@@ -304,3 +304,10 @@ model Wishlist {
   @@unique([userId, productId])
   @@map("wishlists")
 }
+
+// sample
+model Sample {
+  id    Int     @id @default(autoincrement())
+  name  String
+  code  String
+}
