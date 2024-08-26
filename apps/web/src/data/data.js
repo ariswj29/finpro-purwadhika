@@ -1,4 +1,4 @@
-import { logoutProcess } from '@/api/auth';
+// import { logoutProcess } from '@/api/auth';
 
 export const navbars = [
   {
@@ -8,13 +8,13 @@ export const navbars = [
   },
   {
     id: 2,
-    title: 'Login',
-    link: '/login',
+    title: 'Products',
+    link: '/products',
   },
   {
     id: 3,
-    title: 'Register',
-    link: '/register',
+    title: 'Contact',
+    link: '/contact',
   },
 ];
 
@@ -31,53 +31,13 @@ export const navbarsAuth = [
   },
 ];
 
-export const sidebars = [
+export const sliders = [
   {
     id: 1,
-    title: 'Dashboard',
-    link: '/admin/dashboard',
+    image: '/slider2.png',
   },
   {
     id: 2,
-    title: 'Events',
-    link: '/admin/events',
-  },
-  {
-    id: 3,
-    title: 'Promotions',
-    link: '/admin/promotions',
-  },
-  {
-    id: 4,
-    title: 'Review',
-    link: '/admin/review',
-  },
-  {
-    id: 5,
-    title: 'Transactions',
-    link: '/admin/transactions',
-  },
-  {
-    id: 6,
-    title: 'Users',
-    link: '/admin/users',
-  },
-];
-
-export const profiles = [
-  {
-    id: 1,
-    title: 'Edit Profile',
-    link: '#edit-profile',
-  },
-  {
-    id: 2,
-    title: 'Your Saldo',
-    link: '#points',
-  },
-  {
-    id: 3,
-    title: 'Your Transactions',
-    link: '#transactions',
+    image: '/slider1.png',
   },
 ];
