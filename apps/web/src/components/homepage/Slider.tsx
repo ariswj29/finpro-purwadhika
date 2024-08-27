@@ -14,7 +14,6 @@ import {
 import { sliders } from '@/data/data';
 
 export default function Slider() {
-  // const sliders = await getSliders();
   return sliders.length === 0 ? (
     <SkeletonComponent
       className="mb-16"
@@ -38,11 +37,9 @@ export default function Slider() {
     >
       {sliders.map((item, key) => (
         <SwiperSlide
-          // key={slider.sys.id}
           key={key}
           className="slider_1 md:py-[140px] sm:py-0 px-[0px]"
           style={{
-            // backgroundImage: `url(https:${slider.fields.image.fields.file.url})`,
             backgroundImage: `url('${item.image}')`,
             textShadow:
               'rgb(61 61 61) 0px 0px 25px, rgb(61 61 61) 0px 0px 15px',

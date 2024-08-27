@@ -34,10 +34,14 @@ export const navbarsAuth = [
 export const sliders = [
   {
     id: 1,
-    image: '/slider2.png',
+    image: '/hero section/slider-1.png',
   },
   {
     id: 2,
-    image: '/slider1.png',
+    image: '/hero section/slider-2.png',
+  },
+  {
+    id: 2,
+    image: '/hero section/slider-3.png',
   },
 ];
