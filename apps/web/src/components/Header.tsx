@@ -5,14 +5,15 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { navbars, navbarsAuth } from '@/data/data';
+import { FaRegHeart, FaShoppingCart } from 'react-icons/fa';
 
 export const Header = (props: any) => {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <header className="grid md:grid-cols-3 grid-cols-2 md:px-40 px-4 items-center bg-black sticky top-0 z-50 text-white">
-      <div className="md:col-span-2 sm:col-span-1 py-2">
+    <header className="grid md:grid-cols-3 grid-cols-2 md:px-40 px-4 items-center justify-between bg-black sticky top-0 z-50 text-white">
+      <div className=" py-2">
         <Link href="/">
           <Image src="/logo-white.png" alt="Groceria" width={150} height={25} />
         </Link>
@@ -64,6 +65,27 @@ export const Header = (props: any) => {
                 ))}
           </ul>
         </nav>
+      </div>
+      <div className="flex gap-3 justify-self-end items-center">
+        <Link href={'/login'}>
+          <div className="flex gap-2">
+            <Image src="/user.png" alt="user" width={30} height={20} />
+            <div className="text-xs">
+              {' '}
+              Hello, <br /> Sign In{' '}
+            </div>
+          </div>
+        </Link>
+        <div>
+          <Link href={'/wishlist'}>
+            <FaRegHeart size={22} />
+          </Link>
+        </div>
+        <div>
+          <Link href={'/cart'}>
+            <FaShoppingCart size={22} />
+          </Link>
+        </div>
       </div>
     </header>
   );
