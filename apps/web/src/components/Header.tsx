@@ -3,13 +3,27 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { navbars, navbarsAuth } from '@/data/data';
 import { FaRegHeart, FaShoppingCart } from 'react-icons/fa';
+import { getCount } from '@/api/wishlist';
 
 export const Header = (props: any) => {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [wishlistCount, setWishlistCount] = useState(0);
+  const [cartCount, setCartCount] = useState(0);
+
+  useEffect(() => {
+    const fetchCounts = async () => {
+      const res = await getCount();
+
+      setWishlistCount(res.data.wishlist);
+      setCartCount(res.data.cart);
+    };
+
+    fetchCounts();
+  }, [setWishlistCount, setCartCount]);
 
   return (
     <header className="grid md:grid-cols-3 grid-cols-2 md:px-40 px-4 items-center justify-between bg-black sticky top-0 z-50 text-white">
@@ -66,24 +80,34 @@ export const Header = (props: any) => {
           </ul>
         </nav>
       </div>
-      <div className="flex gap-3 justify-self-end items-center">
+      <div className="flex gap-6 justify-self-end items-center">
         <Link href={'/login'}>
           <div className="flex gap-2">
-            <Image src="/user.png" alt="user" width={30} height={20} />
+            <Image src="/user.png" alt="user" width={35} height={18} />
             <div className="text-xs">
               {' '}
               Hello, <br /> Sign In{' '}
             </div>
           </div>
         </Link>
-        <div>
+        <div className="relative">
           <Link href={'/wishlist'}>
             <FaRegHeart size={22} />
+            {wishlistCount > 0 && (
+              <span className="absolute top-0 left-4 mt-[-5px] rounded-full bg-red-500 text-white text-xs px-2">
+                {wishlistCount}
+              </span>
+            )}
           </Link>
         </div>
-        <div>
+        <div className="relative">
           <Link href={'/cart'}>
             <FaShoppingCart size={22} />
+            {cartCount > 0 && (
+              <span className="absolute top-0 left-4 mt-[-5px] rounded-full bg-red-500 text-white text-xs px-2">
+                {cartCount}
+              </span>
+            )}
           </Link>
         </div>
       </div>

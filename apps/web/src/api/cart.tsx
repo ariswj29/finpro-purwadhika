@@ -9,6 +9,13 @@ export async function getAllCart() {
   return res.data;
 }
 
+export async function addCart(productId: number, userId: number) {
+  const url = base_url_api + '/cart';
+  const res = await axios.post(url, { productId, userId });
+
+  return res.data;
+}
+
 export async function removeCart(id: number) {
   const url = base_url_api + '/cart/remove-cart/' + id;
   const res = await axios.put(url);

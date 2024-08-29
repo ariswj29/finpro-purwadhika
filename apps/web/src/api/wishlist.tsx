@@ -9,3 +9,17 @@ export async function getAllWishlist() {
   console.log(res.data, 'res.data');
   return res.data;
 }
+
+export async function getCount() {
+  const url = base_url_api + '/wishlist/count';
+  const res = await axios.get(url);
+
+  return res.data;
+}
+
+export async function removeWishlist(id: number) {
+  const url = base_url_api + '/wishlist/' + id;
+  const res = await axios.delete(url);
+
+  return res.data;
+}

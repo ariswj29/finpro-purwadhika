@@ -5,6 +5,7 @@ import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { getAllProducts } from '@/api/products';
 import { formattedMoney } from '@/helper/helper';
+import { addCart } from '@/api/cart';
 
 interface Product {
   id: number;
@@ -16,6 +17,8 @@ interface Product {
 export default function ProductsList(props: any) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
 
   const fetchProductList = async (limit = 8) => {
     setLoading(true);
@@ -29,17 +32,45 @@ export default function ProductsList(props: any) {
     }
   };
 
+  const handleAddToCart = (id: number) => {
+    const res = addCart(id, 7);
+    showToast('Item added to cart');
+  };
+
+  const showToast = (message: string) => {
+    setToastMessage(message);
+    setToastVisible(true);
+    setTimeout(() => {
+      setToastVisible(false);
+    }, 50000);
+  };
+
   useEffect(() => {
     fetchProductList();
   }, []);
 
   return (
     <div className="container mx-auto px-8 py-12 bg-primary">
+      {toastVisible && (
+        <div
+          className="toast toast-top toast-end"
+          style={{
+            position: 'fixed',
+            top: '3rem',
+            right: '1rem',
+            zIndex: 1000,
+          }}
+        >
+          <div className="alert alert-info">
+            <span>{toastMessage}</span>
+          </div>
+        </div>
+      )}
       <h1 className="text-3xl font-bold mb-4">OUR PRODUCTS</h1>
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 cursor-pointer">
         {loading ? (
           <span className="p-2 font-bold">Loading...</span>
-        ) : products.length == 0 ? (
+        ) : products.length === 0 ? (
           <span className="p-2 font-bold">Data not found!</span>
         ) : (
           products.map((product) => {
@@ -61,20 +92,19 @@ export default function ProductsList(props: any) {
                 <p className="text-gray-600">
                   {formattedMoney(product.price ?? 0)}
                 </p>
-                <Link href={`/${product.id}`}>
-                  <button className="bg-black text-white px-4 py-1 my-2 rounded-md hover:font-bold">
-                    {' '}
-                    Add to Cart{' '}
-                  </button>
-                </Link>
+                <button
+                  className="bg-black text-white px-4 py-1 my-2 rounded-md hover:font-bold"
+                  onClick={() => handleAddToCart(product.id)}
+                >
+                  Add to Cart
+                </button>
               </div>
             );
           })
         )}
       </div>
       <Link href={'/products'}>
-        <button className="bg-secondary rounded-xl py-2 my-9 text-center w-full font-bold hover:font-bold">
-          {' '}
+        <button className="bg-secondary rounded-xl py-2 my-9 text-center w-full font-bold hover:font-extrabold">
           All Products
         </button>
       </Link>
