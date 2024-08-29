@@ -36,7 +36,7 @@ model Product {
   category          Category           @relation(fields: [categoryId], references: [id])
   productCarts      ProductCart[]
   orderProducts     OrderProduct[]
-  productWarehouses ProductWarehouse[]
+  productBranchs    ProductBranch[]
   mutations         Mutation[]
   wishlists         Wishlist[]
 
@@ -56,7 +56,7 @@ model User {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  warehouse Warehouse?
+  branch    Branch?
   addresses Address[]
   carts     Cart[]
   wishlists Wishlist[]
@@ -129,7 +129,7 @@ model Order {
   paymentMethod      String
   paymentProof       String?
   expirePayment      DateTime
-  warehouseId        Int
+  branchId           Int
   cartId             Int                 @unique
   addressId          Int
   shippedAt          DateTime?
@@ -138,7 +138,7 @@ model Order {
   updatedAt          DateTime            @updatedAt
 
   address       Address        @relation(fields: [addressId], references: [id])
-  warehouse     Warehouse      @relation(fields: [warehouseId], references: [id])
+  branch        Branch         @relation(fields: [branchId], references: [id])
   cart          Cart           @relation(fields: [cartId], references: [id])
   orderProducts OrderProduct[]
 
@@ -175,7 +175,7 @@ model OrderProduct {
   @@map("order_products")
 }
 
-model Warehouse {
+model Branch {
   id         Int      @id @default(autoincrement())
   name       String
   address    String   @db.Text
@@ -190,31 +190,31 @@ model Warehouse {
 
   user                User?              @relation(fields: [userId], references: [id])
   orders              Order[]
-  productWarehouses   ProductWarehouse[]
-  sourceMutations     Mutation[]         @relation("SourceWarehouse")
-  destinationutations Mutation[]         @relation("DestinationWarehouse")
+  productBranchs      ProductBranch[]
+  sourceMutations     Mutation[]         @relation("SourceBranch")
+  destinationutations Mutation[]         @relation("DestinationBranch")
   province            Province           @relation(fields: [provinceId], references: [id])
   city                City               @relation(fields: [cityId], references: [id])
   jurnalMutations     JournalMutation[]
 
-  @@map("warehouses")
+  @@map("branchs")
 }
 
-model ProductWarehouse {
+model ProductBranch {
   id          Int      @id @default(autoincrement())
   stock       Int
   productId   Int
-  warehouseId Int
+  branchId    Int
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   deleted     Boolean  @default(false)
 
-  warehouse        Warehouse         @relation(fields: [warehouseId], references: [id])
+  branch           Branch         @relation(fields: [branchId], references: [id])
   product          Product           @relation(fields: [productId], references: [id])
   journalMutations JournalMutation[]
 
-  @@unique([productId, warehouseId])
-  @@map("product_warehouses")
+  @@unique([productId, branchId])
+  @@map("product_branchs")
 }
 
 model Mutation {
@@ -222,15 +222,15 @@ model Mutation {
   stockRequest           Int
   stockProcess           Int?
   note                   String?        @db.Text
-  sourceWarehouseId      Int
-  destinationWarehouseId Int
+  sourceBranchId         Int
+  destinationBranchId    Int
   productId              Int
   status                 MutationStatus
   createdAt              DateTime       @default(now())
   updatedAt              DateTime       @updatedAt
 
-  sourceWarehouse      Warehouse         @relation("SourceWarehouse", fields: [sourceWarehouseId], references: [id])
-  destinationWarehouse Warehouse         @relation("DestinationWarehouse", fields: [destinationWarehouseId], references: [id])
+  sourceBranch         Branch         @relation("SourceBranch", fields: [sourceBranchId], references: [id])
+  destinationBranch    Branch         @relation("DestinationBranch", fields: [destinationBranchId], references: [id])
   journalMutation      JournalMutation[]
   product              Product           @relation(fields: [productId], references: [id])
 
@@ -242,15 +242,15 @@ model JournalMutation {
   quantity           Int
   transactionType    TransactionType
   description        String          @db.Text
-  productWarehouseId Int
-  warehouseId        Int?
-  refMutationId      Int?
+  productBranchId    Int
+  branchId           Int?
+  mutationId         Int?
   createdAt          DateTime        @default(now())
   updatedAt          DateTime        @updatedAt
 
-  productWarehouse ProductWarehouse @relation(fields: [productWarehouseId], references: [id])
-  warehouse        Warehouse?       @relation(fields: [warehouseId], references: [id])
-  refMutation      Mutation?        @relation(fields: [refMutationId], references: [id])
+  productBranch ProductBranch    @relation(fields: [productBranchId], references: [id])
+  branch        Branch?          @relation(fields: [branchId], references: [id])
+  mutation      Mutation?        @relation(fields: [mutationId], references: [id])
 
   @@map("journal_mutations")
 }
@@ -272,7 +272,7 @@ model Province {
   name String
 
   cities     City[]
-  warehouses Warehouse[]
+  branchs Branch[]
   addresses  Address[]
 
   @@map("provinces")
@@ -283,14 +283,13 @@ model City {
   name       String
   provinceId Int
 
-  warehouses Warehouse[]
+  branchs Branch[]
   province   Province    @relation(fields: [provinceId], references: [id])
   addresses  Address[]
 
   @@map("cities")
 }
 
-//baru
 model Wishlist {
   id        Int      @id @default(autoincrement())
   userId    Int

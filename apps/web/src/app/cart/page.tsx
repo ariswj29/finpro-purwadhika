@@ -3,10 +3,13 @@
 import { getAllCart, removeCart } from '@/api/cart';
 import { CartItem } from '@/interface/cart.interface';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 export default function Cart() {
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
 
   useEffect(() => {
     const fetchCart = async () => {
@@ -30,13 +33,30 @@ export default function Cart() {
     if (data.status === 'success') {
       const updatedCart = cart.filter((item) => item.id !== id);
       setCart(updatedCart);
+      showToast('Item removed from cart');
     } else {
       alert('Failed to remove cart');
+      showToast('Failed to remove cart');
     }
+  };
+
+  const showToast = (message: string) => {
+    setToastMessage(message);
+    setToastVisible(true);
+    setTimeout(() => {
+      setToastVisible(false);
+    }, 3000);
   };
 
   return (
     <section className="p-12 max-w-screen-xl mx-auto items-center">
+      {toastVisible && (
+        <div className="toast toast-top toast-end top-[3rem]">
+          <div className="alert alert-info">
+            <span>{toastMessage}</span>
+          </div>
+        </div>
+      )}
       <h3 className="text-3xl font-bold mb-8 text-center">Shopping Cart</h3>
       <table className="w-full">
         <thead>
@@ -66,7 +86,7 @@ export default function Cart() {
               <td>
                 <input
                   type="number"
-                  className="w-16 rounded-xl text-center"
+                  className="w-16 rounded-xl text-center border border-solid border-gray-300"
                   value={item.quantity}
                   onChange={(e) =>
                     handleQuantityChange(index, Number(e.target.value))
@@ -86,6 +106,24 @@ export default function Cart() {
           ))}
         </tbody>
       </table>
+      <Link href={'/products'}>
+        <button className="bg-secondary rounded-3xl py-4 my-8 text-center w-full">
+          <div className="flex justify-between px-4">
+            <span>
+              Price:
+              <span className="font-bold">
+                {' '}
+                Rp.{' '}
+                {cart.reduce(
+                  (acc, item) => acc + item.product.price * item.quantity,
+                  0,
+                )}
+              </span>
+            </span>
+            <span className="font-bold">Checkout {'->'}</span>
+          </div>
+        </button>
+      </Link>
     </section>
   );
 }
