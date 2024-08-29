@@ -2,16 +2,23 @@ import axios from 'axios';
 
 const base_url_api = 'http://localhost:8000/api';
 
-export async function getAllProducts(limit: number = 8) {
+export async function getAllProducts(
+  limit: number = 8,
+  latitude?: number,
+  longitude?: number,
+) {
   const url = base_url_api + '/products';
   const res = await axios.get(url, {
     params: {
       limit,
+      latitude,
+      longitude,
     },
   });
 
   return res.data;
 }
+
 export async function getAllCategories() {
   const url = base_url_api + '/products/categories';
   const res = await axios.get(url);

@@ -6,13 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { getAllProducts } from '@/api/products';
 import { formattedMoney } from '@/helper/helper';
 import { addCart } from '@/api/cart';
-
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  image: string;
-}
+import { Product } from '@/interface/product.interface';
 
 export default function ProductsList(props: any) {
   const [products, setProducts] = useState<Product[]>([]);
@@ -20,15 +14,41 @@ export default function ProductsList(props: any) {
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
 
+  // Mengambil data produk dengan informasi lokasi
   const fetchProductList = async (limit = 8) => {
     setLoading(true);
-    try {
-      const response = await getAllProducts(limit);
-
-      setProducts(response.data);
-      setLoading(false);
-    } catch (error) {
-      console.error(error);
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          try {
+            const response = await getAllProducts(limit, latitude, longitude);
+            setProducts(response.data);
+            setLoading(false);
+          } catch (error) {
+            console.error(error);
+          }
+        },
+        async () => {
+          // Jika akses lokasi gagal, ambil data produk tanpa parameter lokasi
+          try {
+            const response = await getAllProducts(limit);
+            setProducts(response.data);
+            setLoading(false);
+          } catch (error) {
+            console.error(error);
+          }
+        },
+      );
+    } else {
+      // Jika geolocation tidak tersedia, ambil data produk tanpa parameter lokasi
+      try {
+        const response = await getAllProducts(limit);
+        setProducts(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 
@@ -42,7 +62,7 @@ export default function ProductsList(props: any) {
     setToastVisible(true);
     setTimeout(() => {
       setToastVisible(false);
-    }, 50000);
+    }, 5000);
   };
 
   useEffect(() => {
@@ -66,7 +86,7 @@ export default function ProductsList(props: any) {
           </div>
         </div>
       )}
-      <h1 className="text-3xl font-bold mb-4">OUR PRODUCTS</h1>
+      <h1 className="text-4xl font-bold mb-10 text-center">OUR PRODUCTS</h1>
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 cursor-pointer">
         {loading ? (
           <span className="p-2 font-bold">Loading...</span>
@@ -92,12 +112,14 @@ export default function ProductsList(props: any) {
                 <p className="text-gray-600">
                   {formattedMoney(product.price ?? 0)}
                 </p>
-                <button
-                  className="bg-black text-white px-4 py-1 my-2 rounded-md hover:font-bold"
-                  onClick={() => handleAddToCart(product.id)}
-                >
-                  Add to Cart
-                </button>
+                <div className="flex justify-center">
+                  <button
+                    className="bg-black text-white px-8 py-1 mt-4 rounded-2xl hover:font-bold"
+                    onClick={() => handleAddToCart(product.id)}
+                  >
+                    Add to Cart
+                  </button>
+                </div>
               </div>
             );
           })

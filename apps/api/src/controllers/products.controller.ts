@@ -5,10 +5,41 @@ const prisma = new PrismaClient();
 
 export async function getAllProducts(req: Request, res: Response) {
   try {
-    const { limit = '8' } = req.query;
+    const { limit = '8', latitude, longitude } = req.query;
     const limitNumber = parseInt(limit as string, 10);
 
+    let whereSearch: any = {};
+
+    if (latitude && longitude) {
+      const lat = parseFloat(latitude as string);
+      const long = parseFloat(longitude as string);
+
+      if (!isNaN(lat) && !isNaN(long)) {
+        const nearestBranch = await prisma.branch.findFirst({
+          orderBy: [
+            {
+              latitude: 'asc', // Urutkan berdasarkan latitude
+            },
+            {
+              longitude: 'asc', // Urutkan berdasarkan longitude
+            },
+          ],
+        });
+
+        if (nearestBranch) {
+          whereSearch = {
+            productBranchs: {
+              some: {
+                branchId: nearestBranch.id,
+              },
+            },
+          };
+        }
+      }
+    }
+
     const products = await prisma.product.findMany({
+      where: whereSearch,
       take: limitNumber,
     });
 
@@ -21,6 +52,7 @@ export async function getAllProducts(req: Request, res: Response) {
     res.status(400).json({ error: 'error' });
   }
 }
+
 export async function getAllCategories(req: Request, res: Response) {
   try {
     const categories = await prisma.category.findMany();
