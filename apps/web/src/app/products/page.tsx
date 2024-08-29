@@ -96,7 +96,7 @@ export default function ProductsPage() {
                 </p>
                 <div className="flex justify-center">
                   <Link href={`/${product.id}`}>
-                    <button className="bg-secondary px-8 py-1 mt-4 rounded-2xl hover:font-bold">
+                    <button className="bg-black text-white px-8 py-1 mt-4 rounded-2xl hover:font-bold">
                       Add to Cart
                     </button>
                   </Link>
