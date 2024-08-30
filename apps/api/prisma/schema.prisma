@@ -29,6 +29,7 @@ model Product {
   description String?  @db.Text
   price       Float
   image       String?   @default("/product.jpg")
+  currentStock Int?
   categoryId  Int
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

@@ -5,7 +5,7 @@ export const products = [
     description: 'Kentang fresh 1kg',
     price: 18600,
     categoryId: 1,
-    image: '/products/kentang.png',
+    image: '/kentang.png',
   },
   {
     name: 'Brokoli 1kg',
@@ -13,7 +13,7 @@ export const products = [
     description: 'Brokoli asli dari kebun 1kg',
     price: 8000,
     categoryId: 1,
-    image: '/products/brokoli.png',
+    image: '/brokoli.png',
   },
   {
     name: 'Strawberry 500mg',
@@ -21,7 +21,7 @@ export const products = [
     description: 'Strawberry segar dan manis 500mg',
     price: 21000,
     categoryId: 2,
-    image: '/products/strawberry.png',
+    image: '/strawberry.png',
   },
   {
     name: 'Mangga 500mg',
@@ -29,7 +29,7 @@ export const products = [
     description: 'Mangga segar dan manis 500mg',
     price: 25000,
     categoryId: 2,
-    image: '/products/mangga.png',
+    image: '/mangga.png',
   },
   {
     name: 'Ayam Fillet 1kg',
@@ -37,7 +37,7 @@ export const products = [
     description: 'Ayam fillet tanpa tulang 1kg',
     price: 34000,
     categoryId: 3,
-    image: '/products/Ayam_Fillet.png',
+    image: '/Ayam_Fillet.png',
   },
   {
     name: 'Sayap Ayam 1kg',
@@ -45,7 +45,7 @@ export const products = [
     description: 'Sayap ayam 1kg',
     price: 25000,
     categoryId: 3,
-    image: '/products/sayap.png',
+    image: '/sayap.png',
   },
   {
     name: 'Tahu Kuning 1bks',
@@ -53,7 +53,7 @@ export const products = [
     description: 'Tahu kuning 1bks isi 10 biji',
     price: 8000,
     categoryId: 4,
-    image: '/products/tahu.png',
+    image: '/tahu.png',
   },
   {
     name: 'Tempe 1bks',
@@ -61,6 +61,6 @@ export const products = [
     description: 'Tempe 1bks',
     price: 11000,
     categoryId: 4,
-    image: '/products/tempe.png',
+    image: '/tempe.png',
   },
 ];
