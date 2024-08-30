@@ -7,14 +7,18 @@ import { getAllProducts } from '@/api/products';
 import { formattedMoney } from '@/helper/helper';
 import { addCart } from '@/api/cart';
 import { Product } from '@/interface/product.interface';
+import { FaHeart } from 'react-icons/fa';
+import { addToWishlist } from '@/api/wishlist';
 
 export default function ProductsList(props: any) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const [toastVisible, setToastVisible] = useState(false);
-  const [toastMessage, setToastMessage] = useState('');
+  const [toastMessage, setToastMessage] = useState<{
+    message: string;
+    status: string;
+  }>({ message: '', status: '' });
 
-  // Mengambil data produk dengan informasi lokasi
   const fetchProductList = async (limit = 8) => {
     setLoading(true);
     if (navigator.geolocation) {
@@ -52,17 +56,22 @@ export default function ProductsList(props: any) {
     }
   };
 
-  const handleAddToCart = (id: number) => {
-    const res = addCart(id, 7);
-    showToast('Item added to cart');
+  const handleAddToCart = async (id: number) => {
+    const res = await addCart(id, 7);
+    showToast(res);
   };
 
-  const showToast = (message: string) => {
-    setToastMessage(message);
+  const handleAddToWishlist = async (id: number) => {
+    const res = await addToWishlist(id, 7);
+    showToast(res);
+  };
+
+  const showToast = (data: { message: string; status: string }) => {
+    setToastMessage(data);
     setToastVisible(true);
     setTimeout(() => {
       setToastVisible(false);
-    }, 5000);
+    }, 3000);
   };
 
   useEffect(() => {
@@ -81,8 +90,12 @@ export default function ProductsList(props: any) {
             zIndex: 1000,
           }}
         >
-          <div className="alert alert-info">
-            <span>{toastMessage}</span>
+          <div
+            className={`alert ${toastMessage.status == 'success' ? 'alert-success' : 'alert-error'}`}
+          >
+            <span className="text-primary text-bold">
+              {toastMessage.message}
+            </span>
           </div>
         </div>
       )}
@@ -99,6 +112,13 @@ export default function ProductsList(props: any) {
                 key={product.id}
                 className="p-4 bg-white hover:bg-secondary shadow-lg rounded-lg border-2 border-secondary transform transition-transform duration-300 hover:scale-105"
               >
+                {/* Wishlist icon */}
+                <button
+                  onClick={() => handleAddToWishlist(product.id)}
+                  className="absolute top-2 right-2 text-red-500 hover:text-red-700 w-10 h-10"
+                >
+                  <FaHeart />
+                </button>
                 <Image
                   src={`http://localhost:8000/products/${product.image}`}
                   alt={product.name}

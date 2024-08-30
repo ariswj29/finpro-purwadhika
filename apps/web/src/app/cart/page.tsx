@@ -58,54 +58,59 @@ export default function Cart() {
         </div>
       )}
       <h3 className="text-3xl font-bold mb-8 text-center">Shopping Cart</h3>
-      <table className="w-full">
-        <thead>
-          <tr className="text-left">
-            <th>No</th>
-            <th>Product</th>
-            <th>Quantity</th>
-            <th>Total</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {cart.map((item, index) => (
-            <tr key={index}>
-              <td>{index + 1}</td>
-              <td>
-                <div className="flex items-center">
-                  <Image
-                    src={`http://localhost:8000/products/${item.product.image}`}
-                    alt="Product"
-                    width={150}
-                    height={150}
-                  />
-                  {item.product.name}
-                </div>
-              </td>
-              <td>
-                <input
-                  type="number"
-                  className="w-16 rounded-xl text-center border border-solid border-gray-300"
-                  value={item.quantity}
-                  onChange={(e) =>
-                    handleQuantityChange(index, Number(e.target.value))
-                  }
-                />
-              </td>
-              <td>Rp. {item.product.price * item.quantity}</td>{' '}
-              <td>
-                <button
-                  className="px-3 py-1 border border-solid border-secondary rounded-2xl hover:font-bold"
-                  onClick={() => handleRemoveCart(item.id)}
-                >
-                  Remove
-                </button>
-              </td>
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[600px] table-auto border-collapse">
+          <thead>
+            <tr className="text-left bg-gray-100">
+              <th className="p-2">No</th>
+              <th className="p-2">Product</th>
+              <th className="p-2">Quantity</th>
+              <th className="p-2">Total</th>
+              <th className="p-2"></th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {cart.map((item, index) => (
+              <tr key={index} className="border-b">
+                <td className="p-2">{index + 1}</td>
+                <td className="p-2">
+                  <div className="flex items-center">
+                    <Image
+                      src={`http://localhost:8000/products/${item.product.image}`}
+                      alt="Product"
+                      width={80}
+                      height={80}
+                      className="mr-2"
+                    />
+                    {item.product.name}
+                  </div>
+                </td>
+                <td className="p-2">
+                  <input
+                    type="number"
+                    className="w-16 rounded-xl text-center border border-solid border-gray-300"
+                    value={item.quantity}
+                    onChange={(e) =>
+                      handleQuantityChange(index, Number(e.target.value))
+                    }
+                  />
+                </td>
+                <td className="p-2">
+                  Rp. {item.product.price * item.quantity}
+                </td>
+                <td className="p-2">
+                  <button
+                    className="px-3 py-1 border border-solid border-secondary rounded-2xl hover:font-bold"
+                    onClick={() => handleRemoveCart(item.id)}
+                  >
+                    Remove
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       <Link href={'/products'}>
         <button className="bg-secondary rounded-3xl py-4 my-8 text-center w-full">
           <div className="flex justify-between px-4">

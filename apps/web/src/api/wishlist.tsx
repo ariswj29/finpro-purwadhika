@@ -23,3 +23,13 @@ export async function removeWishlist(id: number) {
 
   return res.data;
 }
+
+export async function addToWishlist(productId: number, userId: number) {
+  const url = base_url_api + '/wishlist/';
+  const res = await axios.post(url, {
+    productId,
+    userId,
+  });
+
+  return res.data;
+}
