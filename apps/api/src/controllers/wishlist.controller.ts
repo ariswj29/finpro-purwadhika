@@ -14,14 +14,14 @@ export const getAllWishlist = async (req: Request, res: Response) => {
 export const addToWishlist = async (req: Request, res: Response) => {
   const { productId, userId } = req.body;
 
-  const wishlist = await prisma.wishlist.create({
-    data: {
-      productId: parseInt(productId),
-      userId,
-    },
-  });
+  // const wishlist = await prisma.wishlist.create({
+  //   data: {
+  //     productId: parseInt(productId),
+  //     userId,
+  //   },
+  // });
 
-  res.json({ code: 200, status: 'success', data: wishlist });
+  res.json({ code: 200, status: 'success', data: 'wishlist' });
 };
 
 export const getCount = async (req: Request, res: Response) => {
