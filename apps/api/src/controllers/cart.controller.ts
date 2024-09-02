@@ -1,4 +1,4 @@
-import e, { Request, Response } from 'express';
+import { Request, Response } from 'express';
 import prisma from '@/helpers/prisma';
 
 export const getAllCart = async (req: Request, res: Response) => {

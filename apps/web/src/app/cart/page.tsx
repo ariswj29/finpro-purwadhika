@@ -111,7 +111,7 @@ export default function Cart() {
           </tbody>
         </table>
       </div>
-      <Link href={'/products'}>
+      <Link href={'/checkout'}>
         <button className="bg-secondary rounded-3xl py-4 my-8 text-center w-full">
           <div className="flex justify-between px-4">
             <span>

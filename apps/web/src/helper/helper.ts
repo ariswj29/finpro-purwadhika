@@ -1,12 +1,15 @@
 import { format } from 'date-fns';
 import { id as idLocale } from 'date-fns/locale';
 
-export const totalPrice = (price: number, discount: number, points: number) => {
-  const discountPrice = price - price * (discount / 100);
-  const totalPrice = discountPrice - points;
-  totalPrice < 0 ? 0 : totalPrice;
+export const totalPrice = (price: number, shipping: number) => {
+  const money = price + shipping;
+  const format = new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    minimumFractionDigits: 0,
+  }).format(money);
 
-  return totalPrice;
+  return format.replace('Rp', 'Rp.');
 };
 
 export const formattedDate = (date: string) => {

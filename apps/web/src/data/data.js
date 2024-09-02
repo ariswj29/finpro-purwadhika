@@ -45,3 +45,54 @@ export const sliders = [
     image: '/hero section/slider-3.png',
   },
 ];
+
+export const banks = [
+  {
+    id: 1,
+    name: 'BCA',
+    image: '/banks/bca.png',
+  },
+  {
+    id: 2,
+    name: 'BNI',
+    image: '/banks/bni.png',
+  },
+  {
+    id: 3,
+    name: 'BRI',
+    image: '/banks/bri.png',
+  },
+  {
+    id: 4,
+    name: 'Mandiri',
+    image: '/banks/mandiri.png',
+  },
+  {
+    id: 5,
+    name: 'Gopay',
+    image: '/banks/gopay.png',
+  },
+];
+
+export const couriers = [
+  {
+    id: 1,
+    name: 'JNE',
+  },
+  {
+    id: 2,
+    name: 'J&T',
+  },
+  {
+    id: 3,
+    name: 'SiCepat',
+  },
+  {
+    id: 4,
+    name: 'Lion Parcel',
+  },
+  {
+    id: 7,
+    name: 'Paxel',
+  },
+];
