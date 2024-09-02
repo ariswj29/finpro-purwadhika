@@ -69,7 +69,7 @@ export const Header = (props: any) => {
           </ul>
         </nav>
         <div className="md:hidden flex flex-col mt-4 gap-6 justify-self-end items-center">
-          <Link href={'/login'}>
+          <Link href={'/auth/login'}>
             <div className="flex gap-2">
               <Image src="/user.png" alt="user" width={35} height={18} />
               <div className="text-xs">
@@ -102,7 +102,7 @@ export const Header = (props: any) => {
         </div>
       </div>
       <div className="hidden md:flex gap-6 justify-self-end items-center">
-        <Link href={'/login'}>
+        <Link href={'/auth/login'}>
           <div className="flex gap-2">
             <Image src="/user.png" alt="user" width={35} height={18} />
             <div className="text-xs">
