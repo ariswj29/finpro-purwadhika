@@ -20,17 +20,13 @@ export default function VerifyPage(context: any) {
       const token = searchParams?.token;
       if (token) {
         const response = await verificationEmail({ token });
-        setDataMessage({
-          message: response.data.message,
-          status: 'success',
-        });
+        setDataMessage(response);
       } else {
         throw new Error('Invalid or missing token');
       }
     } catch (error) {
       setDataMessage({
-        message:
-          (error as Error).response?.data?.message || (error as Error).message,
+        message: (error as any).response.data.message,
         status: 'error',
       });
     } finally {

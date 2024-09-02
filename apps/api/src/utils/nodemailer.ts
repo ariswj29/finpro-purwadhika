@@ -34,7 +34,7 @@ export const sendVerificationEmail = async (
     });
 
     const domain = process.env.PUBLIC_APP_URL;
-    const verificationLink = `${domain}/verify?token=${token}`;
+    const verificationLink = `${domain}/auth/verify?token=${token}`;
     console.log(verificationLink, 'verlink');
 
     const mailOptions = {
