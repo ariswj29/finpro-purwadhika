@@ -38,7 +38,8 @@ export default function LoginPage() {
 
       if (status === 'success') {
         Cookies.set('token', token, { expires: 1, secure: true });
-        localStorage.setItem('user', JSON.stringify(data));
+        Cookies.set('userId', data.id, { expires: 1, secure: true });
+        Cookies.set('user', JSON.stringify(data), { expires: 1, secure: true });
 
         setTimeout(() => {
           setShowMessage(false);
@@ -118,6 +119,14 @@ export default function LoginPage() {
                   {errors.password.message}
                 </p>
               )}
+            </div>
+            <div>
+              <Link
+                href="/auth/reset-password"
+                className="text-blue-400 text-xs"
+              >
+                Reset Password
+              </Link>
             </div>
             <button
               type="submit"

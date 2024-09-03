@@ -1,4 +1,4 @@
-import e, { Request, Response } from 'express';
+import { Request, Response } from 'express';
 import prisma from '@/helpers/prisma';
 
 export const getAllCart = async (req: Request, res: Response) => {
@@ -9,6 +9,32 @@ export const getAllCart = async (req: Request, res: Response) => {
     where: {
       cart: {
         isActive: true,
+      },
+    },
+  });
+
+  res.json({ code: 200, status: 'success', data: cart });
+};
+
+export const getCart = async (req: Request, res: Response) => {
+  const userId = parseInt(req.params.id, 10);
+
+  if (isNaN(userId)) {
+    return res.status(400).json({
+      code: 400,
+      status: 'error',
+      message: 'Invalid userId. It must be a number.',
+    });
+  }
+
+  const cart = await prisma.productCart.findMany({
+    include: {
+      product: true,
+    },
+    where: {
+      cart: {
+        isActive: true,
+        userId,
       },
     },
   });
@@ -29,34 +55,7 @@ export const addCart = async (req: Request, res: Response) => {
     },
   });
 
-  const stockProduct = await prisma.product.findUnique({
-    where: {
-      id: Number(productId),
-    },
-  });
-
-  if (stockProduct && stockProduct.currentStock) {
-    stockProduct.currentStock -= 1;
-  }
-  await prisma.product.update({
-    where: {
-      id: Number(productId),
-    },
-    data: {
-      currentStock: stockProduct?.currentStock,
-    },
-  });
-  console.log(stockProduct?.currentStock, 'stockProduct?.currentStock');
-
-  if (stockProduct?.currentStock === 0) {
-    return res.json({
-      code: 400,
-      status: 'error',
-      message: 'Product out of stock',
-    });
-  }
-
-  if (stockProduct?.currentStock !== 0 && productCart) {
+  if (productCart) {
     await prisma.productCart.update({
       where: {
         id: productCart.id,
@@ -66,21 +65,19 @@ export const addCart = async (req: Request, res: Response) => {
       },
     });
   } else {
-    if (stockProduct?.currentStock !== 0) {
-      const cart = await prisma.cart.create({
-        data: {
-          isActive: true,
-          userId,
-        },
-      });
-      await prisma.productCart.create({
-        data: {
-          cartId: cart.id,
-          productId: Number(productId),
-          quantity: 1,
-        },
-      });
-    }
+    const cart = await prisma.cart.create({
+      data: {
+        isActive: true,
+        userId,
+      },
+    });
+    await prisma.productCart.create({
+      data: {
+        cartId: cart.id,
+        productId: Number(productId),
+        quantity: 1,
+      },
+    });
   }
 
   res.json({

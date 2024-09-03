@@ -1,23 +1,29 @@
 'use client';
 
-import { getAllCart, removeCart } from '@/api/cart';
+import { getCart, removeCart } from '@/api/cart';
+import { getCookies } from '@/helper/helper';
 import { CartItem } from '@/interface/cart.interface';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 export default function Cart() {
+  const cookies = getCookies();
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
 
   useEffect(() => {
     const fetchCart = async () => {
-      const res = await getAllCart();
+      const res = await getCart(Number(cookies.userId));
       setCart(res.data);
     };
 
-    fetchCart();
+    if (cookies.token && cookies.userId) {
+      fetchCart();
+    }
+    setLoading(false);
   }, []);
 
   const handleQuantityChange = (index: number, newQuantity: number) => {
@@ -70,65 +76,84 @@ export default function Cart() {
             </tr>
           </thead>
           <tbody>
-            {cart.map((item, index) => (
-              <tr key={index} className="border-b">
-                <td className="p-2">{index + 1}</td>
-                <td className="p-2">
-                  <div className="flex items-center">
-                    <Image
-                      src={`http://localhost:8000/products/${item.product.image}`}
-                      alt="Product"
-                      width={80}
-                      height={80}
-                      className="mr-2"
-                    />
-                    {item.product.name}
-                  </div>
-                </td>
-                <td className="p-2">
-                  <input
-                    type="number"
-                    className="w-16 rounded-xl text-center border border-solid border-gray-300"
-                    value={item.quantity}
-                    onChange={(e) =>
-                      handleQuantityChange(index, Number(e.target.value))
-                    }
-                  />
-                </td>
-                <td className="p-2">
-                  Rp. {item.product.price * item.quantity}
-                </td>
-                <td className="p-2">
-                  <button
-                    className="px-3 py-1 border border-solid border-secondary rounded-2xl hover:font-bold"
-                    onClick={() => handleRemoveCart(item.id)}
-                  >
-                    Remove
-                  </button>
+            {loading ? (
+              <tr>
+                <td
+                  colSpan={5}
+                  className="skeleton h-32 text-center p-4 font-bold"
+                >
+                  Loading...
                 </td>
               </tr>
-            ))}
+            ) : cart.length === 0 ? (
+              <tr>
+                <td colSpan={5} className="text-center p-4 font-bold">
+                  No item in cart
+                </td>
+              </tr>
+            ) : (
+              cart.map((item, index) => (
+                <tr key={index} className="border-b">
+                  <td className="p-2">{index + 1}</td>
+                  <td className="p-2">
+                    <div className="flex items-center">
+                      <Image
+                        src={`http://localhost:8000/products/${item?.product?.image}`}
+                        alt="Product"
+                        width={80}
+                        height={80}
+                        className="mr-2"
+                      />
+                      {item?.product?.name}
+                    </div>
+                  </td>
+                  <td className="p-2">
+                    <input
+                      type="number"
+                      className="w-16 rounded-xl text-center border border-solid border-gray-300"
+                      value={item.quantity}
+                      onChange={(e) =>
+                        handleQuantityChange(index, Number(e.target.value))
+                      }
+                    />
+                  </td>
+                  <td className="p-2">
+                    Rp. {item?.product?.price * item?.quantity}
+                  </td>
+                  <td className="p-2">
+                    <button
+                      className="px-3 py-1 border border-solid border-secondary rounded-2xl hover:font-bold"
+                      onClick={() => handleRemoveCart(item?.id)}
+                    >
+                      Remove
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
-      <Link href={'/products'}>
-        <button className="bg-secondary rounded-3xl py-4 my-8 text-center w-full">
-          <div className="flex justify-between px-4">
-            <span>
-              Price:
-              <span className="font-bold">
-                {' '}
-                Rp.{' '}
-                {cart.reduce(
-                  (acc, item) => acc + item.product.price * item.quantity,
-                  0,
-                )}
+      {cart.length === 0 ? null : (
+        <Link href={'/checkout'}>
+          <button className="bg-secondary rounded-3xl py-4 my-8 text-center w-full">
+            <div className="flex justify-between px-4">
+              <span>
+                Price:
+                <span className="font-bold">
+                  {' '}
+                  Rp.{' '}
+                  {cart.reduce(
+                    (acc, item) => acc + item.product.price * item.quantity,
+                    0,
+                  )}
+                </span>
               </span>
-            </span>
-            <span className="font-bold">Checkout {'->'}</span>
-          </div>
-        </button>
-      </Link>
+              <span className="font-bold">Checkout {'->'}</span>
+            </div>
+          </button>
+        </Link>
+      )}
     </section>
   );
 }

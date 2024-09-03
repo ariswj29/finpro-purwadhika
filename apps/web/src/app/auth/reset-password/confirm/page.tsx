@@ -1,14 +1,15 @@
 'use client';
 
-import { verificationEmail } from '@/api/auth';
+import { confirmResetPassword, verificationEmail } from '@/api/auth';
 import { ShowMessage } from '@/components/ShowMessage';
 import { passwordSchema } from '@/schemas/password.schema';
+import { verifyResetPasssword } from '@/schemas/verifyResetPassword.schema';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
-export default function VerifyPage(context: any) {
+export default function ConfirmResetPasswordPage(context: any) {
   const {
     register,
     watch,
@@ -28,12 +29,12 @@ export default function VerifyPage(context: any) {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const verifyEmail = async (formData: any) => {
+  const resetPassword = async (formData: any) => {
     setLoading(true);
     try {
       const token = searchParams?.token;
       if (token) {
-        const response = await verificationEmail({ token, ...formData });
+        const response = await confirmResetPassword({ token, ...formData });
         setDataMessage(response);
       } else {
         throw new Error('Invalid or missing token');
@@ -79,15 +80,15 @@ export default function VerifyPage(context: any) {
       )}
       <div className="grid md:grid-cols-3 sm:grid-cols-1">
         <div className="p-12 sm:p-16 bg-secondary border border-secondary shadow-sm w-full">
-          <h3 className="text-2xl font-bold ">Welcome to Verify</h3>
+          <h3 className="text-2xl font-bold ">Reset your Password</h3>
           <p className="my-2">
-            Email verification is required to access the application.
+            Please reset your password to secure your account.
           </p>
         </div>
         <div className="col-span-2 p-4 bg-primary shadow-md w-full">
           <div className="mb-4 relative">
             <label htmlFor="password" className="block text-sm font-medium">
-              Password <span className="text-red-500">*</span>
+              New Password <span className="text-red-500">*</span>
             </label>
             <div className="flex justify-between">
               <input
@@ -115,7 +116,7 @@ export default function VerifyPage(context: any) {
               htmlFor="confirmPassword"
               className="block text-sm font-medium"
             >
-              Confirm Password <span className="text-red-500">*</span>
+              Confirm New Password <span className="text-red-500">*</span>
             </label>
             <div className="flex justify-between">
               <input
@@ -140,14 +141,14 @@ export default function VerifyPage(context: any) {
           </div>
           <div className="p-5 ">
             <p className="my-1">
-              Click the button below to verify your email address.
+              Click the button below to submit your new password.
             </p>
             <button
-              onClick={handleSubmit(verifyEmail)}
+              onClick={handleSubmit(resetPassword)}
               disabled={loading}
               className="w-full py-2 px-3 bg-primary border border-secondary rounded-md hover:bg-secondary hover:font-bold mt-2"
             >
-              {loading ? 'Verifying...' : 'Verify Email'}
+              {loading ? 'Verifying...' : 'Reset Password'}
             </button>
           </div>
         </div>

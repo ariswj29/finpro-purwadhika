@@ -1,13 +1,16 @@
 'use client';
 
 import { addCart } from '@/api/cart';
-import { getAllWishlist, removeWishlist } from '@/api/wishlist';
+import { getWishlist, removeWishlist } from '@/api/wishlist';
+import { getCookies } from '@/helper/helper';
 import { WishlistItem } from '@/interface/wishlist.interface';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
 export default function Wishlist() {
+  const cookies = getCookies();
   const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState<{
     message: string;
@@ -16,23 +19,29 @@ export default function Wishlist() {
 
   useEffect(() => {
     const fetchWishlist = async () => {
-      const res = await getAllWishlist();
+      const res = await getWishlist(Number(cookies.userId));
       setWishlist(res.data);
     };
 
-    fetchWishlist();
+    if (cookies.token && cookies.userId) {
+      fetchWishlist();
+    }
+    setLoading(false);
   }, []);
 
   const handleRemoveWishlist = async (id: number) => {
     const res = await removeWishlist(id);
     setWishlist(wishlist.filter((item) => item.id !== id));
-    console.log(res, 'Item removed from wishlist');
     showToast(res);
   };
 
   const handleAddToCart = async (id: number) => {
-    const res = await addCart(id, 7);
-    showToast(res);
+    if (cookies.token && cookies.userId) {
+      const res = await addCart(id, Number(cookies.userId));
+      showToast(res);
+    } else {
+      showToast({ message: 'Please login first!', status: 'error' });
+    }
   };
 
   const showToast = (data: { message: string; status: string }) => {
@@ -77,38 +86,55 @@ export default function Wishlist() {
             </tr>
           </thead>
           <tbody>
-            {wishlist.map((item, index) => (
-              <tr key={index} className="border-b">
-                <td className="p-2">{index + 1}</td>
-                <td className="p-2">
-                  <div className="flex items-center">
-                    <Image
-                      src={`http://localhost:8000/products/${item.product.image}`}
-                      alt="Product"
-                      width={80}
-                      height={80}
-                      className="mr-2"
-                    />
-                    {item.product.name}
-                  </div>
-                </td>
-                <td className="p-2">Rp. {item.product.price}</td>
-                <td className="p-2">
-                  <button
-                    className="px-3 py-1 mb-2 sm:mb-0 sm:mr-2 border border-solid bg-secondary rounded-2xl hover:font-bold"
-                    onClick={() => handleAddToCart(item.id)}
-                  >
-                    Add to Cart
-                  </button>
-                  <button
-                    className="px-3 py-1 border border-solid border-secondary rounded-2xl hover:font-bold"
-                    onClick={() => handleRemoveWishlist(item.id)}
-                  >
-                    Remove
-                  </button>
+            {loading ? (
+              <tr>
+                <td
+                  colSpan={4}
+                  className="skeleton h-32 text-center p-4 font-bold"
+                >
+                  Loading...
                 </td>
               </tr>
-            ))}
+            ) : wishlist.length === 0 ? (
+              <tr>
+                <td colSpan={4} className="text-center p-4 font-bold">
+                  No item in wishlist
+                </td>
+              </tr>
+            ) : (
+              wishlist.map((item, index) => (
+                <tr key={index} className="border-b">
+                  <td className="p-2">{index + 1}</td>
+                  <td className="p-2">
+                    <div className="flex items-center">
+                      <Image
+                        src={`http://localhost:8000/products/${item.product.image}`}
+                        alt="Product"
+                        width={80}
+                        height={80}
+                        className="mr-2"
+                      />
+                      {item.product.name}
+                    </div>
+                  </td>
+                  <td className="p-2">Rp. {item.product.price}</td>
+                  <td className="p-2">
+                    <button
+                      className="px-3 py-1 mb-2 sm:mb-0 sm:mr-2 border border-solid bg-secondary rounded-2xl hover:font-bold"
+                      onClick={() => handleAddToCart(item.product.id)}
+                    >
+                      Add to Cart
+                    </button>
+                    <button
+                      className="px-3 py-1 border border-solid border-secondary rounded-2xl hover:font-bold"
+                      onClick={() => handleRemoveWishlist(item.id)}
+                    >
+                      Remove
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

@@ -4,13 +4,14 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { getAllProducts } from '@/api/products';
-import { formattedMoney } from '@/helper/helper';
+import { formattedMoney, getCookies } from '@/helper/helper';
 import { addCart } from '@/api/cart';
 import { Product } from '@/interface/product.interface';
 import { FaHeart } from 'react-icons/fa';
 import { addToWishlist } from '@/api/wishlist';
 
 export default function ProductsList(props: any) {
+  const cookies = getCookies();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const [toastVisible, setToastVisible] = useState(false);
@@ -57,13 +58,21 @@ export default function ProductsList(props: any) {
   };
 
   const handleAddToCart = async (id: number) => {
-    const res = await addCart(id, 7);
-    showToast(res);
+    if (cookies.token && cookies.userId) {
+      const res = await addCart(id, Number(cookies.userId));
+      showToast(res);
+    } else {
+      showToast({ message: 'Please login first!', status: 'error' });
+    }
   };
 
   const handleAddToWishlist = async (id: number) => {
-    const res = await addToWishlist(id, 7);
-    showToast(res);
+    if (cookies.token && cookies.userId) {
+      const res = await addToWishlist(id, Number(cookies.userId));
+      showToast(res);
+    } else {
+      showToast({ message: 'Please login first!', status: 'error' });
+    }
   };
 
   const showToast = (data: { message: string; status: string }) => {

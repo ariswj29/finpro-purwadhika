@@ -10,8 +10,15 @@ export async function getAllWishlist() {
   return res.data;
 }
 
-export async function getCount() {
-  const url = base_url_api + '/wishlist/count';
+export async function getWishlist(userId: number) {
+  const url = base_url_api + '/wishlist/' + userId;
+  const res = await axios.get(url);
+
+  return res.data;
+}
+
+export async function getCount(userId: number) {
+  const url = base_url_api + '/wishlist/count/' + userId;
   const res = await axios.get(url);
 
   return res.data;

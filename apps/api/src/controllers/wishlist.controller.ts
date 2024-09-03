@@ -24,19 +24,63 @@ export const addToWishlist = async (req: Request, res: Response) => {
   res.json({ code: 200, status: 'success', data: 'wishlist' });
 };
 
-export const getCount = async (req: Request, res: Response) => {
-  const countWishlist = await prisma.wishlist.count();
-  const countCart = await prisma.cart.count({
-    where: {
-      isActive: true,
+export const getWishlist = async (req: Request, res: Response) => {
+  const userId = parseInt(req.params.id, 10);
+
+  if (isNaN(userId)) {
+    return res.status(400).json({
+      code: 400,
+      status: 'error',
+      message: 'Invalid userId. It must be a number.',
+    });
+  }
+
+  const wishlist = await prisma.wishlist.findMany({
+    where: { userId: userId },
+    include: {
+      product: true,
     },
   });
 
-  res.json({
-    code: 200,
-    status: 'success',
-    data: { wishlist: countWishlist, cart: countCart },
-  });
+  res.json({ code: 200, status: 'success', data: wishlist });
+};
+
+export const getCount = async (req: Request, res: Response) => {
+  const userId = parseInt(req.params.id, 10);
+
+  if (isNaN(userId)) {
+    return res.status(400).json({
+      code: 400,
+      status: 'error',
+      message: 'Invalid userId. It must be a number.',
+    });
+  }
+
+  try {
+    const countWishlist = await prisma.wishlist.count({
+      where: { userId: userId },
+    });
+
+    const countCart = await prisma.cart.count({
+      where: {
+        isActive: true,
+        userId: userId,
+      },
+    });
+
+    res.json({
+      code: 200,
+      status: 'success',
+      data: { wishlist: countWishlist, cart: countCart },
+    });
+  } catch (error) {
+    res.status(500).json({
+      code: 500,
+      status: 'error',
+      message: 'Something went wrong.',
+      error: (error as any).message,
+    });
+  }
 };
 
 export const removeWishlist = async (req: Request, res: Response) => {

@@ -7,23 +7,32 @@ import { useEffect, useState } from 'react';
 import { navbars, navbarsAuth } from '@/data/data';
 import { FaRegHeart, FaShoppingCart } from 'react-icons/fa';
 import { getCount } from '@/api/wishlist';
+import { getCookies } from '@/helper/helper';
 
 export const Header = (props: any) => {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [wishlistCount, setWishlistCount] = useState(0);
   const [cartCount, setCartCount] = useState(0);
+  const [user, setUser] = useState<any>({});
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
+    const cookies = getCookies();
+
     const fetchCounts = async () => {
-      const res = await getCount();
+      const res = await getCount(Number(cookies.userId));
 
       setWishlistCount(res.data.wishlist);
       setCartCount(res.data.cart);
     };
 
-    fetchCounts();
-  }, [setWishlistCount, setCartCount]);
+    if (cookies.token && cookies.userId) {
+      fetchCounts();
+      setUser(JSON.parse(cookies.user));
+    }
+  }, []);
 
   return (
     <header className="grid grid-cols-2 md:grid-cols-3 md:px-40 px-4 items-center justify-between bg-black sticky top-0 z-50 text-white">
@@ -47,13 +56,14 @@ export const Header = (props: any) => {
           </svg>
         </button>
       </div>
+
       <div
         className={`${
           isMenuOpen ? 'block' : 'hidden'
         } md:block md:col-span-1 col-span-2 py-4 md:py-0 justify-self-center`}
       >
         <nav>
-          <ul className="flex flex-col md:flex-row md:space-x-4 md:gap-2 gap-4 text-center">
+          <ul className="flex flex-col md:flex-row md:space-x-4 md:gap-8 gap-4 text-center">
             {(props.token === undefined ? navbars : navbarsAuth).map(
               (navbar) => (
                 <li key={navbar.id}>
@@ -68,69 +78,75 @@ export const Header = (props: any) => {
             )}
           </ul>
         </nav>
-        <div className="md:hidden flex flex-col mt-4 gap-6 justify-self-end items-center">
+        {/* mobile */}
+        {isMounted && (
+          <div className="md:hidden flex flex-col mt-4 gap-6 justify-self-end items-center">
+            <Link href={'/auth/login'}>
+              <div className="flex gap-2">
+                <Image src="/user.png" alt="user" width={35} height={18} />
+                <div className="text-xs">
+                  Hello, <br /> {user.username ? user.username : 'Sign In'}
+                </div>
+              </div>
+            </Link>
+            <div className="flex gap-8">
+              <div className="relative">
+                <Link href={'/wishlist'}>
+                  <FaRegHeart size={22} />
+                  {wishlistCount > 0 && (
+                    <span className="absolute top-0 left-4 mt-[-5px] rounded-full bg-red-500 text-white text-xs px-2">
+                      {wishlistCount}
+                    </span>
+                  )}
+                </Link>
+              </div>
+              <div className="relative">
+                <Link href={'/cart'}>
+                  <FaShoppingCart size={22} />
+                  {cartCount > 0 && (
+                    <span className="absolute top-0 left-4 mt-[-5px] rounded-full bg-red-500 text-white text-xs px-2">
+                      {cartCount}
+                    </span>
+                  )}
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+      {/* desktop */}
+      {isMounted && (
+        <div className="hidden md:flex gap-6 justify-self-end items-center">
           <Link href={'/auth/login'}>
             <div className="flex gap-2">
               <Image src="/user.png" alt="user" width={35} height={18} />
               <div className="text-xs">
-                Hello, <br /> Sign In
+                Hello, <br /> {user.username ? user.username : 'Sign In'}
               </div>
             </div>
           </Link>
-          <div className="flex gap-8">
-            <div className="relative">
-              <Link href={'/wishlist'}>
-                <FaRegHeart size={22} />
-                {wishlistCount > 0 && (
-                  <span className="absolute top-0 left-4 mt-[-5px] rounded-full bg-red-500 text-white text-xs px-2">
-                    {wishlistCount}
-                  </span>
-                )}
-              </Link>
-            </div>
-            <div className="relative">
-              <Link href={'/cart'}>
-                <FaShoppingCart size={22} />
-                {cartCount > 0 && (
-                  <span className="absolute top-0 left-4 mt-[-5px] rounded-full bg-red-500 text-white text-xs px-2">
-                    {cartCount}
-                  </span>
-                )}
-              </Link>
-            </div>
+          <div className="relative">
+            <Link href={'/wishlist'}>
+              <FaRegHeart size={22} />
+              {wishlistCount > 0 && (
+                <span className="absolute top-0 left-4 mt-[-5px] rounded-full bg-red-500 text-white text-xs px-2">
+                  {wishlistCount}
+                </span>
+              )}
+            </Link>
+          </div>
+          <div className="relative">
+            <Link href={'/cart'}>
+              <FaShoppingCart size={22} />
+              {cartCount > 0 && (
+                <span className="absolute top-0 left-4 mt-[-5px] rounded-full bg-red-500 text-white text-xs px-2">
+                  {cartCount}
+                </span>
+              )}
+            </Link>
           </div>
         </div>
-      </div>
-      <div className="hidden md:flex gap-6 justify-self-end items-center">
-        <Link href={'/auth/login'}>
-          <div className="flex gap-2">
-            <Image src="/user.png" alt="user" width={35} height={18} />
-            <div className="text-xs">
-              Hello, <br /> Sign In
-            </div>
-          </div>
-        </Link>
-        <div className="relative">
-          <Link href={'/wishlist'}>
-            <FaRegHeart size={22} />
-            {wishlistCount > 0 && (
-              <span className="absolute top-0 left-4 mt-[-5px] rounded-full bg-red-500 text-white text-xs px-2">
-                {wishlistCount}
-              </span>
-            )}
-          </Link>
-        </div>
-        <div className="relative">
-          <Link href={'/cart'}>
-            <FaShoppingCart size={22} />
-            {cartCount > 0 && (
-              <span className="absolute top-0 left-4 mt-[-5px] rounded-full bg-red-500 text-white text-xs px-2">
-                {cartCount}
-              </span>
-            )}
-          </Link>
-        </div>
-      </div>
+      )}
     </header>
   );
 };
