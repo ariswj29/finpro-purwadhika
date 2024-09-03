@@ -1,7 +1,6 @@
 import * as yup from 'yup';
 
-export const registerSchema = yup.object().shape({
-  username: yup.string().required('Username is required'),
+export const verifyResetPasssword = yup.object().shape({
   email: yup
     .string()
     .email('email must be valid')

@@ -120,6 +120,14 @@ export default function LoginPage() {
                 </p>
               )}
             </div>
+            <div>
+              <Link
+                href="/auth/reset-password"
+                className="text-blue-400 text-xs"
+              >
+                Reset Password
+              </Link>
+            </div>
             <button
               type="submit"
               className="w-full py-2 px-3 bg-secondary rounded-md hover:font-bold"
