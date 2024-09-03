@@ -1,5 +1,6 @@
 import { format } from 'date-fns';
 import { id as idLocale } from 'date-fns/locale';
+import Cookies from 'js-cookie';
 
 export const totalPrice = (price: number, shipping: number) => {
   const money = price + shipping;
@@ -24,4 +25,12 @@ export const formattedMoney = (money: number) => {
   }).format(money);
 
   return format.replace('Rp', 'Rp.');
+};
+
+export const getCookies = () => {
+  const token = Cookies.get('token') || '';
+  const userId = Cookies.get('userId') || '';
+  const user = Cookies.get('user') || '';
+
+  return { token, userId, user };
 };

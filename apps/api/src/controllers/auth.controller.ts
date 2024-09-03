@@ -103,6 +103,7 @@ export async function login(req: Request, res: Response) {
       username: user.username,
       email: user.email,
       role: user.role,
+      id: user.id,
     };
 
     res.status(200).json({
