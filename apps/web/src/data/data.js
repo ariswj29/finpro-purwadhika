@@ -47,11 +47,6 @@ export const menuProfiles = [
     title: 'Order Complete',
     link: '/profile/order-complete',
   },
-  {
-    id: 4,
-    title: 'Logout',
-    link: '/profile/',
-  },
 ];
 
 export const sliders = [
