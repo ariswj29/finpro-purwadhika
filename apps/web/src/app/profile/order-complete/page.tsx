@@ -81,6 +81,12 @@ export default function OrderCompletePage() {
                   Loading...
                 </td>
               </tr>
+            ) : data.length === 0 ? (
+              <tr>
+                <td colSpan={6} className="text-center p-4 font-bold">
+                  Data order complete is empty
+                </td>
+              </tr>
             ) : (
               data.map((item, index) => (
                 <tr key={index}>

@@ -102,6 +102,12 @@ export default function OrderListPage() {
                   Loading...
                 </td>
               </tr>
+            ) : data.length === 0 ? (
+              <tr>
+                <td colSpan={6} className="text-center p-4 font-bold">
+                  Data list order is empty
+                </td>
+              </tr>
             ) : (
               data.map((item, index) => (
                 <tr key={index}>
