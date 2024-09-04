@@ -27,7 +27,6 @@ export default function RegisterPage() {
     username: '',
     role: '',
     email: '',
-    password: '',
   });
   const [dataMessage, setDataMessage] = useState({
     message: '',
@@ -35,8 +34,6 @@ export default function RegisterPage() {
     data: {},
   });
   const [showMessage, setShowMessage] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-
   const formSubmit = async (formData: any) => {
     try {
       console.log(formData, 'formData');
@@ -114,31 +111,6 @@ export default function RegisterPage() {
                 </p>
               )}
             </div>
-            <div className="mb-4 relative">
-              <label htmlFor="password" className="block text-sm font-medium">
-                Password <span className="text-red-500">*</span>
-              </label>
-              <div className="flex justify-between">
-                <input
-                  className="mt-1 block w-full px-3 py-2 border border-secondary rounded-md shadow-sm focus:outline-none sm:text-sm"
-                  {...register('password')}
-                  placeholder="Password"
-                  type={showPassword ? 'text' : 'password'}
-                  id="password"
-                />
-                <span
-                  className="absolute right-3 mt-1 top-1/2 cursor-pointer transform"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? <FaEyeSlash /> : <FaEye />}
-                </span>
-              </div>
-              {errors.password && (
-                <p className="text-xs text-red-500 m-1">
-                  {errors.password.message}
-                </p>
-              )}
-            </div>
             <button
               type="submit"
               className="w-full py-2 px-3 bg-secondary rounded-md hover:font-bold"
@@ -147,7 +119,7 @@ export default function RegisterPage() {
             </button>
             <hr className="my-4" />
             <Link
-              href="/login"
+              href="/auth/login"
               className="block w-full text-center py-2 px-3 bg-primary border border-secondary rounded-md hover:bg-secondary hover:font-bold"
             >
               Have an account? Login here

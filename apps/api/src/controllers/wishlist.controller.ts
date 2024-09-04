@@ -47,7 +47,6 @@ export const getWishlist = async (req: Request, res: Response) => {
 
 export const getCount = async (req: Request, res: Response) => {
   const userId = parseInt(req.params.id, 10);
-  console.log(userId, 'userId');
 
   if (isNaN(userId)) {
     return res.status(400).json({

@@ -24,6 +24,20 @@ export async function verificationEmail(data: any) {
   return res.data;
 }
 
+export async function confirmResetPassword(data: any) {
+  const url = base_url_api + '/auth/confirm-reset-password';
+  const res = await axios.post(url, data);
+
+  return res.data;
+}
+
+export async function resetPassword(data: any) {
+  const url = base_url_api + '/auth/reset-password';
+  const res = await axios.post(url, data);
+
+  return res.data;
+}
+
 export async function logout() {
   Cookies.remove('token');
   Cookies.remove('role');

@@ -1,20 +1,19 @@
 import { loginSchema } from '@/schemas/login.schema';
 import { registerSchema } from '@/schemas/register.schema';
-import { PrismaClient } from '@prisma/client';
 import { sign, verify } from 'jsonwebtoken';
 import { compare, genSalt, hash } from 'bcrypt';
 import { Request, Response } from 'express';
 import * as yup from 'yup';
 import { generateVerificationToken } from '@/helpers/generateVerificatioonToken';
-import { sendVerificationEmail } from '@/utils/nodemailer';
-
-const prisma = new PrismaClient();
+import { sendVerificationEmail } from '@/utils/verify.nodemailer';
+import prisma from '@/helpers/prisma';
+import { sendResetPassword } from '@/utils/resetPassword.nodemailer';
 
 export const register = async (req: Request, res: Response) => {
   try {
     await registerSchema.validate(req.body, { abortEarly: false });
 
-    const { username, email, password } = req.body;
+    const { username, email } = req.body;
     const existingUser = await prisma.user.findFirst({
       where: {
         email,
@@ -26,13 +25,11 @@ export const register = async (req: Request, res: Response) => {
         message: 'User already exist',
       });
     }
-    const salt = await genSalt(10);
-    const hashedPassword = await hash(password, salt);
+
     const user = await prisma.user.create({
       data: {
         username,
         email,
-        password: hashedPassword,
         provider: 'credentials',
       },
     });
@@ -125,8 +122,8 @@ export async function login(req: Request, res: Response) {
 
 export const verificationEmail = async (req: Request, res: Response) => {
   try {
-    const { token } = req.body;
-
+    const { token, password } = req.body;
+    console.log(password, 'password');
     if (!token) {
       return res.status(400).json({
         status: 'error',
@@ -136,24 +133,64 @@ export const verificationEmail = async (req: Request, res: Response) => {
 
     const secret = process.env.JWT_SECRET_KEY || 'secret-key';
     const decoded = verify(token as string, secret) as { userId: string };
-
+    console.log(decoded, 'decoded');
+    const salt = await genSalt(10);
+    const hashedPassword = await hash(password, salt);
     const user = await prisma.user.update({
       where: {
         id: Number(decoded.userId),
       },
       data: {
         isVerified: true,
+        password: hashedPassword,
       },
     });
-    res.status(200).json({
+    return res.status(200).json({
       status: 'success',
       message: 'Email succesfully verify',
       user: user,
     });
   } catch (error) {
-    res.status(400).json({
+    return res.status(400).json({
       status: 'error',
       message: 'Email verification failed',
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+};
+
+export const verifyResetPassword = async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+    console.log(email, 'masukin email');
+    console.log(req, 'req body');
+
+    const user = await prisma.user.findFirst({
+      where: {
+        email,
+      },
+    });
+    console.log(user, 'user');
+    if (!user) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'User not found',
+      });
+    }
+    const verificationToken = generateVerificationToken(user.id);
+    const name = `${user.username}`;
+    sendResetPassword(email, verificationToken, name);
+
+    return res.status(201).json({
+      status: 'success',
+      message:
+        'You have successfully reset your Password. Please check your email to reset yout password',
+      data: user,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'Reset Password failed',
       error: error instanceof Error ? error.message : 'Unknown error',
     });
   }
