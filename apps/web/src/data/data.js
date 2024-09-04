@@ -31,6 +31,29 @@ export const navbarsAuth = [
   },
 ];
 
+export const menuProfiles = [
+  {
+    id: 1,
+    title: 'Profile',
+    link: '/profile',
+  },
+  {
+    id: 2,
+    title: 'Order List',
+    link: '/profile/order-list',
+  },
+  {
+    id: 3,
+    title: 'Order Complete',
+    link: '/profile/order-complete',
+  },
+  {
+    id: 4,
+    title: 'Logout',
+    link: '/profile/',
+  },
+];
+
 export const sliders = [
   {
     id: 1,

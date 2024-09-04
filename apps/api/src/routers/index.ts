@@ -4,6 +4,7 @@ import cart from './cart.router';
 import wishlist from './wishlist.router';
 import auth from './auth.router';
 import address from './address.router';
+import orders from './order.router';
 
 const router = Router();
 
@@ -12,5 +13,6 @@ router.use('/api/products', products);
 router.use('/api/cart', cart);
 router.use('/api/wishlist', wishlist);
 router.use('/api/address', address);
+router.use('/api/orders', orders);
 
 export default router;
