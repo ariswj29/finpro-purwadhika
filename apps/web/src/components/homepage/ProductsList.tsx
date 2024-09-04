@@ -13,7 +13,7 @@ import { addToWishlist } from '@/api/wishlist';
 export default function ProductsList(props: any) {
   const cookies = getCookies();
   const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState<{
     message: string;
@@ -21,7 +21,6 @@ export default function ProductsList(props: any) {
   }>({ message: '', status: '' });
 
   const fetchProductList = async (limit = 8) => {
-    setLoading(true);
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
