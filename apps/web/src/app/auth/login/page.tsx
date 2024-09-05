@@ -9,6 +9,7 @@ import Cookies from 'js-cookie';
 import { ShowMessage } from '@/components/ShowMessage';
 import Link from 'next/link';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { signIn } from 'next-auth/react';
 
 export default function LoginPage() {
   const {
@@ -141,6 +142,12 @@ export default function LoginPage() {
             >
               Don{"'"}t have an account? Register here
             </Link>
+            <button
+              onClick={() => signIn('google')}
+              className="mt-4 w-full py-2 px-3 bg-secondary rounded-md hover:font-bold"
+            >
+              Sign in with Google
+            </button>
           </form>
         </div>
       </div>

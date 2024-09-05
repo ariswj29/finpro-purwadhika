@@ -101,6 +101,7 @@ export async function login(req: Request, res: Response) {
       email: user.email,
       role: user.role,
       id: user.id,
+      image: user.image,
     };
 
     res.status(200).json({
