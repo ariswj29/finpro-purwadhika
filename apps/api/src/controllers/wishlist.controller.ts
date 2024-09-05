@@ -61,10 +61,12 @@ export const getCount = async (req: Request, res: Response) => {
       where: { userId: userId },
     });
 
-    const countCart = await prisma.cart.count({
+    const countCart = await prisma.productCart.count({
       where: {
-        isActive: true,
-        userId: userId,
+        cart: {
+          isActive: true,
+          userId: userId,
+        },
       },
     });
 

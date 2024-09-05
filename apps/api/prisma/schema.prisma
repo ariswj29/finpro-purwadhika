@@ -61,6 +61,7 @@ model User {
   addresses Address[]
   carts     Cart[]
   wishlists Wishlist[]
+  orders    Order[]
 
   @@map("users")
 }
@@ -103,7 +104,6 @@ model Cart {
 
   user         User          @relation(fields: [userId], references: [id])
   productCarts ProductCart[]
-  order        Order?
 
   @@map("carts")
 }
@@ -131,7 +131,7 @@ model Order {
   paymentProof       String?
   expirePayment      DateTime
   branchId           Int
-  cartId             Int                 @unique
+  userId             Int                 
   addressId          Int
   shippedAt          DateTime?
   cancellationSource CancellationSource?
@@ -140,7 +140,7 @@ model Order {
 
   address       Address        @relation(fields: [addressId], references: [id])
   branch        Branch         @relation(fields: [branchId], references: [id])
-  cart          Cart           @relation(fields: [cartId], references: [id])
+  user          User           @relation(fields: [userId], references: [id])
   orderProducts OrderProduct[]
 
   @@map("orders")
