@@ -6,6 +6,7 @@ export default function UploadPaymentPage(props: any) {
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [file, setFile] = useState<File | null>(null);
+  console.log(file, 'file');
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -27,9 +28,11 @@ export default function UploadPaymentPage(props: any) {
 
     const formData = new FormData();
     formData.append('paymentProof', file);
+    console.log(formData, 'formdata');
 
     try {
       const response = await uploadPayment(props.order.id, formData);
+      console.log(response, 'response');
       if (response.status === 'success') {
         showToast('Payment Proof Uploaded');
         setTimeout(() => {

@@ -29,8 +29,11 @@ export const formattedMoney = (money: number) => {
 
 export const getCookies = () => {
   const token = Cookies.get('token') || '';
-  const userId = Cookies.get('userId') || '';
+  const userId = Cookies.get('userId') || 0;
   const user = Cookies.get('user') || '';
+  const latitude = Cookies.get('latitude') || 0;
+  const longitude = Cookies.get('longitude') || 0;
+  const nearestBranch = Cookies.get('nearestBranch') || 0;
 
-  return { token, userId, user };
+  return { token, userId, user, latitude, longitude, nearestBranch };
 };

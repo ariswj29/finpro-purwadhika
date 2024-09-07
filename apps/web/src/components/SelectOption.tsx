@@ -2,10 +2,14 @@ import { useState } from 'react';
 
 export default function SelectOption({
   label,
+  field,
   options,
+  register,
 }: {
   label: string;
+  field: string;
   options: any[];
+  register: any;
 }) {
   return (
     <div className="md:grid gap-4">
@@ -13,12 +17,15 @@ export default function SelectOption({
         <div className="label">
           <span className="label-text">{label}</span>
         </div>
-        <select className="select select-bordered">
+        <select className="select select-bordered" {...register(field)}>
           <option disabled selected>
             Pick one
           </option>
           {options?.map((option) => (
-            <option key={option.id}>
+            <option
+              key={option.id}
+              value={field == 'addressId' ? option.id : option.name}
+            >
               {option.name} {option?.address && `| ${option?.address}`}
             </option>
           ))}

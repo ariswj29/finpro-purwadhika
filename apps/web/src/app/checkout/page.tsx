@@ -2,19 +2,27 @@
 
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { formattedMoney, totalPrice } from '@/helper/helper';
-import { getAllCart } from '@/api/cart';
+import { formattedMoney, getCookies, totalPrice } from '@/helper/helper';
+import { getCart } from '@/api/cart';
 import { CartItem } from '@/interface/cart.interface';
 import Image from 'next/image';
 import SelectOption from '@/components/SelectOption';
 import { banks, couriers } from '@/data/data';
 import { getAddress } from '@/api/address';
 import AddAddress from '@/components/AddAdress';
+import { createOrder } from '@/api/order';
 
 export default function CheckoutPage(context: any) {
+  const cookies = getCookies();
   const [cart, setCart] = useState<CartItem[]>([]);
+  console.log(cart, 'cart');
   const [address, setAddress] = useState([]);
   const [addAddress, setAddAddress] = useState(false);
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState<{
+    message: string;
+    status: string;
+  }>({ message: '', status: '' });
   const {
     register,
     watch,
@@ -25,14 +33,13 @@ export default function CheckoutPage(context: any) {
 
   useEffect(() => {
     const fetchCart = async () => {
-      const res = await getAllCart();
+      const res = await getCart(Number(cookies.userId));
       setCart(res.data);
     };
 
     const fetchAddress = async () => {
       try {
-        const res = await getAddress(7);
-        console.log(res.data, 'address');
+        const res = await getAddress(Number(cookies.userId));
         setAddress(res.data);
       } catch (err) {
         console.log(err);
@@ -43,8 +50,60 @@ export default function CheckoutPage(context: any) {
     fetchAddress();
   }, []);
 
+  const handleCheckout = async (formData: any) => {
+    const data = {
+      paymentMethod: formData.paymentMethod,
+      courier: formData.courier,
+      userId: Number(cookies.userId),
+      branchId: Number(cookies.nearestBranch),
+      addressId: Number(formData.addressId),
+      cart: cart.map((item) => ({
+        productId: item.product.id,
+        quantity: item.quantity,
+        price: item.product.price,
+        total: item.product.price * item.quantity,
+      })),
+      shippingCost: 10000,
+      total: cart.reduce((a, b) => a + b.product.price * b.quantity, 0) + 10000,
+    };
+    console.log(data, 'data');
+    const response = await createOrder(data);
+    if (response) {
+      showToast(response);
+      reset();
+      window.location.href = '/profile/order-list';
+    }
+  };
+
+  const showToast = (data: { message: string; status: string }) => {
+    setToastMessage(data);
+    setToastVisible(true);
+    setTimeout(() => {
+      setToastVisible(false);
+    }, 3000);
+  };
+
   return (
     <div className="container max-w-screen-xl mx-auto items-center p-12">
+      {toastVisible && (
+        <div
+          className="toast toast-top toast-end"
+          style={{
+            position: 'fixed',
+            top: '3rem',
+            right: '1rem',
+            zIndex: 1000,
+          }}
+        >
+          <div
+            className={`alert ${toastMessage.status === 'success' ? 'alert-success' : 'alert-error'}`}
+          >
+            <span className="text-primary text-bold">
+              {toastMessage.message}
+            </span>
+          </div>
+        </div>
+      )}
       <div className="bg-white shadow-md rounded-lg p-6">
         <h3 className="text-2xl font-bold text-gray-800 text-center mb-4">
           Checkout
@@ -87,7 +146,12 @@ export default function CheckoutPage(context: any) {
           </div>
           <div className="md:col-span-3 order-1 md:order-1">
             <form>
-              <SelectOption label="Select Address" options={address} />
+              <SelectOption
+                label="Select Address"
+                field="addressId"
+                options={address}
+                register={register}
+              />
               <div
                 className="md:grid gap-4 py-2 tooltip"
                 data-tip="Click if you not have any address or you want to add new address"
@@ -100,8 +164,18 @@ export default function CheckoutPage(context: any) {
                 </a>
                 {addAddress && <AddAddress setAddAddress={setAddAddress} />}
               </div>
-              <SelectOption label="Select Payment Method" options={banks} />
-              <SelectOption label="Select Courier" options={couriers} />
+              <SelectOption
+                label="Select Payment Method"
+                field="paymentMethod"
+                options={banks}
+                register={register}
+              />
+              <SelectOption
+                label="Select Courier"
+                field="courier"
+                options={couriers}
+                register={register}
+              />
             </form>
           </div>
           <div className="mt-4 px-8 md:col-span-2 order-2 md:order-1">
@@ -111,7 +185,12 @@ export default function CheckoutPage(context: any) {
                 <span>Subtotal</span>
                 <span>
                   {formattedMoney(
-                    cart.reduce((a, b) => a + b.product.price, 0),
+                    cart
+                      ? cart.reduce(
+                          (a, b) => a + b.product.price * b.quantity,
+                          0,
+                        )
+                      : 0,
                   )}
                 </span>
               </div>
@@ -123,14 +202,16 @@ export default function CheckoutPage(context: any) {
                 <span className="font-bold">Total</span>
                 <span className="font-bold">
                   {totalPrice(
-                    cart.reduce((a, b) => a + b.product.price, 0),
+                    cart.reduce((a, b) => a + b.product.price * b.quantity, 0),
                     10000,
                   )}
                 </span>
               </div>
-              <button className="bg-secondary rounded-3xl py-2 my-4 text-center w-full">
-                <div className="px-4 text-center hover:font-bold">Checkout</div>
-              </button>
+              <a onClick={handleSubmit(handleCheckout)}>
+                <div className="cursor-pointer bg-secondary rounded-3xl my-4 py-2 px-4 text-center hover:font-bold">
+                  Checkout
+                </div>
+              </a>
             </div>
           </div>
         </div>

@@ -29,12 +29,77 @@ export async function getOrderList(req: Request, res: Response) {
           in: ['UNPAID', 'PAID', 'PROCESSING', 'SHIPPED', 'CANCELED'],
         },
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
 
     return res.status(200).json({
       status: 'success',
       message: 'Successfully get Order',
       data: order,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+export async function createOrder(req: Request, res: Response) {
+  try {
+    const { body } = req;
+    const response = await prisma.order.create({
+      data: {
+        name: `ORDER-${new Date().getTime()}`,
+        paymentStatus: 'UNPAID',
+        shippingCost: body.shippingCost,
+        total: body.total,
+        paymentMethod: body.paymentMethod,
+        courier: body.courier,
+        expirePayment: new Date(new Date().getTime() + 60 * 60 * 1000),
+        address: {
+          connect: {
+            id: body.addressId,
+          },
+        },
+        branch: {
+          connect: {
+            id: body.branchId,
+          },
+        },
+        user: {
+          connect: {
+            id: body.userId,
+          },
+        },
+      },
+    });
+
+    console.log(body, 'body');
+
+    body.cart.forEach(async (item: any) => {
+      await prisma.orderProduct.create({
+        data: {
+          quantity: item.quantity,
+          price: item.price,
+          total: item.total,
+          product: {
+            connect: {
+              id: item.productId,
+            },
+          },
+          order: {
+            connect: {
+              id: response.id,
+            },
+          },
+        },
+      });
+    });
+
+    return res.status(200).json({
+      status: 'success',
+      message: 'Successfully create Order',
+      data: response,
     });
   } catch (error) {
     return res.status(500).json({ message: 'Internal Server Error' });
@@ -98,6 +163,26 @@ export async function cancelOrder(req: Request, res: Response) {
     return res.status(200).json({
       status: 'success',
       message: 'Successfully cancel Order',
+      data: response,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+export async function confirmOrder(req: Request, res: Response) {
+  try {
+    const { id } = req.params;
+    const response = await prisma.order.update({
+      where: { id: Number(id) },
+      data: {
+        paymentStatus: 'DELIVERED',
+      },
+    });
+
+    return res.status(200).json({
+      status: 'success',
+      message: 'Successfully confirm Order',
       data: response,
     });
   } catch (error) {

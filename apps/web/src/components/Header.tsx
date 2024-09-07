@@ -83,8 +83,17 @@ export const Header = (props: any) => {
           <div className="md:hidden flex flex-col mt-4 gap-6 justify-self-end items-center">
             <Link href={user.username ? '/profile' : '/auth/login'}>
               <div className="flex gap-2">
-                <Image src="/user.png" alt="user" width={35} height={18} />
-                <div className="text-xs">
+                <Image
+                  src={
+                    user.image
+                      ? `http://localhost:8000/uploads/profile/${user.image}`
+                      : '/user.png'
+                  }
+                  alt="user"
+                  width={35}
+                  height={18}
+                />
+                <div className="text-xs hover:font-bold">
                   Hello, <br /> {user.username ? user.username : 'Sign In'}
                 </div>
               </div>
@@ -119,8 +128,18 @@ export const Header = (props: any) => {
         <div className="hidden md:flex gap-6 justify-self-end items-center">
           <Link href={user.username ? '/profile' : '/auth/login'}>
             <div className="flex gap-2">
-              <Image src="/user.png" alt="user" width={35} height={18} />
-              <div className="text-xs">
+              <Image
+                src={
+                  user.image
+                    ? `http://localhost:8000/uploads/profile/${user.image}`
+                    : '/user.png'
+                }
+                alt="user"
+                width={35}
+                height={18}
+                className="rounded-full"
+              />
+              <div className="text-xs hover:font-bold">
                 Hello, <br /> {user.username ? user.username : 'Sign In'}
               </div>
             </div>

@@ -18,6 +18,7 @@ export default function OrderListPage() {
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [confirmationModal, setConfirmationModal] = useState(false);
   const [id, setId] = useState<number>(0);
+  const [forModal, setFor] = useState<string>('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -78,18 +79,16 @@ export default function OrderListPage() {
         </div>
       )}
 
-      <div
-        className={`overflow-x-auto min-h-80 ${openDetail ? 'opacity-50 pointer-events-none' : ''}`}
-      >
+      <div className={`${openDetail ? 'opacity-50 pointer-events-none' : ''}`}>
         <table className="table">
           <thead>
             <tr>
               <th>No</th>
-              <th>Action</th>
               <th>No Order</th>
               <th>Date Order</th>
               <th>Status</th>
               <th>Total Price</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
@@ -112,6 +111,12 @@ export default function OrderListPage() {
               data.map((item, index) => (
                 <tr key={index}>
                   <th>{index + 1}</th>
+                  <td>{item.name}</td>
+                  <td>{formattedDate(item.createdAt)}</td>
+                  <td>
+                    <StatusOrder status={item.paymentStatus} />
+                  </td>
+                  <td>{formattedMoney(item.total)}</td>
                   <td>
                     <div className="dropdown">
                       <div tabIndex={0} role="button" className="m-1">
@@ -133,6 +138,9 @@ export default function OrderListPage() {
                           <>
                             <li className="my-1">
                               <a
+                                // disabled={
+                                //   item.expirePayment < new Date() ? true : false
+                                // }
                                 className="font-semibold bg-blue-400"
                                 onClick={() => handleOpenPayment(item)}
                               >
@@ -145,6 +153,7 @@ export default function OrderListPage() {
                                 onClick={() => {
                                   setConfirmationModal(true);
                                   setId(item.id);
+                                  setFor('cancel order');
                                 }}
                               >
                                 Cancel Order
@@ -152,15 +161,23 @@ export default function OrderListPage() {
                             </li>
                           </>
                         )}
+                        {item.paymentStatus == 'SHIPPED' && (
+                          <li className="my-1">
+                            <a
+                              className="font-semibold bg-green-400"
+                              onClick={() => {
+                                setConfirmationModal(true);
+                                setId(item.id);
+                                setFor('received order');
+                              }}
+                            >
+                              Received Order
+                            </a>
+                          </li>
+                        )}
                       </ul>
                     </div>
                   </td>
-                  <td>{item.name}</td>
-                  <td>{formattedDate(item.createdAt)}</td>
-                  <td>
-                    <StatusOrder status={item.paymentStatus} />
-                  </td>
-                  <td>{formattedMoney(item.total)}</td>
                 </tr>
               ))
             )}
@@ -170,8 +187,7 @@ export default function OrderListPage() {
           <ConfirmModal
             id={id}
             setModal={setConfirmationModal}
-            title="Delete"
-            for="users"
+            title={forModal}
           />
         ) : null}
       </div>
