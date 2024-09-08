@@ -133,6 +133,7 @@ model Order {
   branchId           Int
   userId             Int                 
   addressId          Int
+  courier            String?
   shippedAt          DateTime?
   cancellationSource CancellationSource?
   createdAt          DateTime            @default(now())

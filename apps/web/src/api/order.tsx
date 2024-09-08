@@ -23,6 +23,13 @@ export async function getOrderDetail(orderId: number) {
   return res.data;
 }
 
+export async function createOrder(data: any) {
+  const url = base_url_api + '/orders';
+  const res = await axios.post(url, data);
+
+  return res.data;
+}
+
 export async function uploadPayment(orderId: number, data: FormData) {
   const url = `${base_url_api}/orders/upload-payment/${orderId}`;
   const res = await axios.put(url, data, {
@@ -36,6 +43,13 @@ export async function uploadPayment(orderId: number, data: FormData) {
 
 export async function cancelOrder(orderId: number) {
   const url = `${base_url_api}/orders/cancel-order/${orderId}`;
+  const res = await axios.put(url);
+
+  return res.data;
+}
+
+export async function confirmOrder(orderId: number) {
+  const url = `${base_url_api}/orders/confirm-order/${orderId}`;
   const res = await axios.put(url);
 
   return res.data;

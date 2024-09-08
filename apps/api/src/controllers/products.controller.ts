@@ -36,7 +36,6 @@ export async function getAllProducts(req: Request, res: Response) {
           nearestBranchResult.length > 0
         ) {
           const nearestBranch = nearestBranchResult[0];
-          console.log(nearestBranch, 'nearestBranch');
 
           if (nearestBranch && nearestBranch.id) {
             whereSearch = {
@@ -60,6 +59,7 @@ export async function getAllProducts(req: Request, res: Response) {
       status: 'success',
       message: 'success',
       data: products,
+      nearestBranch: whereSearch.productBranchs?.some?.branchId,
     });
   } catch (error) {
     console.error(error);

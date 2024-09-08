@@ -57,18 +57,16 @@ export default function OrderCompletePage() {
       )}
 
       {/* Tabel Order */}
-      <div
-        className={`overflow-x-auto min-h-80 ${openDetail ? 'opacity-50 pointer-events-none' : ''}`}
-      >
+      <div className={`${openDetail ? 'opacity-50 pointer-events-none' : ''}`}>
         <table className="table">
           <thead>
             <tr>
               <th>No</th>
-              <th>Action</th>
               <th>No Order</th>
               <th>Date Order</th>
               <th>Status</th>
               <th>Total Price</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
@@ -91,6 +89,12 @@ export default function OrderCompletePage() {
               data.map((item, index) => (
                 <tr key={index}>
                   <th>{index + 1}</th>
+                  <td>{item.name}</td>
+                  <td>{formattedDate(item.createdAt)}</td>
+                  <td>
+                    <StatusOrder status="COMPLETE" />
+                  </td>
+                  <td>{formattedMoney(item.total)}</td>
                   <td>
                     <div className="dropdown">
                       <div tabIndex={0} role="button" className="m-1">
@@ -111,12 +115,6 @@ export default function OrderCompletePage() {
                       </ul>
                     </div>
                   </td>
-                  <td>{item.name}</td>
-                  <td>{formattedDate(item.createdAt)}</td>
-                  <td>
-                    <StatusOrder status="COMPLETE" />
-                  </td>
-                  <td>{formattedMoney(item.total)}</td>
                 </tr>
               ))
             )}
