@@ -1,4 +1,5 @@
 import { addAddress, getAddress, getCity, getProvince } from '@/api/address';
+import { getCookies } from '@/helper/helper';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { FaPlus } from 'react-icons/fa';
@@ -8,6 +9,7 @@ export default function AddAddress({
 }: {
   setAddAddress: (value: boolean) => void;
 }) {
+  const cookies = getCookies();
   const [province, setProvince] = useState([]);
   const [city, setCity] = useState([]);
   const [toastVisible, setToastVisible] = useState(false);
@@ -55,7 +57,7 @@ export default function AddAddress({
     try {
       data = {
         ...data,
-        userId: 7,
+        userId: Number(cookies.userId),
         longitude: 0,
         latitude: 0,
       };

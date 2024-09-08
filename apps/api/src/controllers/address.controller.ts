@@ -27,13 +27,11 @@ export const addAddress = async (req: Request, res: Response) => {
       },
     });
 
-    return res
-      .status(201)
-      .json({
-        status: 'success',
-        message: 'Successfully add address',
-        data: response,
-      });
+    return res.status(201).json({
+      status: 'success',
+      message: 'Successfully add address',
+      data: response,
+    });
   } catch (error) {
     return res
       .status(500)

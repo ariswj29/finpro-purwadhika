@@ -93,7 +93,7 @@ export const Header = (props: any) => {
                   width={35}
                   height={18}
                 />
-                <div className="text-xs">
+                <div className="text-xs hover:font-bold">
                   Hello, <br /> {user.username ? user.username : 'Sign In'}
                 </div>
               </div>
@@ -139,7 +139,7 @@ export const Header = (props: any) => {
                 height={18}
                 className="rounded-full"
               />
-              <div className="text-xs">
+              <div className="text-xs hover:font-bold">
                 Hello, <br /> {user.username ? user.username : 'Sign In'}
               </div>
             </div>

@@ -9,6 +9,7 @@ import { addCart } from '@/api/cart';
 import { Product } from '@/interface/product.interface';
 import { FaHeart } from 'react-icons/fa';
 import { addToWishlist } from '@/api/wishlist';
+import Cookies from 'js-cookie';
 
 export default function ProductsList(props: any) {
   const cookies = getCookies();
@@ -25,10 +26,22 @@ export default function ProductsList(props: any) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           const { latitude, longitude } = position.coords;
+          Cookies.set('latitude', latitude.toString(), {
+            expires: 1,
+            secure: true,
+          });
+          Cookies.set('longitude', longitude.toString(), {
+            expires: 1,
+            secure: true,
+          });
           try {
             const response = await getAllProducts(limit, latitude, longitude);
             setProducts(response.data);
             setLoading(false);
+            Cookies.set('nearestBranch', response.nearestBranch, {
+              expires: 1,
+              secure: true,
+            });
           } catch (error) {
             console.error(error);
           }

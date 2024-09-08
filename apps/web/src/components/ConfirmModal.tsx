@@ -1,11 +1,10 @@
 import { useState } from 'react';
-import { cancelOrder } from '@/api/order';
+import { cancelOrder, confirmOrder } from '@/api/order';
 
 export default function ConfirmModal(props: {
   id: number;
   setModal: any;
   title: string;
-  for: string;
 }) {
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
@@ -18,6 +17,23 @@ export default function ConfirmModal(props: {
 
       if (status == 'success') {
         showToast('Success cancel order');
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleConfirmation = async () => {
+    try {
+      const response = await confirmOrder(props.id);
+
+      const { status } = response;
+
+      if (status == 'success') {
+        showToast('Success confirm order');
         setTimeout(() => {
           window.location.reload();
         }, 3000);
@@ -51,7 +67,13 @@ export default function ConfirmModal(props: {
         <div className="grid grid-cols-2 gap-2 items-center text-center">
           <a
             className="p-2 my-4 border bg-secondary rounded-md cursor-pointer hover:font-bold"
-            onClick={() => handleDelete()}
+            onClick={() => {
+              if (props.title === 'cancel order') {
+                handleDelete();
+              } else if (props.title === 'received order') {
+                handleConfirmation();
+              }
+            }}
           >
             Yes
           </a>
