@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { navbars, navbarsAuth } from '@/data/data';
 import { FaRegHeart, FaShoppingCart } from 'react-icons/fa';
@@ -33,6 +33,21 @@ export const Header = (props: any) => {
       setUser(JSON.parse(cookies.user));
     }
   }, []);
+  const router = useRouter();
+  const handleCartClick = () => {
+    if (user.id) {
+      router.push('/cart'); // Redirect to cart if logged in
+    } else {
+      router.push('/auth/login'); // Redirect to login if not logged in
+    }
+  };
+  const handleWishlistClick = () => {
+    if (user.id) {
+      router.push('/wishlist'); // Redirect to cart if logged in
+    } else {
+      router.push('/auth/login'); // Redirect to login if not logged in
+    }
+  };
 
   return (
     <header className="grid grid-cols-2 md:grid-cols-3 md:px-40 px-4 items-center justify-between bg-black sticky top-0 z-50 text-white">
@@ -145,24 +160,24 @@ export const Header = (props: any) => {
             </div>
           </Link>
           <div className="relative">
-            <Link href={'/wishlist'}>
+            <button onClick={handleWishlistClick}>
               <FaRegHeart size={22} />
               {wishlistCount > 0 && (
                 <span className="absolute top-0 left-4 mt-[-5px] rounded-full bg-red-500 text-white text-xs px-2">
                   {wishlistCount}
                 </span>
               )}
-            </Link>
+            </button>
           </div>
           <div className="relative">
-            <Link href={'/cart'}>
+            <button onClick={handleCartClick}>
               <FaShoppingCart size={22} />
               {cartCount > 0 && (
                 <span className="absolute top-0 left-4 mt-[-5px] rounded-full bg-red-500 text-white text-xs px-2">
                   {cartCount}
                 </span>
               )}
-            </Link>
+            </button>
           </div>
         </div>
       )}
