@@ -40,6 +40,9 @@ export async function resetPassword(data: any) {
 
 export async function logout() {
   Cookies.remove('token');
-  Cookies.remove('role');
-  localStorage.removeItem('user');
+  Cookies.remove('userId');
+  Cookies.remove('user');
+  Cookies.remove('nearestBranch');
+  Cookies.remove('latitude');
+  Cookies.remove('longitude');
 }

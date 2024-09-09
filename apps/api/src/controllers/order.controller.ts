@@ -3,18 +3,109 @@ import prisma from '@/helpers/prisma';
 
 export async function getAllOrderList(req: Request, res: Response) {
   try {
-    const orderList = await prisma.order.findMany({
+    const { search = '', page = '1', limit = '10', branchId } = req.query;
+
+    const pageNumber = parseInt(page as string, 10) || 1;
+    const limitNumber = parseInt(limit as string, 10) || 10;
+    const parsedBranchId = branchId ? parseInt(branchId as string, 10) : null;
+
+    const orders = await prisma.order.findMany({
+      where: {
+        name: {
+          contains: search as string,
+        },
+        branch:
+          parsedBranchId && parsedBranchId !== 1
+            ? {
+                userId: parsedBranchId,
+              }
+            : undefined,
+      },
       select: {
         id: true,
         name: true,
-        createdAt: true,
         paymentStatus: true,
+        shippingCost: true,
         total: true,
+        paymentMethod: true,
+        expirePayment: true,
+        shippedAt: true,
+        createdAt: true,
+        orderProducts: {
+          select: {
+            id: true,
+            quantity: true,
+            price: true,
+            total: true,
+            product: {
+              select: {
+                name: true,
+                image: true,
+              },
+            },
+          },
+        },
+        user: {
+          select: {
+            id: true,
+            username: true,
+            email: true,
+          },
+        },
+        address: {
+          select: {
+            id: true,
+            name: true,
+            address: true,
+            postalCode: true,
+          },
+        },
+        branch: {
+          select: {
+            id: true,
+            name: true,
+            address: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      skip: (pageNumber - 1) * limitNumber,
+      take: limitNumber,
+    });
+
+    const ordersWithIndex = orders.map((order, index) => ({
+      ...order,
+      no: (pageNumber - 1) * limitNumber + index + 1,
+    }));
+
+    const totalOrders = await prisma.order.count({
+      where: {
+        branch:
+          parsedBranchId && parsedBranchId !== 1
+            ? {
+                userId: parsedBranchId,
+              }
+            : undefined,
       },
     });
 
-    return res.status(200).json(orderList);
+    const totalPages = Math.ceil(totalOrders / limitNumber);
+
+    res.status(200).json({
+      status: 'success',
+      message: 'success get all orders',
+      data: ordersWithIndex,
+      pagination: {
+        totalItems: totalOrders,
+        totalPages,
+        currentPage: pageNumber,
+        pageSize: limitNumber,
+      },
+    });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({ message: 'Internal Server Error' });
   }
 }

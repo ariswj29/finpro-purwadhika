@@ -36,16 +36,16 @@ export const Header = (props: any) => {
   const router = useRouter();
   const handleCartClick = () => {
     if (user.id) {
-      router.push('/cart'); // Redirect to cart if logged in
+      router.push('/cart');
     } else {
-      router.push('/auth/login'); // Redirect to login if not logged in
+      router.push('/auth/login');
     }
   };
   const handleWishlistClick = () => {
     if (user.id) {
-      router.push('/wishlist'); // Redirect to cart if logged in
+      router.push('/wishlist');
     } else {
-      router.push('/auth/login'); // Redirect to login if not logged in
+      router.push('/auth/login');
     }
   };
 
@@ -79,39 +79,44 @@ export const Header = (props: any) => {
       >
         <nav>
           <ul className="flex flex-col md:flex-row md:space-x-4 md:gap-8 gap-4 text-center">
-            {(props.token === undefined ? navbars : navbarsAuth).map(
-              (navbar) => (
-                <li key={navbar.id}>
-                  <Link
-                    href={navbar.link}
-                    className={pathname === navbar.link ? 'active' : 'nav-link'}
-                  >
-                    {navbar.title}
-                  </Link>
-                </li>
-              ),
-            )}
+            {navbars.map((navbar) => (
+              <li key={navbar.id}>
+                <Link
+                  href={navbar.link}
+                  className={pathname === navbar.link ? 'active' : 'nav-link'}
+                >
+                  {navbar.title}
+                </Link>
+              </li>
+            ))}
           </ul>
         </nav>
         {/* mobile */}
         {isMounted && (
           <div className="md:hidden flex flex-col mt-4 gap-6 justify-self-end items-center">
             <Link href={user.username ? '/profile' : '/auth/login'}>
-              <div className="flex gap-2">
-                <Image
-                  src={
-                    user.image
-                      ? `http://localhost:8000/uploads/profile/${user.image}`
-                      : '/user.png'
-                  }
-                  alt="user"
-                  width={35}
-                  height={18}
-                />
-                <div className="text-xs hover:font-bold">
-                  Hello, <br /> {user.username ? user.username : 'Sign In'}
+              {user.username ? (
+                <div className="flex gap-2">
+                  <Image
+                    src={
+                      user.image
+                        ? `http://localhost:8000/uploads/profile/${user.image}`
+                        : '/user.png'
+                    }
+                    alt="user"
+                    width={50}
+                    height={50}
+                    className="rounded-full h-10 w-10"
+                  />
+                  <div className="content-center text-xs hover:font-bold">
+                    Hello, <br /> {user.username}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="bg-secondary px-4 py-1 rounded-md text-black text-sm hover:font-bold">
+                  Sign In
+                </div>
+              )}
             </Link>
             <div className="flex gap-8">
               <div className="relative">
@@ -142,22 +147,28 @@ export const Header = (props: any) => {
       {isMounted && (
         <div className="hidden md:flex gap-6 justify-self-end items-center">
           <Link href={user.username ? '/profile' : '/auth/login'}>
-            <div className="flex gap-2">
-              <Image
-                src={
-                  user.image
-                    ? `http://localhost:8000/uploads/profile/${user.image}`
-                    : '/user.png'
-                }
-                alt="user"
-                width={35}
-                height={18}
-                className="rounded-full"
-              />
-              <div className="text-xs hover:font-bold">
-                Hello, <br /> {user.username ? user.username : 'Sign In'}
+            {user.username ? (
+              <div className="flex gap-2">
+                <Image
+                  src={
+                    user.image
+                      ? `http://localhost:8000/uploads/profile/${user.image}`
+                      : '/user.png'
+                  }
+                  alt="user"
+                  width={50}
+                  height={50}
+                  className="rounded-full h-10 w-10"
+                />
+                <div className="content-center text-xs hover:font-bold">
+                  Hello, <br /> {user.username}
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="bg-secondary px-4 py-1 rounded-md text-black text-sm hover:font-bold">
+                Sign In
+              </div>
+            )}
           </Link>
           <div className="relative">
             <button onClick={handleWishlistClick}>
