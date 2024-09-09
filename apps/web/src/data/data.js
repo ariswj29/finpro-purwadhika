@@ -18,16 +18,59 @@ export const navbars = [
   },
 ];
 
-export const navbarsAuth = [
+export const sidebarSuperadmin = [
   {
     id: 1,
-    title: 'Home',
-    link: '/',
+    title: 'Dashboard',
+    link: '/admin/dashboard',
   },
   {
     id: 2,
-    title: 'Profile',
-    link: '/profile',
+    title: 'Products',
+    link: '/admin/products',
+  },
+  {
+    id: 3,
+    title: 'Orders',
+    link: '/admin/orders',
+  },
+  {
+    id: 4,
+    title: 'Stores',
+    link: '/admin/stores',
+  },
+  {
+    id: 6,
+    title: 'Inventory',
+    link: '/admin/inventory',
+  },
+  {
+    id: 5,
+    title: 'Users',
+    link: '/admin/users',
+  },
+];
+
+export const sidebarAdmin = [
+  {
+    id: 1,
+    title: 'Dashboard',
+    link: '/admin/dashboard',
+  },
+  {
+    id: 2,
+    title: 'Products',
+    link: '/admin/products',
+  },
+  {
+    id: 3,
+    title: 'Orders',
+    link: '/admin/orders',
+  },
+  {
+    id: 4,
+    title: 'Inventory',
+    link: '/admin/inventory',
   },
 ];
 

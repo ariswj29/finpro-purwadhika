@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { navbars, navbarsAuth } from '@/data/data';
 import { FaRegHeart, FaShoppingCart } from 'react-icons/fa';
@@ -33,6 +33,21 @@ export const Header = (props: any) => {
       setUser(JSON.parse(cookies.user));
     }
   }, []);
+  const router = useRouter();
+  const handleCartClick = () => {
+    if (user.id) {
+      router.push('/cart');
+    } else {
+      router.push('/auth/login');
+    }
+  };
+  const handleWishlistClick = () => {
+    if (user.id) {
+      router.push('/wishlist');
+    } else {
+      router.push('/auth/login');
+    }
+  };
 
   return (
     <header className="grid grid-cols-2 md:grid-cols-3 md:px-40 px-4 items-center justify-between bg-black sticky top-0 z-50 text-white">
@@ -64,39 +79,44 @@ export const Header = (props: any) => {
       >
         <nav>
           <ul className="flex flex-col md:flex-row md:space-x-4 md:gap-8 gap-4 text-center">
-            {(props.token === undefined ? navbars : navbarsAuth).map(
-              (navbar) => (
-                <li key={navbar.id}>
-                  <Link
-                    href={navbar.link}
-                    className={pathname === navbar.link ? 'active' : 'nav-link'}
-                  >
-                    {navbar.title}
-                  </Link>
-                </li>
-              ),
-            )}
+            {navbars.map((navbar) => (
+              <li key={navbar.id}>
+                <Link
+                  href={navbar.link}
+                  className={pathname === navbar.link ? 'active' : 'nav-link'}
+                >
+                  {navbar.title}
+                </Link>
+              </li>
+            ))}
           </ul>
         </nav>
         {/* mobile */}
         {isMounted && (
           <div className="md:hidden flex flex-col mt-4 gap-6 justify-self-end items-center">
             <Link href={user.username ? '/profile' : '/auth/login'}>
-              <div className="flex gap-2">
-                <Image
-                  src={
-                    user.image
-                      ? `http://localhost:8000/uploads/profile/${user.image}`
-                      : '/user.png'
-                  }
-                  alt="user"
-                  width={35}
-                  height={18}
-                />
-                <div className="text-xs hover:font-bold">
-                  Hello, <br /> {user.username ? user.username : 'Sign In'}
+              {user.username ? (
+                <div className="flex gap-2">
+                  <Image
+                    src={
+                      user.image
+                        ? `http://localhost:8000/uploads/profile/${user.image}`
+                        : '/user.png'
+                    }
+                    alt="user"
+                    width={50}
+                    height={50}
+                    className="rounded-full h-10 w-10"
+                  />
+                  <div className="content-center text-xs hover:font-bold">
+                    Hello, <br /> {user.username}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="bg-secondary px-4 py-1 rounded-md text-black text-sm hover:font-bold">
+                  Sign In
+                </div>
+              )}
             </Link>
             <div className="flex gap-8">
               <div className="relative">
@@ -127,42 +147,48 @@ export const Header = (props: any) => {
       {isMounted && (
         <div className="hidden md:flex gap-6 justify-self-end items-center">
           <Link href={user.username ? '/profile' : '/auth/login'}>
-            <div className="flex gap-2">
-              <Image
-                src={
-                  user.image
-                    ? `http://localhost:8000/uploads/profile/${user.image}`
-                    : '/user.png'
-                }
-                alt="user"
-                width={35}
-                height={18}
-                className="rounded-full"
-              />
-              <div className="text-xs hover:font-bold">
-                Hello, <br /> {user.username ? user.username : 'Sign In'}
+            {user.username ? (
+              <div className="flex gap-2">
+                <Image
+                  src={
+                    user.image
+                      ? `http://localhost:8000/uploads/profile/${user.image}`
+                      : '/user.png'
+                  }
+                  alt="user"
+                  width={50}
+                  height={50}
+                  className="rounded-full h-10 w-10"
+                />
+                <div className="content-center text-xs hover:font-bold">
+                  Hello, <br /> {user.username}
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="bg-secondary px-4 py-1 rounded-md text-black text-sm hover:font-bold">
+                Sign In
+              </div>
+            )}
           </Link>
           <div className="relative">
-            <Link href={'/wishlist'}>
+            <button onClick={handleWishlistClick}>
               <FaRegHeart size={22} />
               {wishlistCount > 0 && (
                 <span className="absolute top-0 left-4 mt-[-5px] rounded-full bg-red-500 text-white text-xs px-2">
                   {wishlistCount}
                 </span>
               )}
-            </Link>
+            </button>
           </div>
           <div className="relative">
-            <Link href={'/cart'}>
+            <button onClick={handleCartClick}>
               <FaShoppingCart size={22} />
               {cartCount > 0 && (
                 <span className="absolute top-0 left-4 mt-[-5px] rounded-full bg-red-500 text-white text-xs px-2">
                   {cartCount}
                 </span>
               )}
-            </Link>
+            </button>
           </div>
         </div>
       )}

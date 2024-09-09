@@ -2,6 +2,24 @@ import axios from 'axios';
 
 const base_url_api = 'http://localhost:8000/api';
 
+export async function getAllOrders(
+  search?: string,
+  branchId?: number,
+  page: number = 1,
+  limit: number = 10,
+) {
+  const url = base_url_api + '/orders';
+  const res = await axios.get(url, {
+    params: {
+      search,
+      branchId,
+      page,
+      limit,
+    },
+  });
+  return res.data;
+}
+
 export async function getAllOrder(userId: number) {
   const url = base_url_api + '/orders/' + userId;
   const res = await axios.get(url);
