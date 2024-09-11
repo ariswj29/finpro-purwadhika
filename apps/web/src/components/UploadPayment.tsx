@@ -1,12 +1,12 @@
-import { uploadPayment } from '@/api/order';
-import { useState } from 'react';
+import { confirmPayment, uploadPayment } from '@/api/order';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 export default function UploadPaymentPage(props: any) {
   const [preview, setPreview] = useState<string | null>('');
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [file, setFile] = useState<File | null>(null);
-  console.log(file, 'file');
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -28,11 +28,10 @@ export default function UploadPaymentPage(props: any) {
 
     const formData = new FormData();
     formData.append('paymentProof', file);
-    console.log(formData, 'formdata');
+    formData.append('status', 'PAID');
 
     try {
       const response = await uploadPayment(props.order.id, formData);
-      console.log(response, 'response');
       if (response.status === 'success') {
         showToast('Payment Proof Uploaded');
         setTimeout(() => {
@@ -46,6 +45,35 @@ export default function UploadPaymentPage(props: any) {
       showToast('Error uploading payment proof');
     }
   };
+
+  const handleConfirmPayment = async (orderId: number, confirm: string) => {
+    try {
+      let response;
+      response = await confirmPayment(orderId, {
+        status: confirm === 'accepted' ? 'PROCESSING' : 'UNPAID',
+      });
+
+      const { status } = response;
+
+      if (status == 'success') {
+        showToast(`Success ${confirm} payment`);
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    if (props.to === 'confirm-payment') {
+      console.log(props.order, 'order');
+      setPreview(
+        'http://localhost:8000/uploads/payments/' + props.order.paymentProof,
+      );
+    }
+  }, []);
 
   const showToast = (message: string) => {
     setToastMessage(message);
@@ -64,19 +92,23 @@ export default function UploadPaymentPage(props: any) {
           </div>
         </div>
       )}
-      <h1 className="text-xl font-bold mb-4">Upload Payment</h1>
+      <h1 className="text-xl font-bold mb-4">
+        {props.to !== 'confirm-payment' ? 'Upload Payment' : 'Confirm Payment'}
+      </h1>
       <form>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Upload Payment Proof
-          </label>
-          <input
-            type="file"
-            className="file-input file-input-bordered w-full"
-            accept="image/*"
-            onChange={handleFileChange}
-          />
-        </div>
+        {props.to !== 'confirm-payment' && (
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Upload Payment Proof
+            </label>
+            <input
+              type="file"
+              className="file-input file-input-bordered w-full"
+              accept="image/*"
+              onChange={handleFileChange}
+            />
+          </div>
+        )}
 
         {preview && (
           <div className="mb-4">
@@ -84,9 +116,11 @@ export default function UploadPaymentPage(props: any) {
               Preview
             </label>
             <div className="flex justify-center">
-              <img
+              <Image
                 src={preview}
                 alt="Image Preview"
+                width={192}
+                height={192}
                 className="w-48 h-auto max-h-96 rounded-lg border"
               />
             </div>
@@ -100,11 +134,25 @@ export default function UploadPaymentPage(props: any) {
           >
             Close
           </a>
+          {props.to == 'confirm-payment' && (
+            <a
+              className="p-2 mr-2 border bg-red-400 rounded-md cursor-pointer hover:font-bold"
+              onClick={() => handleConfirmPayment(props.order.id, 'rejected')}
+            >
+              Reject Payment
+            </a>
+          )}
           <a
             className="p-2 border bg-secondary rounded-md cursor-pointer hover:font-bold"
-            onClick={handlePayment}
+            onClick={
+              props.to === 'confirm-payment'
+                ? () => handleConfirmPayment(props.order.id, 'accepted')
+                : handlePayment
+            }
           >
-            Submit
+            {props.to == 'confirm-payment'
+              ? 'Confirm Payment'
+              : 'Upload Payment'}
           </a>
         </div>
       </form>

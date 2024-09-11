@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { cancelOrder, confirmOrder } from '@/api/order';
+import { cancelOrder, confirmOrder, sendOrder } from '@/api/order';
 import { deleteAddress } from '@/api/address';
 
 export default function ConfirmModal(props: {
@@ -43,6 +43,24 @@ export default function ConfirmModal(props: {
       console.error(error);
     }
   };
+
+  const handleSendOrder = async () => {
+    try {
+      const response = await sendOrder(props.id);
+
+      const { status } = response;
+
+      if (status == 'success') {
+        showToast('Success send order');
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleDeleteAddress = async () => {
     try {
       const response = await deleteAddress(props.id);
@@ -89,6 +107,8 @@ export default function ConfirmModal(props: {
                 handleDelete();
               } else if (props.title === 'received order') {
                 handleConfirmation();
+              } else if (props.title === 'send order') {
+                handleSendOrder();
               } else if (props.title === 'address') {
                 handleDeleteAddress();
               }
