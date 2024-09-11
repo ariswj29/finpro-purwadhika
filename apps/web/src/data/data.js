@@ -82,11 +82,16 @@ export const menuProfiles = [
   },
   {
     id: 2,
+    title: 'Address',
+    link: '/profile/address',
+  },
+  {
+    id: 3,
     title: 'Order List',
     link: '/profile/order-list',
   },
   {
-    id: 3,
+    id: 4,
     title: 'Order Complete',
     link: '/profile/order-complete',
   },

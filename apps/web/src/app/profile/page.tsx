@@ -6,6 +6,7 @@ import { getProfile, updateProfile, verifyEmail } from '@/api/profile'; // Pasti
 import { getCookies } from '@/helper/helper';
 import Cookies from 'js-cookie';
 import Image from 'next/image';
+import { logout } from '@/api/auth';
 
 export default function ProfilePage() {
   const [profileData, setProfileData] = useState({
@@ -16,6 +17,11 @@ export default function ProfilePage() {
 
   const [preview, setPreview] = useState<string | null>('');
   const [file, setFile] = useState<File | null>(null);
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState<{
+    message: string;
+    status: string;
+  }>({ message: '', status: '' });
 
   const {
     register,
@@ -67,6 +73,7 @@ export default function ProfilePage() {
     formData.append('username', data.username || '');
     if (data.password) {
       formData.append('password', data.password);
+      formData.append('oldPassword', data.oldPassword);
     }
     formData.append('confirmPassword', data.confirmPassword || '');
 
@@ -76,8 +83,11 @@ export default function ProfilePage() {
         expires: 1,
         secure: true,
       });
+      showToast(response);
       setProfileData(response.data);
-      window.location.reload();
+      setTimeout(() => {
+        window.location.reload();
+      }, 3000);
     } catch (error) {
       console.error('Perbaruan profil gagal:', error);
     }
@@ -94,15 +104,44 @@ export default function ProfilePage() {
         expires: 1,
         secure: true,
       });
+      showToast(response);
       setProfileData(response.data);
+      logout();
       window.location.href = '/auth/login';
     } catch (error) {
       console.error('Perbaruan profil gagal:', error);
     }
   };
 
+  const showToast = (data: { message: string; status: string }) => {
+    setToastMessage(data);
+    setToastVisible(true);
+    setTimeout(() => {
+      setToastVisible(false);
+    }, 3000);
+  };
+
   return (
     <div className="container mx-auto px-4">
+      {toastVisible && (
+        <div
+          className="toast toast-top toast-end"
+          style={{
+            position: 'fixed',
+            top: '3rem',
+            right: '1rem',
+            zIndex: 1000,
+          }}
+        >
+          <div
+            className={`alert ${toastMessage.status === 'success' ? 'alert-success' : 'alert-error'}`}
+          >
+            <span className="text-primary text-bold">
+              {toastMessage.message}
+            </span>
+          </div>
+        </div>
+      )}
       <h3 className="text-3xl font-bold mb-6 text-center">My Profile</h3>
 
       <form
@@ -172,7 +211,20 @@ export default function ProfilePage() {
         className="card shadow-lg p-6 bg-base-100"
       >
         <div className="form-control mb-4">
-          <label className="label font-semibold">Password</label>
+          <label className="label font-semibold">Old Password</label>
+          <input
+            type="password"
+            {...register('oldPassword')}
+            className="input input-bordered w-full"
+            placeholder="Masukkan password baru"
+          />
+          {errors.password && (
+            <p className="text-error text-sm">{errors.password.message}</p>
+          )}
+        </div>
+
+        <div className="form-control mb-4">
+          <label className="label font-semibold">New Password</label>
           <input
             type="password"
             {...register('password')}
@@ -185,7 +237,7 @@ export default function ProfilePage() {
         </div>
 
         <div className="form-control mb-4">
-          <label className="label font-semibold">Confirm Password</label>
+          <label className="label font-semibold">Confirm New Password</label>
           <input
             type="password"
             {...register('confirmPassword')}
