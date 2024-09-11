@@ -1,3 +1,4 @@
+import { getCookie } from '@/action/cookies';
 import axios from 'axios';
 
 const base_url_api = 'http://localhost:8000/api';
@@ -31,30 +32,49 @@ export async function getCity(provinceId: number) {
 }
 
 export async function addressDetail(id: string) {
+  const authToken = await getCookie('token');
   const url = base_url_api + '/address/' + id;
-  const res = await axios.get(url);
+  const res = await axios.get(url, {
+    headers: {
+      Authorization: 'Bearer ' + authToken,
+    },
+  });
 
   return res.data;
 }
 
 export async function editAddress(id: string, data: any) {
+  const authToken = await getCookie('token');
   const url = base_url_api + '/address/' + id;
-  const res = await axios.put(url, data);
+  const res = await axios.put(url, data, {
+    headers: {
+      Authorization: 'Bearer ' + authToken,
+    },
+  });
 
   return res.data;
 }
 
 export async function deleteAddress(id: number) {
+  const authToken = await getCookie('token');
   const url = base_url_api + '/address/' + id;
-  const res = await axios.delete(url);
+  const res = await axios.delete(url, {
+    headers: {
+      Authorization: 'Bearer ' + authToken,
+    },
+  });
 
   return res.data;
 }
 
 export async function setPrimaryAddress(id: number, data: any) {
-  console.log(data, 'dataprimary');
+  const authToken = await getCookie('token');
   const url = base_url_api + '/address/primary-address/' + id;
-  const res = await axios.put(url, data);
+  const res = await axios.put(url, data, {
+    headers: {
+      Authorization: 'Bearer ' + authToken,
+    },
+  });
 
   return res.data;
 }
