@@ -1,6 +1,6 @@
 'use client';
 
-import { getCart, removeCart } from '@/api/cart';
+import { getCart, updateCart } from '@/api/cart';
 import { getCookies } from '@/helper/helper';
 import { CartItem } from '@/interface/cart.interface';
 import Image from 'next/image';
@@ -33,7 +33,7 @@ export default function Cart() {
   };
 
   const handleRemoveCart = async (id: number) => {
-    const res = await removeCart(id);
+    const res = await updateCart(id);
     const data = await res;
 
     if (data.status === 'success') {

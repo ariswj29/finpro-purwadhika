@@ -91,6 +91,7 @@ export async function login(req: Request, res: Response) {
     const jwtPayload = {
       username: user.username,
       email: user.email,
+      role: user.role,
     };
     const token = await sign(jwtPayload, 'mySecret', {
       expiresIn: '1h',
