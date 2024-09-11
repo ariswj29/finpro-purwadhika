@@ -26,15 +26,23 @@ export default function UserLayout({
     const fetchUserData = () => {
       const cookies = getCookies();
       const token = cookies.token;
-      const users = JSON.parse(cookies.user || '{}');
-      setUser(users);
 
-      if (token && users) {
-        setToken(token);
-        if (users.role !== 'USER') {
-          setIsAdmin(true);
+      if (cookies.user) {
+        try {
+          const users = JSON.parse(cookies.user);
+          setUser(users);
+          if (token && users) {
+            setToken(token);
+            if (users.role !== 'USER') {
+              setIsAdmin(true);
+            }
+          }
+        } catch (error) {
+          console.error('Failed to parse cookies.user:', error);
+          setUser(null);
         }
       }
+
       setLoading(false);
     };
 

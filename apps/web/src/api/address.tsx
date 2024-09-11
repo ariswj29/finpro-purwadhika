@@ -29,3 +29,32 @@ export async function getCity(provinceId: number) {
 
   return res.data;
 }
+
+export async function addressDetail(id: string) {
+  const url = base_url_api + '/address/' + id;
+  const res = await axios.get(url);
+
+  return res.data;
+}
+
+export async function editAddress(id: string, data: any) {
+  const url = base_url_api + '/address/' + id;
+  const res = await axios.put(url, data);
+
+  return res.data;
+}
+
+export async function deleteAddress(id: number) {
+  const url = base_url_api + '/address/' + id;
+  const res = await axios.delete(url);
+
+  return res.data;
+}
+
+export async function setPrimaryAddress(id: number, data: any) {
+  console.log(data, 'dataprimary');
+  const url = base_url_api + '/address/primary-address/' + id;
+  const res = await axios.put(url, data);
+
+  return res.data;
+}

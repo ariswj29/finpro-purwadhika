@@ -57,7 +57,7 @@ export default function UpdateEmailPage(context: any) {
       setTimeout(() => {
         setShowMessage(false);
         window.location.href = '/auth/login';
-      }, 20000);
+      }, 3000);
     }
   };
 

@@ -1,5 +1,5 @@
 import { Response, Request } from 'express';
-import { genSalt, hash } from 'bcrypt';
+import { compare, genSalt, hash } from 'bcrypt';
 import prisma from '@/helpers/prisma';
 import { generateVerificationTokenNewEmail } from '@/helpers/generateVerificationTokenNewEmail';
 import { sendNewEmail } from '@/utils/updateEmail.nodemailer';
@@ -28,12 +28,14 @@ export const updateEmailRequest = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { email } = req.body;
+    console.log(email, 'email req');
 
     const existingUser = await prisma.user.findFirst({
       where: {
         email,
       },
     });
+    console.log(existingUser, 'existing');
 
     if (existingUser) {
       return res.status(404).json({
@@ -116,16 +118,42 @@ export const verifyEmailChange = async (req: Request, res: Response) => {
 export const updateProfile = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { username, email, password } = req.body;
+    const { username, password, oldPassword } = req.body;
     const image = req.file?.filename;
 
     let updateData: any = {};
 
     if (username) updateData.username = username;
 
-    // if (email) updateData.email = email;
-
+    // If password needs to be changed, verify the old password first
     if (password) {
+      if (!oldPassword) {
+        return res.status(400).json({
+          status: 'error',
+          message: 'Old password is required to update the password',
+        });
+      }
+      const user = await prisma.user.findUnique({
+        where: { id: Number(id) },
+      });
+
+      if (!user) {
+        return res.status(404).json({
+          status: 'error',
+          message: 'User not found',
+        });
+      }
+
+      const isMatch = user.password
+        ? await compare(oldPassword, user.password)
+        : false;
+      if (!isMatch) {
+        return res.status(400).json({
+          status: 'error',
+          message: 'Old password is incorrect',
+        });
+      }
+
       const salt = await genSalt(10);
       const hashedPassword = await hash(password, salt);
       updateData.password = hashedPassword;
@@ -146,14 +174,7 @@ export const updateProfile = async (req: Request, res: Response) => {
       data: updatedUser,
     });
   } catch (error) {
-    console.error('Update failed:', error); // Add logging for debugging
-
-    // if (error instanceof yup.ValidationError) {
-    //   return res.status(400).json({
-    //     status: 'error',
-    //     message: error.errors,
-    //   });
-    // }
+    console.error('Update failed:', error);
 
     res.status(400).json({
       status: 'error',
