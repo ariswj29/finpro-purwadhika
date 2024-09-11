@@ -1,3 +1,4 @@
+import { getCookie } from '@/action/cookies';
 import axios from 'axios';
 
 const base_url_api = 'http://localhost:8000/api';
@@ -10,22 +11,45 @@ export async function getAllCart() {
 }
 
 export async function getCart(userId: number) {
+  const authToken = await getCookie('token');
   const url = base_url_api + '/cart/' + userId;
-  const res = await axios.get(url);
+  const res = await axios.get(url, {
+    headers: {
+      Authorization: 'Bearer ' + authToken,
+    },
+  });
 
   return res.data;
 }
 
 export async function addCart(productId: number, userId: number) {
+  const authToken = await getCookie('token');
   const url = base_url_api + '/cart';
-  const res = await axios.post(url, { productId, userId });
+  const res = await axios.post(
+    url,
+    { productId, userId },
+    {
+      headers: {
+        Authorization: 'Bearer ' + authToken,
+      },
+    },
+  );
 
   return res.data;
 }
 
-export async function removeCart(id: number) {
-  const url = base_url_api + '/cart/remove-cart/' + id;
-  const res = await axios.put(url);
+export async function updateCart(id: number) {
+  const authToken = await getCookie('token');
+  const url = base_url_api + '/cart/update-cart/' + id;
+  const res = await axios.put(
+    url,
+    {},
+    {
+      headers: {
+        Authorization: 'Bearer ' + authToken,
+      },
+    },
+  );
 
   return res.data;
 }
