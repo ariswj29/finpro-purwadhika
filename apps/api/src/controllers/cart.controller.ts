@@ -88,7 +88,7 @@ export const addCart = async (req: Request, res: Response) => {
   });
 };
 
-export const removeCart = async (req: Request, res: Response) => {
+export const updateCart = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   await prisma.cart.update({
