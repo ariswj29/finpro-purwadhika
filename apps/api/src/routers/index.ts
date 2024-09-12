@@ -8,6 +8,7 @@ import orders from './order.router';
 import profile from './profile.router';
 import checkout from './checkout.router';
 import branch from './branch.router';
+import user from './user.router';
 
 const router = Router();
 
@@ -20,5 +21,6 @@ router.use('/api/orders', orders);
 router.use('/api/profile', profile);
 router.use('/api/checkout', checkout);
 router.use('/api/branch', branch);
+router.use('/api/users', user);
 
 export default router;
