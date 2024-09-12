@@ -40,7 +40,9 @@ export default function CheckoutPage(context: any) {
   } = useForm();
 
   const selectedCourier = watch('courier'); // Watch untuk courier
+  console.log(selectedCourier, 'selected courier');
   const selectedAddress = watch('addressId'); // Watch untuk address
+  console.log(selectedAddress, 'selected address');
 
   useEffect(() => {
     const fetchCart = async () => {
@@ -72,8 +74,8 @@ export default function CheckoutPage(context: any) {
       const response = await calShippingCost({
         courier,
         destination: cityId,
-        origin: branch.cityId, // Menggunakan cityId dari branch
-        weight: 1000, // Berat dummy, bisa disesuaikan
+        origin: branch.cityId,
+        weight: 1000,
       });
       setShippingCost(response); // Simpan biaya pengiriman ke state
     } catch (error) {
@@ -84,12 +86,14 @@ export default function CheckoutPage(context: any) {
 
   // Checkout page
   useEffect(() => {
-    if (selectedCourier && selectedAddress) {
+    // Cek apakah `selectedAddress` dan `selectedCourier` sudah terisi
+    if (selectedAddress !== 'Pick one' && selectedCourier !== 'Pick one') {
       const selectedAddressObj = address.find(
         (addr) => addr.id === Number(selectedAddress),
       );
+
       if (selectedAddressObj) {
-        // Use the cityId from the selected address to calculate shipping
+        // Jika kedua pilihan sudah terisi, panggil calculateShippingCost
         calculateShippingCost(selectedAddressObj.cityId, selectedCourier);
       }
     }
@@ -108,10 +112,10 @@ export default function CheckoutPage(context: any) {
         price: item.product.price,
         total: item.product.price * item.quantity,
       })),
-      shippingCost, // Gunakan biaya pengiriman dari state
+      shippingCost: shippingCost?.data[0].value,
       total:
         cart.reduce((a, b) => a + b.product.price * b.quantity, 0) +
-        shippingCost,
+        shippingCost?.data[0].value,
     };
 
     console.log(data, 'data');
@@ -247,16 +251,24 @@ export default function CheckoutPage(context: any) {
               {/* Shipping Cost */}
               <div className="flex justify-between my-2">
                 <span>Shipping Cost</span>
-                <span>{formattedMoney(shippingCost?.data[0].value)}</span>
+                <span>
+                  {formattedMoney(
+                    shippingCost?.data
+                      ? shippingCost?.data[0].value
+                      : shippingCost,
+                  )}
+                </span>
               </div>
 
               {/* Total */}
               <div className="flex justify-between my-2 pt-2 border-t-2 border-t-slate-700 border-t-solid">
                 <span className="font-bold">Total</span>
                 <span className="font-bold">
-                  {formattedMoney(
-                    cart.reduce((a, b) => a + b.product.price * b.quantity, 0) +
-                      shippingCost?.data[0].value,
+                  {totalPrice(
+                    cart.reduce((a, b) => a + b.product.price * b.quantity, 0),
+                    shippingCost?.data
+                      ? shippingCost?.data[0].value
+                      : shippingCost,
                   )}
                 </span>
               </div>
