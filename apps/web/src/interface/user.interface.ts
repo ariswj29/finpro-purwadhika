@@ -3,7 +3,7 @@ export interface User {
   email: string;
   password: string;
   salt: string;
-  role: 'admin' | 'user';
+  role: 'SUPER_ADMIN' | 'ADMIN' | 'USER';
   createdAt: Date;
   updatedAt: Date;
 }

@@ -142,23 +142,15 @@ export const banks = [
 
 export const couriers = [
   {
-    id: 1,
+    id: 'jne',
     name: 'JNE',
   },
   {
-    id: 2,
-    name: 'J&T',
+    id: 'tiki',
+    name: 'TIKI',
   },
   {
-    id: 3,
-    name: 'SiCepat',
-  },
-  {
-    id: 4,
-    name: 'Lion Parcel',
-  },
-  {
-    id: 7,
-    name: 'Paxel',
+    id: 'pos',
+    name: 'POS Indonesia',
   },
 ];

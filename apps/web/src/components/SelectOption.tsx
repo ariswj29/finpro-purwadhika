@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 export default function SelectOption({
   label,
   field,
@@ -24,7 +22,13 @@ export default function SelectOption({
           {options?.map((option) => (
             <option
               key={option.id}
-              value={field == 'addressId' ? option.id : option.name}
+              value={
+                field === 'courier'
+                  ? option.id
+                  : field === 'addressId'
+                    ? option.id
+                    : option.name
+              }
             >
               {option.name} {option?.address && `| ${option?.address}`}
             </option>
