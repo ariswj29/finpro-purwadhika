@@ -4,7 +4,6 @@ import { RAJAONGKIR_API_KEY } from '@/config';
 
 export const shippingCost = async (req: Request, res: Response) => {
   const { courier, destination, origin, weight } = req.body;
-  console.log(req.body, 'body');
 
   // Validasi apakah semua parameter yang dibutuhkan ada
   if (!courier || !destination || !origin || !weight) {
@@ -16,7 +15,7 @@ export const shippingCost = async (req: Request, res: Response) => {
   const response = await axios.post(
     'https://api.rajaongkir.com/starter/cost',
     {
-      origin: origin.toString(), // pastikan ini string
+      origin: origin.toString(),
       destination: destination.toString(), // pastikan ini string
       weight: Number(weight), // pastikan ini number
       courier: courier.toLowerCase(), // pastikan ini string
@@ -28,7 +27,6 @@ export const shippingCost = async (req: Request, res: Response) => {
       },
     },
   );
-  console.log(response.data, 'res ongkir');
   // Memproses hasil dari API Raja Ongkir
   const results: any[] = response.data.rajaongkir.results;
 
