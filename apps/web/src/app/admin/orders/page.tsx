@@ -103,7 +103,7 @@ export default function OrderTable() {
             ) : (
               orders.map((order: Order, index) => {
                 return (
-                  <tr key={order.id} className="border border-2 p-2">
+                  <tr key={order.id} className="border p-2">
                     <td className="border p-2 text-center">{order.no}</td>
                     <td className="border p-2 capitalize">{order.name}</td>
                     <td className="flex border p-2 capitalize justify-center">

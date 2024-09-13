@@ -84,7 +84,7 @@ export default function ProductsPage() {
                 className="p-4 bg-white hover:bg-secondary shadow-lg rounded-lg border-2 border-secondary transform transition-transform duration-300 hover:scale-105 my-9"
               >
                 <Image
-                  src={`http://localhost:8000/products/${product.image}`}
+                  src={`${process.env.NEXT_PUBLIC_BASE_URL}/products/${product.image}`}
                   alt={product.name}
                   className="bg-gray-200 rounded-lg h-48 w-full object-cover"
                   width={500}

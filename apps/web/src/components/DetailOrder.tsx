@@ -20,7 +20,10 @@ export const DetailOrder = (props: any) => {
   }, []);
 
   const openPaymentProof = (image: string) => {
-    window.open(`http://localhost:8000/uploads/payments/${image}`, '_blank');
+    window.open(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/uploads/payments/${image}`,
+      '_blank',
+    );
   };
 
   return (
@@ -59,7 +62,7 @@ export const DetailOrder = (props: any) => {
                   <td>{index + 1}</td>
                   <td className="flex items-center">
                     <Image
-                      src={`http://localhost:8000/products/${item.product.image}`}
+                      src={`${process.env.NEXT_PUBLIC_BASE_URL}/products/${item.product.image}`}
                       width={75}
                       height={75}
                       alt="image product"

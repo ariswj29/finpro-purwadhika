@@ -141,7 +141,7 @@ export default function ProductsList(props: any) {
                   <FaHeart />
                 </button>
                 <Image
-                  src={`http://localhost:8000/products/${product.image}`}
+                  src={`${process.env.NEXT_PUBLIC_BASE_URL}/products/${product.image}`}
                   alt={product.name}
                   className="bg-gray-200 rounded-lg h-48 w-full object-cover"
                   width={500}
