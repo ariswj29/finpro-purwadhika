@@ -11,8 +11,8 @@ import { Router } from 'express';
 const router = Router();
 
 router.get('/:id', verifyToken, getProfile);
-router.put('/update-email/:id', verifyToken, updateEmailRequest);
-router.put('/verification-email/:id', verifyToken, verifyEmailChange);
+router.put('/update-email/:id', updateEmailRequest);
+router.put('/verification-email/:id', verifyEmailChange);
 router.put('/:id', upload.single('image'), verifyToken, updateProfile);
 
 export default router;
