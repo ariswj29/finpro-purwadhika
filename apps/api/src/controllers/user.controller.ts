@@ -61,6 +61,7 @@ export const createUsers = async (req: Request, res: Response) => {
     await usersSchema.validate(req.body, { abortEarly: false });
 
     const { username, role, email, password } = req.body;
+    const image = req.file?.filename;
     const existingUser = await prisma.user.findFirst({
       where: {
         email,
@@ -81,6 +82,7 @@ export const createUsers = async (req: Request, res: Response) => {
         email,
         password: hashedPassword,
         isVerified: true,
+        image,
       },
     });
 
@@ -133,6 +135,7 @@ export const updateUsers = async (req: Request, res: Response) => {
 
     const { id } = req.params;
     const { username, role, email } = req.body;
+    const image = req.file?.filename;
 
     const user = await prisma.user.findUnique({
       where: {
@@ -155,6 +158,7 @@ export const updateUsers = async (req: Request, res: Response) => {
         username,
         role,
         email,
+        image,
       },
     });
 
