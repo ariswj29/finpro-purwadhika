@@ -84,7 +84,7 @@ const FormUsers = () => {
             show={showMessage}
           />
         ) : null}
-        <div className="text-2xl mb-4">Table Users</div>
+        <div className="text-2xl mb-4">Add User</div>
         <div className="grid grid-cols-2 gap-4 items-center">
           <label className="label">Username</label>
           <div className="">
