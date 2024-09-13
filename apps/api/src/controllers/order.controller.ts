@@ -143,7 +143,7 @@ export async function createOrder(req: Request, res: Response) {
       data: {
         name: `ORDER-${new Date().getTime()}`,
         paymentStatus: 'UNPAID',
-        shippingCost: body.shippingCost,
+        shippingCost: Number(body.shippingCost),
         total: body.total,
         paymentMethod: body.paymentMethod,
         courier: body.courier,
@@ -165,8 +165,6 @@ export async function createOrder(req: Request, res: Response) {
         },
       },
     });
-
-    console.log(body, 'body');
 
     body.cart.forEach(async (item: any) => {
       await prisma.orderProduct.create({
