@@ -142,3 +142,168 @@ export const getAllListProducts = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Failed to fetch products' });
   }
 };
+
+export async function products(req: Request, res: Response) {
+  try {
+    const { search = '', page = '1', limit = '10' } = req.query;
+
+    const pageNumber = parseInt(page as string, 10) || 1;
+    const limitNumber = parseInt(limit as string, 10) || 10;
+
+    const products = await prisma.product.findMany({
+      where: {
+        name: {
+          contains: search as string,
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        image: true,
+        category: {
+          select: {
+            name: true,
+          },
+        },
+        productBranchs: {
+          select: {
+            stock: true,
+          },
+        },
+      },
+      skip: (pageNumber - 1) * limitNumber,
+      take: limitNumber,
+    });
+
+    const productsWithStockAndIndex = products.map((product, index) => {
+      const totalStock = product.productBranchs.reduce(
+        (acc, branch) => acc + branch.stock,
+        0,
+      );
+
+      return {
+        ...product,
+        no: (pageNumber - 1) * limitNumber + index + 1,
+        totalStock,
+      };
+    });
+
+    const totalProducts = await prisma.product.count();
+    const totalPages = Math.ceil(totalProducts / limitNumber);
+
+    res.status(200).json({
+      status: 'success',
+      message: 'success get all products',
+      data: productsWithStockAndIndex,
+      pagination: {
+        totalItems: totalProducts,
+        totalPages,
+        currentPage: pageNumber,
+        pageSize: limitNumber,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+export async function createProduct(req: Request, res: Response) {
+  try {
+    const { name, price, categoryId, slug, description } = req.body;
+    const image = req.file?.filename;
+
+    const product = await prisma.product.create({
+      data: {
+        name,
+        price: parseInt(price, 10),
+        image,
+        categoryId: parseInt(categoryId, 10),
+        slug,
+        description,
+      },
+    });
+
+    res.status(201).json({
+      status: 'success',
+      message: 'success create product',
+      data: product,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+export async function product(req: Request, res: Response) {
+  try {
+    const { id } = req.params;
+
+    const product = await prisma.product.findUnique({
+      where: {
+        id: parseInt(id, 10),
+      },
+    });
+
+    res.status(200).json({
+      status: 'success',
+      message: 'success get product',
+      data: product,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+export async function updateProduct(req: Request, res: Response) {
+  try {
+    const { id } = req.params;
+    const { name, price, categoryId, slug, description } = req.body;
+    const image = req.file?.filename;
+
+    const product = await prisma.product.update({
+      where: {
+        id: parseInt(id, 10),
+      },
+      data: {
+        name,
+        price: parseInt(price, 10),
+        image,
+        categoryId: parseInt(categoryId, 10),
+        slug,
+        description,
+      },
+    });
+
+    res.status(200).json({
+      status: 'success',
+      message: 'success update product',
+      data: product,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+export async function deleteProduct(req: Request, res: Response) {
+  try {
+    const { id } = req.params;
+
+    await prisma.product.delete({
+      where: {
+        id: parseInt(id, 10),
+      },
+    });
+
+    res.status(200).json({
+      status: 'success',
+      message: 'success delete product',
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}

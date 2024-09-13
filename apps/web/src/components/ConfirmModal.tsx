@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { cancelOrder, confirmOrder, sendOrder } from '@/api/order';
 import { deleteAddress } from '@/api/address';
 import { deleteUserProcess } from '@/api/user';
+import { deleteProduct } from '@/api/products';
 
 export default function ConfirmModal(props: {
   id: number;
@@ -96,6 +97,23 @@ export default function ConfirmModal(props: {
     }
   };
 
+  const handleDeleteProducts = async () => {
+    try {
+      const response = await deleteProduct(props.id.toString());
+
+      const { status } = response;
+
+      if (status == 'success') {
+        showToast('Success delete product');
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const showToast = (message: string) => {
     setToastMessage(message);
     setToastVisible(true);
@@ -131,6 +149,8 @@ export default function ConfirmModal(props: {
                 handleDeleteAddress();
               } else if (props.title === 'Delete user') {
                 handleDeleteUsers();
+              } else if (props.title === 'Delete product') {
+                handleDeleteProducts();
               }
             }}
           >

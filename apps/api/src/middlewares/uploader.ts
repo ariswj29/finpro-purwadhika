@@ -4,7 +4,15 @@ import fs from 'fs';
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const uploadPath = path.join(__dirname, '../../public/uploads/profile');
+    let uploadPath;
+
+    if (req.baseUrl.includes('/profile')) {
+      uploadPath = path.join(__dirname, '../../public/uploads/profile');
+    } else if (req.baseUrl.includes('/products')) {
+      uploadPath = path.join(__dirname, '../../public/uploads/products');
+    } else {
+      uploadPath = path.join(__dirname, '../../public/uploads/others');
+    }
 
     if (!fs.existsSync(uploadPath)) {
       fs.mkdirSync(uploadPath, { recursive: true });
@@ -34,6 +42,6 @@ export const upload = multer({
     }
   },
   limits: {
-    fileSize: 1 * 1024 * 1024,
+    fileSize: 1 * 1024 * 1024, // 1 MB
   },
 });

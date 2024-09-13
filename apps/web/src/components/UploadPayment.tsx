@@ -70,7 +70,7 @@ export default function UploadPaymentPage(props: any) {
     if (props.to == 'confirm-payment') {
       console.log(props.order, 'order');
       setPreview(
-        'process.env.NEXT_PUBLIC_BASE_API_URL/uploads/payments/' +
+        `${process.env.NEXT_PUBLIC_BASE_URL}/uploads/payments/` +
           props.order.paymentProof,
       );
     }
