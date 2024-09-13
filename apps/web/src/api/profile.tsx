@@ -29,24 +29,14 @@ export async function updateProfile(id: Number, data: FormData) {
 }
 
 export async function verifyEmail(id: Number, data: FormData) {
-  const authToken = await getCookie('token');
   const url = base_url_api + '/profile/update-email/' + id;
-  const response = await axios.put(url, data, {
-    headers: {
-      Authorization: 'Bearer ' + authToken,
-    },
-  });
+  const response = await axios.put(url, data);
 
   return response.data;
 }
 export async function updateNewEmail(id: Number, data: any) {
-  const authToken = await getCookie('token');
   const url = base_url_api + '/profile/verification-email/' + id;
-  const response = await axios.put(url, data, {
-    headers: {
-      Authorization: 'Bearer ' + authToken,
-    },
-  });
+  const response = await axios.put(url, data);
 
   return response.data;
 }

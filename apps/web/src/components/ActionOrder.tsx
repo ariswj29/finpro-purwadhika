@@ -89,7 +89,7 @@ export default function ActionOrder({ order }: any) {
             <li className="my-1">
               <a
                 className="font-semibold bg-green-400"
-                onClick={() => handleOpenPayment(order.id)}
+                onClick={() => handleOpenPayment(order)}
               >
                 Confirm Payment
               </a>

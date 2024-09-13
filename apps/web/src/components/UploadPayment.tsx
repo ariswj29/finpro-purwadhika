@@ -67,7 +67,7 @@ export default function UploadPaymentPage(props: any) {
   };
 
   useEffect(() => {
-    if (props.to === 'confirm-payment') {
+    if (props.to == 'confirm-payment') {
       console.log(props.order, 'order');
       setPreview(
         'http://localhost:8000/uploads/payments/' + props.order.paymentProof,
