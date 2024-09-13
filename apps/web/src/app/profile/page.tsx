@@ -41,7 +41,7 @@ export default function ProfilePage() {
         setValue('username', profileResponse.data.username);
         setValue('email', profileResponse.data.email);
         setPreview(
-          `http://localhost:8000/uploads/profile/${profileResponse.data.image}`,
+          `${process.env.NEXT_PUBLIC_BASE_URL}/uploads/profile/${profileResponse.data.image}`,
         );
       } catch (error) {
         console.error('Gagal mengambil data profil:', error);

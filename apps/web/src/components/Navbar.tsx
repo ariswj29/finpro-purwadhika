@@ -8,7 +8,7 @@ export const Navbar = (props: { users: { username: ''; image: '' } }) => {
         <Image
           src={
             props.users.image
-              ? `http://localhost:8000/uploads/profile/${props.users.image}`
+              ? `${process.env.NEXT_PUBLIC_BASE_URL}/uploads/profile/${props.users.image}`
               : '/user.png'
           }
           alt="user"

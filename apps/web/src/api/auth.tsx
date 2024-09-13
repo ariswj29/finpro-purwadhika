@@ -1,7 +1,8 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-const base_url_api = 'http://localhost:8000/api';
+const base_url_api = process.env.NEXT_PUBLIC_BASE_API_URL;
+console.log('base_url_api', base_url_api);
 
 export async function registerField(data: any) {
   const url = base_url_api + '/auth/register';

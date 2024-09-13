@@ -108,7 +108,7 @@ export default function Wishlist() {
                   <td className="p-2">
                     <div className="flex items-center">
                       <Image
-                        src={`http://localhost:8000/products/${item.product.image}`}
+                        src={`${process.env.NEXT_PUBLIC_BASE_URL}/products/${item.product.image}`}
                         alt="Product"
                         width={80}
                         height={80}

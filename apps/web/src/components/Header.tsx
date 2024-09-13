@@ -100,7 +100,7 @@ export const Header = (props: any) => {
                   <Image
                     src={
                       user.image
-                        ? `http://localhost:8000/uploads/profile/${user.image}`
+                        ? `${process.env.NEXT_PUBLIC_BASE_URL}/uploads/profile/${user.image}`
                         : '/user.png'
                     }
                     alt="user"
@@ -152,7 +152,7 @@ export const Header = (props: any) => {
                 <Image
                   src={
                     user.image
-                      ? `http://localhost:8000/uploads/profile/${user.image}`
+                      ? `${process.env.NEXT_PUBLIC_BASE_URL}/uploads/profile/${user.image}`
                       : '/user.png'
                   }
                   alt="user"
