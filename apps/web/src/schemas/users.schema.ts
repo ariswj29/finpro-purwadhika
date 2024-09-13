@@ -13,4 +13,5 @@ export const usersSchema = yup.object().shape({
     .when('$isEdit', (isEdit, schema) =>
       isEdit ? schema.optional() : schema.required('Password is required'),
     ),
+  image: yup.string(),
 });

@@ -25,6 +25,7 @@ export async function createUserProcess(data: any) {
   const url = base_url_api + '/users';
   const res = await axios.post(url, data, {
     headers: {
+      'Content-Type': 'multipart/form-data',
       Authorization: 'Bearer ' + authToken,
     },
   });
@@ -49,6 +50,7 @@ export async function updateUserProcess(id: string, data: any) {
   const url = base_url_api + '/users/' + id;
   const res = await axios.put(url, data, {
     headers: {
+      'Content-Type': 'multipart/form-data',
       Authorization: 'Bearer ' + authToken,
     },
   });
