@@ -3,6 +3,7 @@ import { cancelOrder, confirmOrder, sendOrder } from '@/api/order';
 import { deleteAddress } from '@/api/address';
 import { deleteUserProcess } from '@/api/user';
 import { deleteProduct } from '@/api/products';
+import { deleteCategory } from '@/api/category';
 
 export default function ConfirmModal(props: {
   id: number;
@@ -114,6 +115,23 @@ export default function ConfirmModal(props: {
     }
   };
 
+  const handleDeleteCategory = async () => {
+    try {
+      const response = await deleteCategory(props.id);
+
+      const { status } = response;
+
+      if (status == 'success') {
+        showToast('Success delete category');
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const showToast = (message: string) => {
     setToastMessage(message);
     setToastVisible(true);
@@ -151,6 +169,8 @@ export default function ConfirmModal(props: {
                 handleDeleteUsers();
               } else if (props.title === 'Delete product') {
                 handleDeleteProducts();
+              } else if (props.title === 'Delete category') {
+                handleDeleteCategory();
               }
             }}
           >

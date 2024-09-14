@@ -30,6 +30,11 @@ export const sidebarSuperadmin = [
     link: '/admin/products',
   },
   {
+    id: 7,
+    title: 'Category Products',
+    link: '/admin/category-products',
+  },
+  {
     id: 3,
     title: 'Orders',
     link: '/admin/orders',
@@ -61,6 +66,11 @@ export const sidebarAdmin = [
     id: 2,
     title: 'Products',
     link: '/admin/products',
+  },
+  {
+    id: 7,
+    title: 'Category Products',
+    link: '/admin/category-products',
   },
   {
     id: 3,
