@@ -100,5 +100,21 @@ export const updateCart = async (req: Request, res: Response) => {
     },
   });
 
-  res.json({ code: 200, status: 'success', message: 'Cart removed' });
+  res.json({ code: 200, status: 'success', message: 'Cart Updated' });
+};
+
+export const updateQuantity = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { quantity } = req.body;
+
+  await prisma.productCart.update({
+    where: {
+      id: Number(id),
+    },
+    data: {
+      quantity,
+    },
+  });
+
+  res.json({ code: 200, status: 'success', message: 'Cart Updated' });
 };

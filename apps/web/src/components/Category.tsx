@@ -2,40 +2,55 @@ import { Categories } from '@/interface/category.interface';
 import React from 'react';
 
 interface CategoryProps {
-  onSortChange: (sortConfig: string) => void;
+  onSortChange: (sortConfig: string | null) => void;
   categories: Categories[];
 }
 
 const Category: React.FC<CategoryProps> = ({ onSortChange, categories }) => {
-  const handleSort = (sortBy: number) => {
+  const handleSort = (sortBy: number | null) => {
     let category = '';
-    switch (sortBy) {
-      case 1:
-        console.log(category, 'vegetable');
-        category = 'fruits';
-        break;
-      case 2:
-        console.log(category, 'meats');
-        category = 'vegetables';
-        break;
-      case 3:
-        console.log(category, 'fruits');
-        category = 'meat';
-        break;
-      case 4:
-        console.log(category, 'processed ingredients');
-        category = 'processed ingredients';
-        break;
-      default:
-        category = '';
-        break;
+
+    if (sortBy === null) {
+      category = '';
+    } else {
+      switch (sortBy) {
+        case 1:
+          category = 'fruits';
+          break;
+        case 2:
+          category = 'vegetables';
+          break;
+        case 3:
+          category = 'meat';
+          break;
+        case 4:
+          category = 'processed ingredients';
+          break;
+        default:
+          category = '';
+          break;
+      }
     }
-    onSortChange(category);
+
+    onSortChange(category === '' ? null : category);
   };
 
   return (
     <div className="flex justify-center py-8 gap-9">
       <div className="flex justify-center items-center space-x-12">
+        {/* All Categories Button */}
+        <div className="hover:font-semibold">
+          <div
+            className="border py-1 border-gray-900 rounded-2xl inline-flex items-center justify-center cursor-pointer transition duration-300 ease-in-out transform hover:font-semibold w-auto"
+            onClick={() => handleSort(null)}
+          >
+            <span className="px-3 py-1 text-black hover:font-semibold">
+              All Categories
+            </span>
+          </div>
+        </div>
+
+        {/* Category Buttons */}
         {categories && categories.length > 0 ? (
           categories.map((category, index) => (
             <div key={index} className="hover:font-semibold">

@@ -2,6 +2,7 @@
 
 import { addCart } from '@/api/cart';
 import { getWishlist, removeWishlist } from '@/api/wishlist';
+import NotificationToast from '@/components/NotificationToast';
 import { getCookies } from '@/helper/helper';
 import { WishlistItem } from '@/interface/wishlist.interface';
 import Image from 'next/image';
@@ -11,11 +12,10 @@ export default function Wishlist() {
   const cookies = getCookies();
   const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [toastVisible, setToastVisible] = useState(false);
-  const [toastMessage, setToastMessage] = useState<{
-    message: string;
-    status: string;
-  }>({ message: '', status: '' });
+  const [notif, setNotif] = useState<{ message: string; status: string }>({
+    message: '',
+    status: '',
+  });
 
   useEffect(() => {
     const fetchWishlist = async () => {
@@ -45,35 +45,15 @@ export default function Wishlist() {
   };
 
   const showToast = (data: { message: string; status: string }) => {
-    setToastMessage(data);
-    setToastVisible(true);
+    setNotif(data);
     setTimeout(() => {
-      setToastVisible(false);
+      setNotif({ message: '', status: '' });
     }, 3000);
   };
 
   return (
     <section className="p-12 max-w-screen-xl mx-auto items-center">
-      {toastVisible && (
-        <div
-          className="toast toast-top toast-end"
-          style={{
-            position: 'fixed',
-            top: '3rem',
-            right: '1rem',
-            zIndex: 1000,
-          }}
-        >
-          <div
-            className={`alert ${toastMessage.status === 'success' ? 'alert-success' : 'alert-error'}`}
-          >
-            <span className="text-primary text-bold">
-              {toastMessage.message}
-            </span>
-          </div>
-        </div>
-      )}
-
+      <NotificationToast toastMessage={notif} />
       <h3 className="text-3xl font-bold mb-8 text-center">My Wishlist</h3>
       <div className="overflow-x-auto">
         <table className="w-full min-w-[600px] table-auto border-collapse">

@@ -1,18 +1,22 @@
 'use client';
 
-import { getCart, updateCart } from '@/api/cart';
+import { getCart, updateCart, updateCartQuantity } from '@/api/cart';
+import NotificationToast from '@/components/NotificationToast';
 import { getCookies } from '@/helper/helper';
 import { CartItem } from '@/interface/cart.interface';
 import Image from 'next/image';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export default function Cart() {
+  const router = useRouter();
   const cookies = getCookies();
   const [cart, setCart] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [toastVisible, setToastVisible] = useState(false);
-  const [toastMessage, setToastMessage] = useState('');
+  const [notif, setNotif] = useState<{ message: string; status: string }>({
+    message: '',
+    status: '',
+  });
 
   useEffect(() => {
     const fetchCart = async () => {
@@ -39,30 +43,47 @@ export default function Cart() {
     if (data.status === 'success') {
       const updatedCart = cart.filter((item) => item.id !== id);
       setCart(updatedCart);
-      showToast('Item removed from cart');
+      showToast(res);
     } else {
-      alert('Failed to remove cart');
-      showToast('Failed to remove cart');
+      showToast({ message: 'Failed to remove cart!', status: 'error' });
     }
   };
 
-  const showToast = (message: string) => {
-    setToastMessage(message);
-    setToastVisible(true);
+  const checkout = async () => {
+    const cartItems = cart.map((item) => ({
+      id: item.id,
+      product_id: item.product.id,
+      quantity: item.quantity,
+    }));
+
+    try {
+      await Promise.all(
+        cartItems.map((item) => updateCartQuantity(item.id, item.quantity)),
+      );
+
+      showToast({
+        message: 'Cart updated successfully and Ready to checkout!',
+        status: 'success',
+      });
+
+      setTimeout(() => {
+        router.push('/checkout');
+      }, 3000);
+    } catch (error) {
+      showToast({ message: 'Failed to update cart!', status: 'error' });
+    }
+  };
+
+  const showToast = (data: { message: string; status: string }) => {
+    setNotif(data);
     setTimeout(() => {
-      setToastVisible(false);
+      setNotif({ message: '', status: '' });
     }, 3000);
   };
 
   return (
     <section className="p-12 max-w-screen-xl mx-auto items-center">
-      {toastVisible && (
-        <div className="toast toast-top toast-end top-[3rem]">
-          <div className="alert alert-info">
-            <span>{toastMessage}</span>
-          </div>
-        </div>
-      )}
+      <NotificationToast toastMessage={notif} />
       <h3 className="text-3xl font-bold mb-8 text-center">Shopping Cart</h3>
       <div className="overflow-x-auto">
         <table className="w-full min-w-[600px] table-auto border-collapse">
@@ -135,24 +156,25 @@ export default function Cart() {
         </table>
       </div>
       {cart.length === 0 ? null : (
-        <Link href={'/checkout'}>
-          <button className="bg-secondary rounded-3xl py-4 my-8 text-center w-full">
-            <div className="flex justify-between px-4">
-              <span>
-                Price:
-                <span className="font-bold">
-                  {' '}
-                  Rp.{' '}
-                  {cart.reduce(
-                    (acc, item) => acc + item.product.price * item.quantity,
-                    0,
-                  )}
-                </span>
+        <button
+          className="bg-secondary rounded-3xl py-4 my-8 text-center w-full"
+          onClick={checkout}
+        >
+          <div className="flex justify-between px-4">
+            <span>
+              Price:
+              <span className="font-bold">
+                {' '}
+                Rp.{' '}
+                {cart.reduce(
+                  (acc, item) => acc + item.product.price * item.quantity,
+                  0,
+                )}
               </span>
-              <span className="font-bold">Checkout {'->'}</span>
-            </div>
-          </button>
-        </Link>
+            </span>
+            <span className="font-bold">Checkout {'->'}</span>
+          </div>
+        </button>
       )}
     </section>
   );

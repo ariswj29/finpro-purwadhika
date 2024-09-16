@@ -7,6 +7,7 @@ import {
   getCity,
   getProvince,
 } from '@/api/address';
+import NotificationToast from '@/components/NotificationToast';
 import { getCookies } from '@/helper/helper';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -20,11 +21,10 @@ export default function AddAddress() {
   const addressId = Array.isArray(id) ? id[0] : id || null;
   const [province, setProvince] = useState([]);
   const [city, setCity] = useState([]);
-  const [toastVisible, setToastVisible] = useState(false);
-  const [toastMessage, setToastMessage] = useState<{
-    message: string;
-    status: string;
-  }>({ message: '', status: '' });
+  const [notif, setNotif] = useState<{ message: string; status: string }>({
+    message: '',
+    status: '',
+  });
   const {
     register,
     watch,
@@ -97,35 +97,16 @@ export default function AddAddress() {
   };
 
   const showToast = (data: { message: string; status: string }) => {
-    setToastMessage(data);
-    setToastVisible(true);
+    setNotif(data);
     setTimeout(() => {
-      setToastVisible(false);
+      setNotif({ message: '', status: '' });
     }, 3000);
   };
 
   return (
     <div className="shadow container mx-auto px-4">
       <form>
-        {toastVisible && (
-          <div
-            className="toast toast-top toast-end"
-            style={{
-              position: 'fixed',
-              top: '3rem',
-              right: '1rem',
-              zIndex: 1000,
-            }}
-          >
-            <div
-              className={`alert ${toastMessage.status === 'success' ? 'alert-success' : 'alert-error'}`}
-            >
-              <span className="text-primary text-bold">
-                {toastMessage.message}
-              </span>
-            </div>
-          </div>
-        )}
+        <NotificationToast toastMessage={notif} />
         <div className="md:grid">
           <label className="form-control w-full">
             <div className="label">

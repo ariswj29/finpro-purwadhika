@@ -1,12 +1,15 @@
 import { confirmPayment, uploadPayment } from '@/api/order';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import NotificationToast from './NotificationToast';
 
 export default function UploadPaymentPage(props: any) {
   const [preview, setPreview] = useState<string | null>('');
-  const [toastVisible, setToastVisible] = useState(false);
-  const [toastMessage, setToastMessage] = useState('');
   const [file, setFile] = useState<File | null>(null);
+  const [notif, setNotif] = useState<{ message: string; status: string }>({
+    message: '',
+    status: '',
+  });
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -22,7 +25,7 @@ export default function UploadPaymentPage(props: any) {
 
   const handlePayment = async () => {
     if (!file) {
-      showToast('Please upload payment proof');
+      showToast({ message: 'Please upload payment proof!', status: 'error' });
       return;
     }
 
@@ -33,16 +36,19 @@ export default function UploadPaymentPage(props: any) {
     try {
       const response = await uploadPayment(props.order.id, formData);
       if (response.status === 'success') {
-        showToast('Payment Proof Uploaded');
+        showToast(response);
         setTimeout(() => {
           props.onClose(false);
           window.location.reload();
         }, 3000);
       } else {
-        showToast('Failed to upload payment proof');
+        showToast({
+          message: 'Failed to upload payment proof!',
+          status: 'error',
+        });
       }
     } catch (error) {
-      showToast('Error uploading payment proof');
+      showToast({ message: 'Error uploading payment proof!', status: 'error' });
     }
   };
 
@@ -56,7 +62,7 @@ export default function UploadPaymentPage(props: any) {
       const { status } = response;
 
       if (status == 'success') {
-        showToast(`Success ${confirm} payment`);
+        showToast(response);
         setTimeout(() => {
           window.location.reload();
         }, 3000);
@@ -76,23 +82,16 @@ export default function UploadPaymentPage(props: any) {
     }
   }, []);
 
-  const showToast = (message: string) => {
-    setToastMessage(message);
-    setToastVisible(true);
+  const showToast = (data: { message: string; status: string }) => {
+    setNotif(data);
     setTimeout(() => {
-      setToastVisible(false);
-    }, 5000);
+      setNotif({ message: '', status: '' });
+    }, 3000);
   };
 
   return (
     <div className="relative bg-white p-4 rounded-lg shadow-lg z-10 max-w-md mx-auto">
-      {toastVisible && (
-        <div className="toast toast-top toast-end top-[3rem]">
-          <div className="alert alert-info">
-            <span>{toastMessage}</span>
-          </div>
-        </div>
-      )}
+      <NotificationToast toastMessage={notif} />
       <h1 className="text-xl font-bold mb-4">
         {props.to !== 'confirm-payment' ? 'Upload Payment' : 'Confirm Payment'}
       </h1>

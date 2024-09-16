@@ -240,15 +240,24 @@ export async function product(req: Request, res: Response) {
   try {
     const { id } = req.params;
 
-    const product = await prisma.product.findUnique({
+    const isIdNumeric = !isNaN(Number(id));
+
+    const product = await prisma.product.findFirst({
       where: {
-        id: parseInt(id, 10),
+        OR: [
+          { id: isIdNumeric ? parseInt(id, 10) : undefined },
+          { slug: !isIdNumeric ? id : undefined },
+        ],
       },
     });
 
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
     res.status(200).json({
       status: 'success',
-      message: 'success get product',
+      message: 'Success get product',
       data: product,
     });
   } catch (error) {

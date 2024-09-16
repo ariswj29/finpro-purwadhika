@@ -6,6 +6,7 @@ import { FaPen, FaPlus, FaSearch, FaTrash } from 'react-icons/fa';
 import Link from 'next/link';
 import { getAddress, setPrimaryAddress } from '@/api/address';
 import ConfirmModal from '@/components/ConfirmModal';
+import NotificationToast from '@/components/NotificationToast';
 
 export default function AddressPage() {
   const cookies = getCookies();
@@ -14,6 +15,10 @@ export default function AddressPage() {
   const [confirmationModal, setConfirmationModal] = useState(false);
   const [id, setId] = useState<number>(0);
   const [forModal, setFor] = useState<string>('');
+  const [notif, setNotif] = useState<{ message: string; status: string }>({
+    message: '',
+    status: '',
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,21 +38,32 @@ export default function AddressPage() {
       const response = await setPrimaryAddress(addressId, {
         userId: Number(cookies.userId),
       });
-      window.location.reload();
+      showToast(response);
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     } catch (error) {
       console.error('Failed to set primary address', error);
     }
   };
 
+  const showToast = (data: { message: string; status: string }) => {
+    setNotif(data);
+    setTimeout(() => {
+      setNotif({ message: '', status: '' });
+    }, 3000);
+  };
+
   return (
     <div className="stats stats-vertical shadow container mx-auto px-4">
+      <NotificationToast toastMessage={notif} />
       <div className="flex justify-between items-center gap-4">
         <div className="flex">
           <div className=" pl-6 stat-value text-xl">My Address</div>
         </div>
         <Link
           href={'/profile/address/add'}
-          className="bg-secondary hover:bg-yellow-400 text-primary p-2 px-4 my-2"
+          className="bg-secondary hover:bg-yellow-400 p-2 px-4 my-2 rounded-lg"
         >
           <span className="flex items-center">
             <FaPlus /> &nbsp; Add New Address
@@ -83,7 +99,7 @@ export default function AddressPage() {
             <div className="grid grid-cols-2">
               <div className="justify-self-end">
                 <Link href={`/profile/address/${item.id}`}>
-                  <button className="bg-secondary hover:bg-yellow-600 text-primary p-1 rounded">
+                  <button className="bg-secondary hover:bg-yellow-600 text-primary p-1 rounded-md">
                     <FaPen />
                   </button>
                 </Link>
@@ -95,7 +111,7 @@ export default function AddressPage() {
                     setId(item.id);
                     setFor('address');
                   }}
-                  className="bg-black hover:bg-red-600 text-primary p-1 rounded ml-2"
+                  className="bg-black hover:bg-red-600 text-primary p-1 rounded-md ml-2"
                 >
                   <FaTrash />
                 </button>
@@ -103,7 +119,8 @@ export default function AddressPage() {
               <div className="col-span-2">
                 <button
                   onClick={() => handleSetPrimary(item.id)}
-                  className="btn btn-xs p-1 rounded ml-2"
+                  className="btn btn-xs py-1 px-2 rounded ml-2"
+                  disabled={item.isPrimary ? true : false}
                 >
                   Set as primary
                 </button>

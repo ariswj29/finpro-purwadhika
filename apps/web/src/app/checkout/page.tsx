@@ -13,20 +13,16 @@ import AddAddress from '@/components/AddAdress';
 import { createOrder } from '@/api/order';
 import { getBranch } from '@/api/branch';
 import { calShippingCost } from '@/api/checkout';
+import NotificationToast from '../../components/NotificationToast';
 
 export default function CheckoutPage(context: any) {
   const cookies = getCookies();
   const [cart, setCart] = useState<CartItem[]>([]);
   const [address, setAddress] = useState([]);
   const [branch, setBranch] = useState([]);
-  const [shippingCost, setShippingCost] = useState(0); // State untuk menyimpan biaya pengiriman
-  console.log(shippingCost, 'ship');
+  const [shippingCost, setShippingCost] = useState(0);
   const [addAddress, setAddAddress] = useState(false);
-  const [toastVisible, setToastVisible] = useState(false);
-  const [toastMessage, setToastMessage] = useState<{
-    message: string;
-    status: string;
-  }>({
+  const [notif, setNotif] = useState<{ message: string; status: string }>({
     message: '',
     status: '',
   });
@@ -39,10 +35,8 @@ export default function CheckoutPage(context: any) {
     formState: { errors },
   } = useForm();
 
-  const selectedCourier = watch('courier'); // Watch untuk courier
-  console.log(selectedCourier, 'selected courier');
-  const selectedAddress = watch('addressId'); // Watch untuk address
-  console.log(selectedAddress, 'selected address');
+  const selectedCourier = watch('courier');
+  const selectedAddress = watch('addressId');
 
   useEffect(() => {
     const fetchCart = async () => {
@@ -68,7 +62,6 @@ export default function CheckoutPage(context: any) {
     fetchAddress();
   }, []);
 
-  // Fungsi untuk menghitung biaya pengiriman
   const calculateShippingCost = async (cityId: string, courier: string) => {
     try {
       const response = await calShippingCost({
@@ -77,23 +70,20 @@ export default function CheckoutPage(context: any) {
         origin: branch.cityId,
         weight: 1000,
       });
-      setShippingCost(response); // Simpan biaya pengiriman ke state
+      setShippingCost(response);
     } catch (error) {
       console.error('Error calculating shipping cost:', error);
-      setShippingCost(0); // Set shipping cost ke 0 jika gagal
+      setShippingCost(0);
     }
   };
 
-  // Checkout page
   useEffect(() => {
-    // Cek apakah `selectedAddress` dan `selectedCourier` sudah terisi
     if (selectedAddress !== 'Pick one' && selectedCourier !== 'Pick one') {
       const selectedAddressObj = address.find(
         (addr) => addr.id === Number(selectedAddress),
       );
 
       if (selectedAddressObj) {
-        // Jika kedua pilihan sudah terisi, panggil calculateShippingCost
         calculateShippingCost(selectedAddressObj.cityId, selectedCourier);
       }
     }
@@ -123,41 +113,22 @@ export default function CheckoutPage(context: any) {
     if (response) {
       showToast(response);
       reset();
-      window.location.href = '/profile/order-list';
+      setTimeout(() => {
+        window.location.href = '/profile/order-list';
+      }, 3000);
     }
   };
 
   const showToast = (data: { message: string; status: string }) => {
-    setToastMessage(data);
-    setToastVisible(true);
+    setNotif(data);
     setTimeout(() => {
-      setToastVisible(false);
+      setNotif({ message: '', status: '' });
     }, 3000);
   };
 
   return (
     <div className="container max-w-screen-xl mx-auto items-center p-12">
-      {/* Toast */}
-      {toastVisible && (
-        <div
-          className="toast toast-top toast-end"
-          style={{
-            position: 'fixed',
-            top: '3rem',
-            right: '1rem',
-            zIndex: 1000,
-          }}
-        >
-          <div
-            className={`alert ${toastMessage.status === 'success' ? 'alert-success' : 'alert-error'}`}
-          >
-            <span className="text-primary text-bold">
-              {toastMessage.message}
-            </span>
-          </div>
-        </div>
-      )}
-
+      <NotificationToast toastMessage={notif} />
       <div className="bg-white shadow-md rounded-lg p-6">
         <h3 className="text-2xl font-bold text-gray-800 text-center mb-4">
           Checkout

@@ -7,21 +7,15 @@ import { getCookies } from '@/helper/helper';
 import Cookies from 'js-cookie';
 import Image from 'next/image';
 import { logout } from '@/api/auth';
+import NotificationToast from '@/components/NotificationToast';
 
 export default function ProfilePage() {
-  const [profileData, setProfileData] = useState({
-    username: '',
-    email: '',
-    image: '/profile.jpg',
-  });
-
   const [preview, setPreview] = useState<string | null>('');
   const [file, setFile] = useState<File | null>(null);
-  const [toastVisible, setToastVisible] = useState(false);
-  const [toastMessage, setToastMessage] = useState<{
-    message: string;
-    status: string;
-  }>({ message: '', status: '' });
+  const [notif, setNotif] = useState<{ message: string; status: string }>({
+    message: '',
+    status: '',
+  });
 
   const {
     register,
@@ -37,7 +31,6 @@ export default function ProfilePage() {
       const cookies = getCookies();
       try {
         const profileResponse = await getProfile(Number(cookies.userId));
-        setProfileData(profileResponse.data);
         setValue('username', profileResponse.data.username);
         setValue('email', profileResponse.data.email);
         setPreview(
@@ -84,7 +77,6 @@ export default function ProfilePage() {
         secure: true,
       });
       showToast(response);
-      setProfileData(response.data);
       setTimeout(() => {
         window.location.reload();
       }, 3000);
@@ -95,9 +87,6 @@ export default function ProfilePage() {
 
   const onSubmitEmail = async (data: any) => {
     const cookies = getCookies();
-
-    console.log(data, 'formdata email');
-
     try {
       const response = await verifyEmail(Number(cookies.userId), data);
       Cookies.set('user', JSON.stringify(response.data), {
@@ -105,7 +94,6 @@ export default function ProfilePage() {
         secure: true,
       });
       showToast(response);
-      setProfileData(response.data);
       logout();
       window.location.href = '/auth/login';
     } catch (error) {
@@ -114,34 +102,15 @@ export default function ProfilePage() {
   };
 
   const showToast = (data: { message: string; status: string }) => {
-    setToastMessage(data);
-    setToastVisible(true);
+    setNotif(data);
     setTimeout(() => {
-      setToastVisible(false);
+      setNotif({ message: '', status: '' });
     }, 3000);
   };
 
   return (
     <div className="container mx-auto px-4">
-      {toastVisible && (
-        <div
-          className="toast toast-top toast-end"
-          style={{
-            position: 'fixed',
-            top: '3rem',
-            right: '1rem',
-            zIndex: 1000,
-          }}
-        >
-          <div
-            className={`alert ${toastMessage.status === 'success' ? 'alert-success' : 'alert-error'}`}
-          >
-            <span className="text-primary text-bold">
-              {toastMessage.message}
-            </span>
-          </div>
-        </div>
-      )}
+      <NotificationToast toastMessage={notif} />
       <h3 className="text-3xl font-bold mb-6 text-center">My Profile</h3>
 
       <form
@@ -152,9 +121,11 @@ export default function ProfilePage() {
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-2"></label>
             <div className="flex justify-center">
-              <img
+              <Image
+                width={200}
+                height={200}
                 src={preview}
-                alt="Pratampilan Gambarss"
+                alt="Pratampilan Gambar"
                 className="w-48 h-auto max-h-96 rounded-lg border"
               />
             </div>
