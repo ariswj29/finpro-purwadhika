@@ -5,21 +5,13 @@ import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { getAllProducts } from '@/api/products';
 import { formattedMoney, getCookies } from '@/helper/helper';
-import { addCart } from '@/api/cart';
 import { Product } from '@/interface/product.interface';
-import { FaHeart } from 'react-icons/fa';
-import { addToWishlist } from '@/api/wishlist';
 import Cookies from 'js-cookie';
 
 export default function ProductsList(props: any) {
   const cookies = getCookies();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [toastVisible, setToastVisible] = useState(false);
-  const [toastMessage, setToastMessage] = useState<{
-    message: string;
-    status: string;
-  }>({ message: '', status: '' });
 
   const fetchProductList = async (limit = 8) => {
     if (navigator.geolocation) {
@@ -69,58 +61,15 @@ export default function ProductsList(props: any) {
     }
   };
 
-  const handleAddToCart = async (id: number) => {
-    if (cookies.token && cookies.userId) {
-      const res = await addCart(id, Number(cookies.userId));
-      showToast(res);
-    } else {
-      showToast({ message: 'Please login first!', status: 'error' });
-    }
-  };
-
-  const handleAddToWishlist = async (id: number) => {
-    if (cookies.token && cookies.userId) {
-      const res = await addToWishlist(id, Number(cookies.userId));
-      showToast(res);
-    } else {
-      showToast({ message: 'Please login first!', status: 'error' });
-    }
-  };
-
-  const showToast = (data: { message: string; status: string }) => {
-    setToastMessage(data);
-    setToastVisible(true);
-    setTimeout(() => {
-      setToastVisible(false);
-    }, 3000);
-  };
-
   useEffect(() => {
     fetchProductList();
   }, []);
 
   return (
     <div className="container mx-auto px-8 py-12 bg-primary">
-      {toastVisible && (
-        <div
-          className="toast toast-top toast-end"
-          style={{
-            position: 'fixed',
-            top: '3rem',
-            right: '1rem',
-            zIndex: 1000,
-          }}
-        >
-          <div
-            className={`alert ${toastMessage.status == 'success' ? 'alert-success' : 'alert-error'}`}
-          >
-            <span className="text-primary text-bold">
-              {toastMessage.message}
-            </span>
-          </div>
-        </div>
-      )}
-      <h1 className="text-4xl font-bold mb-10 text-center">OUR PRODUCTS</h1>
+      <h1 className="text-4xl font-bold mb-10 text-center">
+        BEST SELLER PRODUCTS
+      </h1>
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 cursor-pointer">
         {loading ? (
           <span className="p-2 font-bold">Loading...</span>
@@ -133,34 +82,24 @@ export default function ProductsList(props: any) {
                 key={product.id}
                 className="p-4 bg-white hover:bg-secondary shadow-lg rounded-lg border-2 border-secondary transform transition-transform duration-300 hover:scale-105"
               >
-                {/* Wishlist icon */}
-                <button
-                  onClick={() => handleAddToWishlist(product.id)}
-                  className="absolute top-2 right-2 text-red-500 hover:text-red-700 w-10 h-10"
-                >
-                  <FaHeart />
-                </button>
-                <Image
-                  src={`${process.env.NEXT_PUBLIC_BASE_URL}/products/${product.image}`}
-                  alt={product.name}
-                  className="bg-gray-200 rounded-lg h-48 w-full object-cover"
-                  width={500}
-                  height={500}
-                />
-                <h2 className="text-xl font-semibold pt-4 text-black">
-                  {product.name}
-                </h2>
-                <p className="text-gray-600">
-                  {formattedMoney(product.price ?? 0)}
-                </p>
-                <div className="flex justify-center">
-                  <button
-                    className="bg-black text-white px-8 py-1 mt-4 rounded-2xl hover:font-bold"
-                    onClick={() => handleAddToCart(product.id)}
-                  >
-                    Add to Cart
-                  </button>
-                </div>
+                <Link href={`/products/${product.slug}`}>
+                  <Image
+                    src={`${process.env.NEXT_PUBLIC_BASE_URL}/products/${product.image}`}
+                    alt={product.name}
+                    className="bg-gray-200 rounded-lg h-48 w-full object-cover"
+                    width={500}
+                    height={500}
+                  />
+                  <h2 className="text-xl font-semibold pt-4 text-black">
+                    {product.name}
+                  </h2>
+                  <p className="text-gray-600">
+                    {formattedMoney(product.price ?? 0)}
+                  </p>
+                  <p className="text-gray-600">
+                    Stock: {product.currentStock || 0}
+                  </p>
+                </Link>
               </div>
             );
           })

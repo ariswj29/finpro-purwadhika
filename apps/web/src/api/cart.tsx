@@ -53,3 +53,19 @@ export async function updateCart(id: number) {
 
   return res.data;
 }
+
+export async function updateCartQuantity(id: number, quantity: number) {
+  const authToken = await getCookie('token');
+  const url = base_url_api + '/cart/update-quantity/' + id;
+  const res = await axios.put(
+    url,
+    { quantity },
+    {
+      headers: {
+        Authorization: 'Bearer ' + authToken,
+      },
+    },
+  );
+
+  return res.data;
+}
