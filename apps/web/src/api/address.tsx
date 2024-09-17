@@ -24,7 +24,7 @@ export async function getProvince() {
   return res.data;
 }
 
-export async function getCity(provinceId: number) {
+export async function getCity(provinceId: string) {
   const url = base_url_api + `/address/city?provinceId=${provinceId}`;
   const res = await axios.get(url);
 

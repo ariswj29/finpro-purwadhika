@@ -1,32 +1,16 @@
 'use client';
-import {
-  addAddress,
-  addressDetail,
-  editAddress,
-  getAddress,
-  getCity,
-  getProvince,
-} from '@/api/address';
-import NotificationToast from '@/components/NotificationToast';
-import { getCookies } from '@/helper/helper';
-import { addressSchema } from '@/schemas/address.schema';
+
+import { createUserProcess, getUserById, updateUserProcess } from '@/api/user';
+import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { FaPlus } from 'react-icons/fa';
+import { ShowMessage } from '@/components/ShowMessage';
+import { usersSchema } from '@/schemas/users.schema';
+import { updateBranch } from '@/api/branch';
+import { getCity, getProvince } from '@/api/address';
 
-export default function AddAddress() {
-  const cookies = getCookies();
-  const router = useRouter();
-  const { id } = useParams();
-  const addressId = Array.isArray(id) ? id[0] : id || null;
-  const [province, setProvince] = useState([]);
-  const [city, setCity] = useState([]);
-  const [notif, setNotif] = useState<{ message: string; status: string }>({
-    message: '',
-    status: '',
-  });
+const FormUsers = () => {
   const {
     register,
     watch,
@@ -34,20 +18,37 @@ export default function AddAddress() {
     reset,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(addressSchema),
+    resolver: yupResolver(usersSchema),
   });
 
+  const router = useRouter();
+  const { id } = useParams();
+  const [province, setProvince] = useState([]);
+  const [city, setCity] = useState([]);
+  const branchId = Array.isArray(id) ? id[0] : id || null;
+  const [notif, setNotif] = useState<{ message: string; status: string }>({
+    message: '',
+    status: '',
+  });
+  const [showMessage, setShowMessage] = useState(false);
+
   useEffect(() => {
-    if (addressId != 'add') {
-      addressDetail(addressId || '')
+    if (branchId != 'add') {
+      getUserById(branchId || '')
         .then((data) => {
           reset(data.data);
         })
         .catch((error) => {
-          console.error('Error fetching address:', error);
+          console.error('Error fetching user:', error);
         });
     }
-  }, [addressId, reset]);
+  }, [branchId, reset]);
+
+  useEffect(() => {
+    if (branchId) {
+      reset({ ...watch() });
+    }
+  }, [branchId, reset, watch]);
 
   useEffect(() => {
     const fetchProvince = async () => {
@@ -77,40 +78,48 @@ export default function AddAddress() {
     }
   }, [watch('provinceId')]);
 
-  const onSubmit = async (data: any, event: any) => {
+  const formSubmit = async (formData: any) => {
     try {
-      data = {
-        ...data,
-        userId: Number(cookies.userId),
-        longitude: 0,
-        latitude: 0,
-      };
-      let response;
-      if (addressId == 'add') {
-        response = await addAddress(data);
+      if (branchId != 'add') {
+        const response = await updateBranch(branchId || '', formData);
+        setShowMessage(true);
+        setDataMessage(response);
       } else {
-        response = await editAddress(addressId || '', data);
+        const response = await createUserProcess(formData);
+        setShowMessage(true);
+        setDataMessage(response);
       }
-      showToast(response);
       setTimeout(() => {
-        router.push('/profile/address');
+        setShowMessage(false);
+        router.push('/admin/stores');
       }, 3000);
     } catch (error) {
-      console.error('Error adding address:', error);
+      console.error('Error creating/updating branch:', error);
     }
-  };
-
-  const showToast = (data: { message: string; status: string }) => {
-    setNotif(data);
-    setTimeout(() => {
-      setNotif({ message: '', status: '' });
-    }, 3000);
   };
 
   return (
     <div className="shadow container mx-auto px-4">
       <form>
-        <NotificationToast toastMessage={notif} />
+        {toastVisible && (
+          <div
+            className="toast toast-top toast-end"
+            style={{
+              position: 'fixed',
+              top: '3rem',
+              right: '1rem',
+              zIndex: 1000,
+            }}
+          >
+            <div
+              className={`alert ${toastMessage.status === 'success' ? 'alert-success' : 'alert-error'}`}
+            >
+              <span className="text-primary text-bold">
+                {toastMessage.message}
+              </span>
+            </div>
+          </div>
+        )}
         <div className="md:grid">
           <label className="form-control w-full">
             <div className="label">
@@ -123,7 +132,7 @@ export default function AddAddress() {
               {...register('name', { required: true })}
             />
             {errors.name && (
-              <span className="text-red-500">This field is required</span>
+              <span className="text-red-500">{errors.name.message}</span>
             )}
           </label>
           <label className="form-control w-full">
@@ -145,7 +154,7 @@ export default function AddAddress() {
               ))}
             </select>
             {errors.provinceId && (
-              <span className="text-red-500">This field is required</span>
+              <span className="text-red-500">{errors.provinceId.message}</span>
             )}
           </label>
           <label className="form-control w-full">
@@ -167,7 +176,7 @@ export default function AddAddress() {
               ))}
             </select>
             {errors.cityId && (
-              <span className="text-red-500">This field is required</span>
+              <span className="text-red-500">{errors.cityId.message}</span>
             )}
           </label>
           <label className="form-control w-full">
@@ -181,7 +190,7 @@ export default function AddAddress() {
               {...register('address', { required: true })}
             />
             {errors.address && (
-              <span className="text-red-500">This field is required</span>
+              <span className="text-red-500">{errors.address.message}</span>
             )}
           </label>
           <label className="form-control w-full">
@@ -195,7 +204,7 @@ export default function AddAddress() {
               {...register('postalCode', { required: true })}
             />
             {errors.postalCode && (
-              <span className="text-red-500">This field is required</span>
+              <span className="text-red-500">{errors.postalCode.message}</span>
             )}
           </label>
           <button
@@ -209,4 +218,4 @@ export default function AddAddress() {
       </form>
     </div>
   );
-}
+};
