@@ -16,6 +16,6 @@ export interface Branch {
     name: string;
   };
   user: {
-    name: string;
+    username: string;
   };
 }

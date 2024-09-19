@@ -6,7 +6,7 @@ export const branchSchemma = yup.object().shape({
   provinceId: yup.string().required('province is required'),
   cityId: yup.string().required('city is required'),
   postalCode: yup.string().required('postal code is required'),
-  latitude: yup.string().required('latitude is required'),
-  longitude: yup.string().required('longitude is required'),
+  latitude: yup.string(),
+  longitude: yup.string(),
   userId: yup.string().required('user is required'),
 });

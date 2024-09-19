@@ -111,7 +111,7 @@ export default function UsersPage() {
                   <td className="border p-2">{branch.address}</td>
                   <td className="border p-2">{branch.province.name}</td>
                   <td className="border p-2">{branch.city.name}</td>
-                  <td className="border p-2">{branch.user.name}</td>
+                  <td className="border p-2">{branch.user.username}</td>
                   <td className="border p-2">
                     <Link href={`/admin/stores/${branch.id}`}>
                       <button className="bg-yellow-500 hover:bg-yellow-600 text-primary p-1 rounded">

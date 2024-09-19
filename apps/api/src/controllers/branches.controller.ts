@@ -25,7 +25,7 @@ export async function createBranch(req: Request, res: Response) {
         longitude: Number(longitude),
         province: { connect: { id: Number(provinceId) } },
         city: { connect: { id: Number(cityId) } },
-        user: { connect: { id: userId } },
+        user: { connect: { id: Number(userId) } },
       },
     });
 
@@ -116,40 +116,51 @@ export const getAllBranch = async (req: Request, res: Response) => {
 };
 
 export async function updateBranch(req: Request, res: Response) {
-  // try {
-  const { id } = req.params;
-  const {
-    name,
-    address,
-    provinceId,
-    cityId,
-    postalCode,
-    latitude,
-    longitude,
-    userId,
-  } = req.body;
-
-  const promotion = await prisma.branch.update({
-    where: { id: Number(id) },
-    data: {
+  try {
+    const { id } = req.params;
+    const {
       name,
       address,
-      provinceId: Number(provinceId),
-      cityId: Number(cityId),
+      provinceId,
+      cityId,
       postalCode,
-      latitude: Number(latitude),
-      longitude: Number(longitude),
-      userId: Number(userId),
-    },
-  });
-  res.status(200).json({
-    status: 'success',
-    message: 'branch successfully updated',
-    data: promotion,
-  });
-  // } catch (error) {
-  //   res.status(400).json({ message: 'something went wrong' });
-  // }
+      latitude,
+      longitude,
+      userId,
+    } = req.body;
+
+    const user = await prisma.user.findUnique({
+      where: { id: Number(userId), branch: null },
+    });
+
+    if (!user) {
+      return res.status(200).json({
+        status: 'error',
+        message: 'User not found or already has a branch',
+      });
+    }
+
+    const promotion = await prisma.branch.update({
+      where: { id: Number(id) },
+      data: {
+        name,
+        address,
+        provinceId: Number(provinceId),
+        cityId: Number(cityId),
+        postalCode,
+        latitude: Number(latitude),
+        longitude: Number(longitude),
+        userId: Number(userId),
+      },
+    });
+    res.status(200).json({
+      status: 'success',
+      message: 'Branch successfully updated',
+      data: promotion,
+    });
+  } catch (error) {
+    res.status(400).json({ message: 'something went wrong' });
+  }
 }
 
 export async function deleteBranch(req: Request, res: Response) {

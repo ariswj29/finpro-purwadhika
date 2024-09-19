@@ -69,3 +69,15 @@ export async function deleteUserProcess(id: number) {
 
   return res.data;
 }
+
+export async function getUserAdmin() {
+  const authToken = await getCookie('token');
+  const url = base_url_api + '/users/admin';
+  const res = await axios.get(url, {
+    headers: {
+      Authorization: 'Bearer ' + authToken,
+    },
+  });
+
+  return res.data;
+}
