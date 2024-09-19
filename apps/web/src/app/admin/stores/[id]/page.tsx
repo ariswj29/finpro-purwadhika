@@ -1,16 +1,16 @@
 'use client';
 
-import { createUserProcess, getUserById, updateUserProcess } from '@/api/user';
+import { getUserAdmin } from '@/api/user';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useParams, useRouter } from 'next/navigation';
 import { ShowMessage } from '@/components/ShowMessage';
-import { usersSchema } from '@/schemas/users.schema';
-import { updateBranch } from '@/api/branch';
+import { branchSchemma } from '@/schemas/branch.schema';
+import { createBranch, getBranch, updateBranch } from '@/api/branch';
 import { getCity, getProvince } from '@/api/address';
 
-const FormUsers = () => {
+const FormStore = () => {
   const {
     register,
     watch,
@@ -18,23 +18,25 @@ const FormUsers = () => {
     reset,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(usersSchema),
+    resolver: yupResolver(branchSchemma),
   });
 
   const router = useRouter();
   const { id } = useParams();
-  const [province, setProvince] = useState([]);
-  const [city, setCity] = useState([]);
-  const branchId = Array.isArray(id) ? id[0] : id || null;
-  const [notif, setNotif] = useState<{ message: string; status: string }>({
+  const storeId = Array.isArray(id) ? id[0] : id || null;
+  const [dataMessage, setDataMessage] = useState({
     message: '',
     status: '',
+    data: {},
   });
   const [showMessage, setShowMessage] = useState(false);
+  const [province, setProvince] = useState([]);
+  const [city, setCity] = useState([]);
+  const [user, setUser] = useState([]);
 
   useEffect(() => {
-    if (branchId != 'add') {
-      getUserById(branchId || '')
+    if (storeId != 'add') {
+      getBranch(Number(storeId) || 0)
         .then((data) => {
           reset(data.data);
         })
@@ -42,15 +44,24 @@ const FormUsers = () => {
           console.error('Error fetching user:', error);
         });
     }
-  }, [branchId, reset]);
+  }, [storeId, reset]);
 
   useEffect(() => {
-    if (branchId) {
+    if (storeId) {
       reset({ ...watch() });
     }
-  }, [branchId, reset, watch]);
+  }, [storeId, reset, watch]);
 
   useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await getUserAdmin();
+        setUser(res.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
     const fetchProvince = async () => {
       try {
         const res = await getProvince();
@@ -69,6 +80,7 @@ const FormUsers = () => {
       }
     };
 
+    fetchUser();
     fetchProvince();
     const provinceId = watch('provinceId');
     if (provinceId) {
@@ -78,144 +90,157 @@ const FormUsers = () => {
     }
   }, [watch('provinceId')]);
 
-  const formSubmit = async (formData: any) => {
+  const onSubmit = async (data: any) => {
+    console.log(data, 'data submit');
     try {
-      if (branchId != 'add') {
-        const response = await updateBranch(branchId || '', formData);
-        setShowMessage(true);
-        setDataMessage(response);
+      data = {
+        ...data,
+        longitude: 0,
+        latitude: 0,
+      };
+      let response;
+      if (storeId == 'add') {
+        response = await createBranch(data);
       } else {
-        const response = await createUserProcess(formData);
-        setShowMessage(true);
-        setDataMessage(response);
+        response = await updateBranch(storeId || '', data);
       }
+      console.log(response, 'response');
+      setDataMessage(response);
+      setShowMessage(true);
       setTimeout(() => {
-        setShowMessage(false);
         router.push('/admin/stores');
+        setShowMessage(false);
       }, 3000);
     } catch (error) {
-      console.error('Error creating/updating branch:', error);
+      console.error('Error adding address:', error);
     }
   };
 
   return (
-    <div className="shadow container mx-auto px-4">
-      <form>
-        {toastVisible && (
-          <div
-            className="toast toast-top toast-end"
-            style={{
-              position: 'fixed',
-              top: '3rem',
-              right: '1rem',
-              zIndex: 1000,
-            }}
-          >
-            <div
-              className={`alert ${toastMessage.status === 'success' ? 'alert-success' : 'alert-error'}`}
-            >
-              <span className="text-primary text-bold">
-                {toastMessage.message}
-              </span>
-            </div>
-          </div>
-        )}
-        <div className="md:grid">
-          <label className="form-control w-full">
-            <div className="label">
-              <span className="label-text font-bold">Name</span>
-            </div>
+    <form>
+      <div className="container mx-auto px-4">
+        {showMessage === true ? (
+          <ShowMessage
+            name={
+              dataMessage.message === 'Branch successfully created'
+                ? 'Add Data Success'
+                : dataMessage.message === 'Branch successfully updated'
+                  ? 'Edit Data Success'
+                  : 'Failed'
+            }
+            desc={dataMessage.message}
+            status={dataMessage.status}
+            show={showMessage}
+          />
+        ) : null}
+        <div className="text-2xl mb-4">Add Store</div>
+        <div className="grid grid-cols-2 gap-4 items-center">
+          <label className="label">Name Branch</label>
+          <div className="">
             <input
-              type="text"
-              placeholder="Name"
-              className="input input-bordered"
-              {...register('name', { required: true })}
+              className="w-full border p-2"
+              {...register('name')}
+              placeholder="Name Branch"
             />
             {errors.name && (
-              <span className="text-red-500">{errors.name.message}</span>
+              <p className="text-sm text-red-500">{errors.name.message}</p>
             )}
-          </label>
-          <label className="form-control w-full">
-            <div className="label">
-              <span className="label-text font-bold">Province</span>
-            </div>
-            <select
-              className="select select-bordered"
-              {...register('provinceId', { required: true })}
-              defaultValue=""
-            >
-              <option value="" disabled>
-                Pick one
+          </div>
+
+          <label className="label">Province</label>
+          <select
+            className="select select-bordered"
+            {...register('provinceId', { required: true })}
+            defaultValue=""
+          >
+            <option value="" disabled>
+              Pick one
+            </option>
+            {province.map((prov: { id: string; name: number }) => (
+              <option key={prov.id} value={prov.id}>
+                {prov.name}
               </option>
-              {province.map((prov: { id: string; name: number }) => (
-                <option key={prov.id} value={prov.id}>
-                  {prov.name}
-                </option>
-              ))}
-            </select>
-            {errors.provinceId && (
-              <span className="text-red-500">{errors.provinceId.message}</span>
-            )}
-          </label>
-          <label className="form-control w-full">
-            <div className="label">
-              <span className="label-text font-bold">City</span>
-            </div>
-            <select
-              className="select select-bordered"
-              {...register('cityId', { required: true })}
-              defaultValue=""
-            >
-              <option value="" disabled>
-                Pick one
+            ))}
+          </select>
+          {errors.provinceId && (
+            <span className="text-red-500">This field is required</span>
+          )}
+          <label className="label">City</label>
+          <select
+            className="select select-bordered"
+            {...register('cityId', { required: true })}
+            defaultValue=""
+          >
+            <option value="" disabled>
+              Pick one
+            </option>
+            {city.map((c: { id: string; name: number }) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
               </option>
-              {city.map((c: { id: string; name: number }) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-            {errors.cityId && (
-              <span className="text-red-500">{errors.cityId.message}</span>
-            )}
-          </label>
-          <label className="form-control w-full">
-            <div className="label">
-              <span className="label-text font-bold">Address</span>
-            </div>
-            <input
-              type="text"
+            ))}
+          </select>
+          {errors.cityId && (
+            <span className="text-red-500">This field is required</span>
+          )}
+
+          <label className="label">Address</label>
+          <div className="">
+            <textarea
+              className="w-full border p-2"
+              {...register('address')}
               placeholder="Address"
-              className="input input-bordered"
-              {...register('address', { required: true })}
             />
             {errors.address && (
-              <span className="text-red-500">{errors.address.message}</span>
+              <p className="text-sm text-red-500">{errors.address.message}</p>
             )}
-          </label>
-          <label className="form-control w-full">
-            <div className="label">
-              <span className="label-text font-bold">Postal Code</span>
-            </div>
+          </div>
+
+          <label className="label">Postal Code</label>
+          <div className="">
             <input
-              type="text"
+              className="w-full border p-2"
+              {...register('postalCode')}
               placeholder="Postal Code"
-              className="input input-bordered"
-              {...register('postalCode', { required: true })}
             />
             {errors.postalCode && (
-              <span className="text-red-500">{errors.postalCode.message}</span>
+              <p className="text-sm text-red-500">
+                {errors.postalCode.message}
+              </p>
             )}
-          </label>
-          <button
-            type="submit"
-            className="btn bg-secondary my-4"
-            onClick={handleSubmit(onSubmit)}
+          </div>
+
+          <label className="label">Admin Store</label>
+          <select
+            className="select select-bordered"
+            {...register('userId')}
+            defaultValue=""
           >
-            <FaPlus /> Submit
-          </button>
+            <option value="" disabled>
+              Pick one
+            </option>
+            {user.map(
+              (prov: { id: string; username: string; email: string }) => (
+                <option key={prov.id} value={prov.id}>
+                  {prov.username} | {prov.email}
+                </option>
+              ),
+            )}
+          </select>
+
+          <div className="my-4">
+            <button
+              className="bg-green-500 px-4 py-2 cursor-pointer text-white rounded"
+              type="submit"
+              onClick={handleSubmit(onSubmit)}
+            >
+              Save{' '}
+            </button>
+          </div>
         </div>
-      </form>
-    </div>
+      </div>
+    </form>
   );
 };
+
+export default FormStore;

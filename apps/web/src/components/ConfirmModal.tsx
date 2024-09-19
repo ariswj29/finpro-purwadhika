@@ -140,7 +140,7 @@ export default function ConfirmModal(props: {
       const { status } = response;
 
       if (status == 'success') {
-        showToast('Success delete user');
+        showToast('Success delete branch');
         setTimeout(() => {
           window.location.reload();
         }, 3000);

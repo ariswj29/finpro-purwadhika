@@ -210,3 +210,28 @@ export const deleteUsers = async (req: Request, res: Response) => {
     res.status(400).json({ error: 'error' });
   }
 };
+
+export const getAdmin = async (req: Request, res: Response) => {
+  try {
+    const users = await prisma.user.findMany({
+      where: {
+        role: 'ADMIN',
+        // branch: null
+      },
+
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        role: true,
+      },
+    });
+
+    res.status(200).json({
+      message: 'success',
+      data: users,
+    });
+  } catch (error) {
+    res.status(400).json({ error: 'error' });
+  }
+};
