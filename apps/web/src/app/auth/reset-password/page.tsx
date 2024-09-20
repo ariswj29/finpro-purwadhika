@@ -74,8 +74,8 @@ export default function ResetPasswordPage(context: any) {
         <div className="p-12 sm:p-16 bg-secondary border border-secondary shadow-sm w-full">
           <h3 className="text-2xl font-bold ">Having trouble logging in? </h3>
           <p className="my-2">
-            Enter your email, and we'll send you a link to get back into your
-            account.
+            Enter your email, and we&apos;ll send you a link to get back into
+            your account.
           </p>
         </div>
         <div className="col-span-2 p-4 bg-primary shadow-md w-full">

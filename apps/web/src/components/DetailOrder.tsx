@@ -17,7 +17,7 @@ export const DetailOrder = (props: any) => {
     };
 
     fetchData();
-  }, []);
+  }, [props.order.id]);
 
   const openPaymentProof = (image: string) => {
     window.open(

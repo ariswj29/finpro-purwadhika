@@ -9,7 +9,6 @@ import Image from 'next/image';
 import SelectOption from '@/components/SelectOption';
 import { banks, couriers } from '@/data/data';
 import { getAddress } from '@/api/address';
-import AddAddress from '@/components/AddAdress';
 import { createOrder } from '@/api/order';
 import { getBranch } from '@/api/branch';
 import { calShippingCost } from '@/api/checkout';
@@ -18,8 +17,8 @@ import NotificationToast from '../../components/NotificationToast';
 export default function CheckoutPage(context: any) {
   const cookies = getCookies();
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [address, setAddress] = useState([]);
-  const [branch, setBranch] = useState([]);
+  const [address, setAddress] = useState<{ id: number; cityId: string }[]>([]);
+  const [branch, setBranch] = useState<{ cityId: string } | null>(null);
   const [shippingCost, setShippingCost] = useState(0);
   const [addAddress, setAddAddress] = useState(false);
   const [notif, setNotif] = useState<{ message: string; status: string }>({
@@ -60,24 +59,24 @@ export default function CheckoutPage(context: any) {
     fetchCart();
     fetchBranch();
     fetchAddress();
-  }, []);
-
-  const calculateShippingCost = async (cityId: string, courier: string) => {
-    try {
-      const response = await calShippingCost({
-        courier,
-        destination: cityId,
-        origin: branch.cityId,
-        weight: 1000,
-      });
-      setShippingCost(response);
-    } catch (error) {
-      console.error('Error calculating shipping cost:', error);
-      setShippingCost(0);
-    }
-  };
+  }, [cookies.nearestBranch, cookies.userId]);
 
   useEffect(() => {
+    const calculateShippingCost = async (cityId: string, courier: string) => {
+      try {
+        const response = await calShippingCost({
+          courier,
+          destination: cityId,
+          origin: branch?.cityId || '',
+          weight: 1000,
+        });
+        setShippingCost(response);
+      } catch (error) {
+        console.error('Error calculating shipping cost:', error);
+        setShippingCost(0);
+      }
+    };
+
     if (selectedAddress !== 'Pick one' && selectedCourier !== 'Pick one') {
       const selectedAddressObj = address.find(
         (addr) => addr.id === Number(selectedAddress),
@@ -87,7 +86,7 @@ export default function CheckoutPage(context: any) {
         calculateShippingCost(selectedAddressObj.cityId, selectedCourier);
       }
     }
-  }, [selectedCourier, selectedAddress, address]);
+  }, [selectedCourier, selectedAddress, address, branch?.cityId]);
 
   const handleCheckout = async (formData: any) => {
     const data = {
@@ -112,7 +111,6 @@ export default function CheckoutPage(context: any) {
     const response = await createOrder(data);
     if (response) {
       showToast(response);
-      reset();
       setTimeout(() => {
         window.location.href = '/profile/order-list';
       }, 3000);

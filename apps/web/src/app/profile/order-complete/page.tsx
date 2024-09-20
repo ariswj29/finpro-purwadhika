@@ -26,7 +26,7 @@ export default function OrderCompletePage() {
     };
 
     fetchData();
-  }, []);
+  }, [cookies.userId]);
 
   const handleOpenDetail = (order: any) => {
     setSelectedOrder(order);

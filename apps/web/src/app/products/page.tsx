@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { formattedMoney } from '@/helper/helper';
 import { getAllCategories, getAllListProducts } from '@/api/products';
@@ -22,27 +22,30 @@ export default function ProductsPage() {
   const [selectCategories, setSelectCategories] = useState('');
   const [searchEvents, setSearchEvents] = useState('');
 
-  const fetchProductsPage = async (page = 1, limit = 16) => {
-    setLoading(true);
-    try {
-      const response = await getAllListProducts(
-        searchEvents,
-        selectCategories,
-        page,
-        limit,
-      );
+  const fetchProductsPage = useCallback(
+    async (page = 1, limit = 16) => {
+      setLoading(true);
+      try {
+        const response = await getAllListProducts(
+          searchEvents,
+          selectCategories,
+          page,
+          limit,
+        );
 
-      setProducts(response.data);
-      setTotalPages(response.total);
-      setLoading(false);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+        setProducts(response.data);
+        setTotalPages(response.total);
+        setLoading(false);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [searchEvents, selectCategories],
+  );
 
   useEffect(() => {
     fetchProductsPage();
-  }, [selectCategories, searchEvents]);
+  }, [fetchProductsPage]);
 
   useEffect(() => {
     async function fetchCategories() {

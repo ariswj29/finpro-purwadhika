@@ -68,14 +68,15 @@ export default function AddAddress() {
       }
     };
 
-    fetchProvince();
     const provinceId = watch('provinceId');
+
+    fetchProvince();
     if (provinceId) {
       fetchCity(provinceId);
     } else {
       setCity([]);
     }
-  }, [watch('provinceId')]);
+  }, [watch, watch('provinceId')]);
 
   const onSubmit = async (data: any, event: any) => {
     try {

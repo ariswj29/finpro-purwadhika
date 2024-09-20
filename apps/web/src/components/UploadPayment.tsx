@@ -80,7 +80,7 @@ export default function UploadPaymentPage(props: any) {
           props.order.paymentProof,
       );
     }
-  }, []);
+  }, [props.order, props.to]);
 
   const showToast = (data: { message: string; status: string }) => {
     setNotif(data);
