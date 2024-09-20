@@ -42,18 +42,20 @@ export default function ProductsPage() {
 
   useEffect(() => {
     fetchProductsPage();
+  }, [selectCategories, searchEvents]);
+
+  useEffect(() => {
     async function fetchCategories() {
       try {
         const response = await getAllCategories();
-        setCategories(response.data || []); // Ensure that `response.data` is an array or default to an empty array
+        setCategories(response.data || []);
       } catch (error) {
         console.error(error);
-        setCategories([]); // In case of an error, set categories to an empty array
+        setCategories([]);
       }
     }
     fetchCategories();
-  }, [selectCategories, searchEvents]);
-  console.log(searchEvents, 'search');
+  }, []);
 
   const handlePageChange = (newPage: number) => {
     console.log(newPage);
@@ -62,8 +64,8 @@ export default function ProductsPage() {
     fetchProductsPage(newPage);
   };
 
-  const handleSortCategory = (sortConfig: string) => {
-    setSelectCategories(sortConfig);
+  const handleSortCategory = (sortConfig: string | null) => {
+    setSelectCategories(sortConfig ?? '');
   };
 
   return (
@@ -71,7 +73,7 @@ export default function ProductsPage() {
       <h1 className="text-5xl font-bold mb-4 text-center">List Products</h1>
       <Category onSortChange={handleSortCategory} categories={categories} />
       <SearchBar setSearchEvents={setSearchEvents} className="" />
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 cursor-pointer">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mt-4 cursor-pointer">
         {loading ? (
           <span className="p-2 font-bold">Loading...</span>
         ) : products.length == 0 ? (
@@ -81,26 +83,24 @@ export default function ProductsPage() {
             return (
               <div
                 key={product.id}
-                className="p-4 bg-white hover:bg-secondary shadow-lg rounded-lg border-2 border-secondary transform transition-transform duration-300 hover:scale-105 my-9"
+                className="p-4 bg-white hover:bg-secondary shadow-lg rounded-lg border-2 border-secondary transform transition-transform duration-300 hover:scale-105 my-2"
               >
-                <Image
-                  src={`http://localhost:8000/products/${product.image}`}
-                  alt={product.name}
-                  className="bg-gray-200 rounded-lg h-48 w-full object-cover"
-                  width={500}
-                  height={500}
-                />
-                <h2 className="text-xl font-semibold pt-4">{product.name}</h2>
-                <p className="text-gray-600">
-                  {formattedMoney(product.price ?? 0)}
-                </p>
-                <div className="flex justify-center">
-                  <Link href={`/${product.id}`}>
-                    <button className="bg-secondary px-8 py-1 mt-4 rounded-2xl hover:font-bold">
-                      Add to Cart
-                    </button>
-                  </Link>
-                </div>
+                <Link href={`/products/${product.slug}`}>
+                  <Image
+                    src={`${process.env.NEXT_PUBLIC_BASE_URL}/products/${product.image}`}
+                    alt={product.name}
+                    className="bg-gray-200 rounded-lg h-48 w-full object-cover"
+                    width={500}
+                    height={500}
+                  />
+                  <h2 className="text-xl font-semibold pt-4">{product.name}</h2>
+                  <p className="text-gray-600">
+                    {formattedMoney(product.price ?? 0)}
+                  </p>
+                  <p className="text-gray-600">
+                    Stock: {product.currentStock || 0}
+                  </p>
+                </Link>
               </div>
             );
           })

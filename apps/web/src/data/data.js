@@ -18,16 +18,92 @@ export const navbars = [
   },
 ];
 
-export const navbarsAuth = [
+export const sidebarSuperadmin = [
   {
     id: 1,
-    title: 'Home',
-    link: '/',
+    title: 'Dashboard',
+    link: '/admin/dashboard',
   },
   {
     id: 2,
+    title: 'Products',
+    link: '/admin/products',
+  },
+  {
+    id: 7,
+    title: 'Category Products',
+    link: '/admin/category-products',
+  },
+  {
+    id: 3,
+    title: 'Orders',
+    link: '/admin/orders',
+  },
+  {
+    id: 4,
+    title: 'Stores',
+    link: '/admin/stores',
+  },
+  {
+    id: 6,
+    title: 'Inventory',
+    link: '/admin/inventory',
+  },
+  {
+    id: 5,
+    title: 'Users',
+    link: '/admin/users',
+  },
+];
+
+export const sidebarAdmin = [
+  {
+    id: 1,
+    title: 'Dashboard',
+    link: '/admin/dashboard',
+  },
+  {
+    id: 2,
+    title: 'Products',
+    link: '/admin/products',
+  },
+  {
+    id: 7,
+    title: 'Category Products',
+    link: '/admin/category-products',
+  },
+  {
+    id: 3,
+    title: 'Orders',
+    link: '/admin/orders',
+  },
+  {
+    id: 4,
+    title: 'Inventory',
+    link: '/admin/inventory',
+  },
+];
+
+export const menuProfiles = [
+  {
+    id: 1,
     title: 'Profile',
     link: '/profile',
+  },
+  {
+    id: 2,
+    title: 'Address',
+    link: '/profile/address',
+  },
+  {
+    id: 3,
+    title: 'Order List',
+    link: '/profile/order-list',
+  },
+  {
+    id: 4,
+    title: 'Order Complete',
+    link: '/profile/order-complete',
   },
 ];
 
@@ -43,5 +119,48 @@ export const sliders = [
   {
     id: 2,
     image: '/hero section/slider-3.png',
+  },
+];
+
+export const banks = [
+  {
+    id: 1,
+    name: 'BCA',
+    image: '/banks/bca.png',
+  },
+  {
+    id: 2,
+    name: 'BNI',
+    image: '/banks/bni.png',
+  },
+  {
+    id: 3,
+    name: 'BRI',
+    image: '/banks/bri.png',
+  },
+  {
+    id: 4,
+    name: 'Mandiri',
+    image: '/banks/mandiri.png',
+  },
+  {
+    id: 5,
+    name: 'Gopay',
+    image: '/banks/gopay.png',
+  },
+];
+
+export const couriers = [
+  {
+    id: 'jne',
+    name: 'JNE',
+  },
+  {
+    id: 'tiki',
+    name: 'TIKI',
+  },
+  {
+    id: 'pos',
+    name: 'POS Indonesia',
   },
 ];

@@ -1,12 +1,16 @@
 import { format } from 'date-fns';
 import { id as idLocale } from 'date-fns/locale';
+import Cookies from 'js-cookie';
 
-export const totalPrice = (price: number, discount: number, points: number) => {
-  const discountPrice = price - price * (discount / 100);
-  const totalPrice = discountPrice - points;
-  totalPrice < 0 ? 0 : totalPrice;
+export const totalPrice = (price: number, shipping: number) => {
+  const money = price + shipping;
+  const format = new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    minimumFractionDigits: 0,
+  }).format(money);
 
-  return totalPrice;
+  return format.replace('Rp', 'Rp.');
 };
 
 export const formattedDate = (date: string) => {
@@ -21,4 +25,15 @@ export const formattedMoney = (money: number) => {
   }).format(money);
 
   return format.replace('Rp', 'Rp.');
+};
+
+export const getCookies = () => {
+  const token = Cookies.get('token') || '';
+  const userId = Cookies.get('userId') || 0;
+  const user = Cookies.get('user') || '';
+  const latitude = Cookies.get('latitude') || 0;
+  const longitude = Cookies.get('longitude') || 0;
+  const nearestBranch = Cookies.get('nearestBranch') || 0;
+
+  return { token, userId, user, latitude, longitude, nearestBranch };
 };
