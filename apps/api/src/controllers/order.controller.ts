@@ -76,7 +76,7 @@ export async function getAllOrderList(req: Request, res: Response) {
       take: limitNumber,
     });
 
-    const ordersWithIndex = orders.map((order, index) => ({
+    const ordersWithIndex = orders.map((order, index: number) => ({
       ...order,
       no: (pageNumber - 1) * limitNumber + index + 1,
     }));
