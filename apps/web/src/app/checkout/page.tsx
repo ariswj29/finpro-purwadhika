@@ -19,7 +19,7 @@ export default function CheckoutPage(context: any) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [address, setAddress] = useState<{ id: number; cityId: string }[]>([]);
   const [branch, setBranch] = useState<{ cityId: string } | null>(null);
-  const [shippingCost, setShippingCost] = useState(0);
+  const [shippingCost, setShippingCost] = useState({ data: [{ value: 0 }] });
   const [addAddress, setAddAddress] = useState(false);
   const [notif, setNotif] = useState<{ message: string; status: string }>({
     message: '',
@@ -73,7 +73,7 @@ export default function CheckoutPage(context: any) {
         setShippingCost(response);
       } catch (error) {
         console.error('Error calculating shipping cost:', error);
-        setShippingCost(0);
+        setShippingCost({ data: [{ value: 0 }] });
       }
     };
 
@@ -222,9 +222,9 @@ export default function CheckoutPage(context: any) {
                 <span>Shipping Cost</span>
                 <span>
                   {formattedMoney(
-                    shippingCost?.data
-                      ? shippingCost?.data[0].value
-                      : shippingCost,
+                    typeof shippingCost === 'number'
+                      ? shippingCost
+                      : shippingCost?.data[0].value,
                   )}
                 </span>
               </div>
@@ -235,9 +235,9 @@ export default function CheckoutPage(context: any) {
                 <span className="font-bold">
                   {totalPrice(
                     cart.reduce((a, b) => a + b.product.price * b.quantity, 0),
-                    shippingCost?.data
-                      ? shippingCost?.data[0].value
-                      : shippingCost,
+                    typeof shippingCost === 'number'
+                      ? shippingCost
+                      : shippingCost?.data[0].value,
                   )}
                 </span>
               </div>
