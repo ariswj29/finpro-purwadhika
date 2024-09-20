@@ -51,7 +51,7 @@ export default function AddAddress({
     } else {
       setCity([]);
     }
-  }, [watch('provinceId')]);
+  }, [watch, watch('provinceId')]);
 
   const onSubmit = async (data: any, event: any) => {
     try {

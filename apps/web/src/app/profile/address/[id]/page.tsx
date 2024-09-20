@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 import {
   addAddress,
@@ -68,6 +69,7 @@ export default function AddAddress() {
       }
     };
 
+    // Extract watch('provinceId') to a variable
     const provinceId = watch('provinceId');
 
     fetchProvince();
@@ -76,7 +78,7 @@ export default function AddAddress() {
     } else {
       setCity([]);
     }
-  }, [watch, watch('provinceId')]);
+  }, [watch, watch('provinceId')]); // Keep the `watch` function and `provinceId` as dependencies
 
   const onSubmit = async (data: any, event: any) => {
     try {
