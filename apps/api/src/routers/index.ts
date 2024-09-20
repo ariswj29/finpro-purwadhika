@@ -10,6 +10,7 @@ import checkout from './checkout.router';
 import branch from './branch.router';
 import user from './user.router';
 import category from './category.router';
+import inventory from './inventory.router';
 
 const router = Router();
 
@@ -24,5 +25,6 @@ router.use('/api/checkout', checkout);
 router.use('/api/branch', branch);
 router.use('/api/users', user);
 router.use('/api/categories', category);
+router.use('/api/inventory', inventory);
 
 export default router;
