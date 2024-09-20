@@ -19,7 +19,7 @@ router.get('/allproducts', getAllListProducts);
 router.get('/categories', getAllCategories);
 router.get('/', verifyToken, products);
 router.post('/', verifyToken, upload.single('image'), createProduct);
-router.get('/:id', verifyToken, product);
+router.get('/:id', product);
 router.put('/:id', verifyToken, upload.single('image'), updateProduct);
 router.delete('/:id', verifyToken, deleteProduct);
 
