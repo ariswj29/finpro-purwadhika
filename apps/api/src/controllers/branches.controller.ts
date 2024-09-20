@@ -89,8 +89,6 @@ export const getAllBranch = async (req: Request, res: Response) => {
         provinceId: true,
         cityId: true,
         userId: true,
-        createdAt: true,
-        updatedAt: true,
         city: true,
         province: true,
         user: true,
@@ -99,10 +97,22 @@ export const getAllBranch = async (req: Request, res: Response) => {
       take: limitNumber,
     });
 
-    const branchWithIndex = branch.map((item, index: number) => ({
-      ...item,
-      no: (pageNumber - 1) * limitNumber + index + 1,
-    }));
+    const branchWithIndex = branch.map(
+      (
+        item: {
+          id: number;
+          name: string;
+          address: string;
+          user: { id: number; username: string | null } | null;
+          province: { name: string };
+          city: { name: string };
+        },
+        index: number,
+      ) => ({
+        ...item,
+        no: (pageNumber - 1) * limitNumber + index + 1,
+      }),
+    );
 
     const totalBranch = await prisma.branch.count({ where });
     const totalPages = Math.ceil(totalBranch / limitNumber);
