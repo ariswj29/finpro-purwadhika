@@ -76,10 +76,22 @@ export async function getAllOrderList(req: Request, res: Response) {
       take: limitNumber,
     });
 
-    const ordersWithIndex = orders.map((order, index: number) => ({
-      ...order,
-      no: (pageNumber - 1) * limitNumber + index + 1,
-    }));
+    const ordersWithIndex = orders.map(
+      (
+        order: {
+          id: number;
+          name: string;
+          paymentStatus: string;
+          total: number;
+          user: { username: string | null };
+          branch: { name: string };
+        },
+        index: number,
+      ) => ({
+        ...order,
+        no: (pageNumber - 1) * limitNumber + index + 1,
+      }),
+    );
 
     const totalOrders = await prisma.order.count({
       where: {

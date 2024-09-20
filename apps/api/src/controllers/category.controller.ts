@@ -29,10 +29,15 @@ export const getAllCategory = async (req: Request, res: Response) => {
       take: limitNumber,
     });
 
-    const categorysWithIndex = categorys.map((category, index) => ({
-      ...category,
-      no: (pageNumber - 1) * limitNumber + index + 1,
-    }));
+    const categorysWithIndex = categorys.map(
+      (
+        category: { id: number; name: string; slug: string },
+        index: number,
+      ) => ({
+        ...category,
+        no: (pageNumber - 1) * limitNumber + index + 1,
+      }),
+    );
 
     const totalCategory = await prisma.category.count({ where });
     const totalPages = Math.ceil(totalCategory / limitNumber);
