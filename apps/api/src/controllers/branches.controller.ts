@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient, Branch } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { Request, Response } from 'express';
 
 const prisma = new PrismaClient();
@@ -68,17 +68,7 @@ export const getAllBranch = async (req: Request, res: Response) => {
     const pageNumber = parseInt(page as string, 10);
     const limitNumber = parseInt(limit as string, 10);
 
-    const where: Prisma.BranchWhereInput = {
-      ...(search && {
-        OR: [
-          { name: { contains: search as string } },
-          { address: { contains: search as string } },
-        ],
-      }),
-    };
-
     const branch = await prisma.branch.findMany({
-      where,
       select: {
         id: true,
         name: true,
@@ -92,6 +82,12 @@ export const getAllBranch = async (req: Request, res: Response) => {
         city: true,
         province: true,
         user: true,
+      },
+      where: {
+        OR: [
+          { name: { contains: search as string } },
+          { address: { contains: search as string } },
+        ],
       },
       skip: (pageNumber - 1) * limitNumber,
       take: limitNumber,
@@ -114,7 +110,14 @@ export const getAllBranch = async (req: Request, res: Response) => {
       }),
     );
 
-    const totalBranch = await prisma.branch.count({ where });
+    const totalBranch = await prisma.branch.count({
+      where: {
+        OR: [
+          { name: { contains: search as string } },
+          { address: { contains: search as string } },
+        ],
+      },
+    });
     const totalPages = Math.ceil(totalBranch / limitNumber);
 
     res.status(200).json({

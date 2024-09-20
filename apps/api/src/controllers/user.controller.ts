@@ -12,17 +12,13 @@ export const getAllUsers = async (req: Request, res: Response) => {
     const pageNumber = parseInt(page as string, 10);
     const limitNumber = parseInt(limit as string, 10);
 
-    const where: Prisma.UserWhereInput = {
-      ...(search && {
+    const users = await prisma.user.findMany({
+      where: {
         OR: [
           { username: { contains: search as string } },
           { email: { contains: search as string } },
         ],
-      }),
-    };
-
-    const users = await prisma.user.findMany({
-      where,
+      },
       select: {
         id: true,
         username: true,
@@ -48,7 +44,14 @@ export const getAllUsers = async (req: Request, res: Response) => {
       }),
     );
 
-    const totalUsers = await prisma.user.count({ where });
+    const totalUsers = await prisma.user.count({
+      where: {
+        OR: [
+          { username: { contains: search as string } },
+          { email: { contains: search as string } },
+        ],
+      },
+    });
     const totalPages = Math.ceil(totalUsers / limitNumber);
 
     res.status(200).json({

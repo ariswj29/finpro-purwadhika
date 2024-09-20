@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import prisma from '@/helpers/prisma';
 import { Prisma } from '@prisma/client';
-import { compare, genSalt, hash } from 'bcrypt';
 import { categorySchema } from '@/schemas/category.schema';
 import * as yup from 'yup';
 
@@ -12,19 +11,13 @@ export const getAllCategory = async (req: Request, res: Response) => {
     const pageNumber = parseInt(page as string, 10);
     const limitNumber = parseInt(limit as string, 10);
 
-    const where: Prisma.CategoryWhereInput = {
-      ...(search && {
-        OR: [{ name: { contains: search as string } }],
-      }),
-    };
-
     const categorys = await prisma.category.findMany({
-      where,
       select: {
         id: true,
         name: true,
         slug: true,
       },
+      where: { name: { contains: search as string } },
       skip: (pageNumber - 1) * limitNumber,
       take: limitNumber,
     });
@@ -39,7 +32,9 @@ export const getAllCategory = async (req: Request, res: Response) => {
       }),
     );
 
-    const totalCategory = await prisma.category.count({ where });
+    const totalCategory = await prisma.category.count({
+      where: { name: { contains: search as string } },
+    });
     const totalPages = Math.ceil(totalCategory / limitNumber);
 
     res.status(200).json({
