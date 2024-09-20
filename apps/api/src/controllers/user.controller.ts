@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import prisma from '@/helpers/prisma';
-import { Prisma } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 import { compare, genSalt, hash } from 'bcrypt';
 import { usersSchema } from '@/schemas/user.schema';
 import * as yup from 'yup';
@@ -33,7 +33,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
       take: limitNumber,
     });
 
-    const usersWithIndex = users.map((user, index) => ({
+    const usersWithIndex = users.map((user, index: number) => ({
       ...user,
       no: (pageNumber - 1) * limitNumber + index + 1,
     }));

@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient, Branch } from '@prisma/client';
 import { Request, Response } from 'express';
 
 const prisma = new PrismaClient();
@@ -83,6 +83,14 @@ export const getAllBranch = async (req: Request, res: Response) => {
         id: true,
         name: true,
         address: true,
+        postalCode: true,
+        latitude: true,
+        longitude: true,
+        provinceId: true,
+        cityId: true,
+        userId: true,
+        createdAt: true,
+        updatedAt: true,
         city: true,
         province: true,
         user: true,
@@ -91,7 +99,7 @@ export const getAllBranch = async (req: Request, res: Response) => {
       take: limitNumber,
     });
 
-    const branchWithIndex = branch.map((item, index) => ({
+    const branchWithIndex = branch.map((item, index: number) => ({
       ...item,
       no: (pageNumber - 1) * limitNumber + index + 1,
     }));

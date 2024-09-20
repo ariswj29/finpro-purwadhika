@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma, Category, Product } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -112,8 +112,9 @@ export const getAllListProducts = async (req: Request, res: Response) => {
 
     if (category) {
       const selectedCategory = categories.find(
-        (cat) => cat.name.toLowerCase() === category.toLowerCase(),
+        (cat: Category) => cat.name.toLowerCase() === category.toLowerCase(),
       );
+
       if (selectedCategory) {
         const where = { categoryId: selectedCategory.id };
         whereSearch = {
@@ -176,18 +177,29 @@ export async function products(req: Request, res: Response) {
       take: limitNumber,
     });
 
-    const productsWithStockAndIndex = products.map((product, index) => {
-      const totalStock = product.productBranchs.reduce(
-        (acc, branch) => acc + branch.stock,
-        0,
-      );
-
-      return {
-        ...product,
-        no: (pageNumber - 1) * limitNumber + index + 1,
-        totalStock,
-      };
-    });
+    const productsWithStockAndIndex = products.map(
+      (
+        product: {
+          id: number;
+          name: string;
+          price: number;
+          image: string | null;
+          category: { name: string };
+          productBranchs: { stock: number }[];
+        },
+        index: number,
+      ) => {
+        const totalStock = product.productBranchs.reduce(
+          (acc: number, branch: { stock: number }) => acc + branch.stock,
+          0,
+        );
+        return {
+          ...product,
+          no: (pageNumber - 1) * limitNumber + index + 1,
+          totalStock,
+        };
+      },
+    );
 
     const totalProducts = await prisma.product.count();
     const totalPages = Math.ceil(totalProducts / limitNumber);
