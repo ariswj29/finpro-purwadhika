@@ -3,9 +3,8 @@
 import { getAllBranches } from '@/api/branch';
 import ConfirmModal from '@/components/ConfirmModal';
 import { Branch } from '@/interface/branches.interface';
-import { User } from '@/interface/user.interface';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { FaPen, FaPlus, FaSearch, FaTrash } from 'react-icons/fa';
 
 export default function UsersPage() {
@@ -17,11 +16,7 @@ export default function UsersPage() {
   const [confirmationModal, setConfirmationModal] = useState(false);
   const [id, setId] = useState<number>(0);
 
-  useEffect(() => {
-    fetchData();
-  }, [page]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const res = await getAllBranches(search, page);
@@ -31,7 +26,11 @@ export default function UsersPage() {
     } catch (error) {
       console.error(error);
     }
-  };
+  }, [search, page]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);

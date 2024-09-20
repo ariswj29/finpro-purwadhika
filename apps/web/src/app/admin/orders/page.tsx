@@ -1,8 +1,7 @@
 'use client';
 
-// import { getAllTableOrders } from '@/api/order';
 import ConfirmModal from '@/components/ConfirmModal';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { FaSearch } from 'react-icons/fa';
 import { formattedMoney, getCookies } from '@/helper/helper';
 import { getAllOrders } from '@/api/order';
@@ -20,22 +19,22 @@ export default function OrderTable() {
   const [confirmationModal, setConfirmationModal] = useState(false);
   const [id, setId] = useState<number>(0);
 
-  useEffect(() => {
-    fetchData();
-  }, [page]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     const branchId = cookies.userId ? cookies.userId : 0;
     try {
-      const res = await getAllOrders(search, branchId, page);
+      const res = await getAllOrders(search, Number(branchId), page);
       setOrders(res.data);
       setTotalPages(res.pagination.totalPages);
       setLoading(false);
     } catch (error) {
       console.error(error);
     }
-  };
+  }, [search, page, cookies.userId]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);

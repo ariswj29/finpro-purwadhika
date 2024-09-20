@@ -1,7 +1,7 @@
 'use client';
 
 import ConfirmModal from '@/components/ConfirmModal';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { FaPen, FaPlus, FaSearch, FaTrash } from 'react-icons/fa';
 import { formattedMoney, getCookies } from '@/helper/helper';
 import { Product } from '@/interface/product.interface';
@@ -20,11 +20,7 @@ export default function ProductTable() {
   const [confirmationModal, setConfirmationModal] = useState(false);
   const [id, setId] = useState<number>(0);
 
-  useEffect(() => {
-    fetchData();
-  }, [page]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const res = await getProducts(search, page);
@@ -34,7 +30,11 @@ export default function ProductTable() {
     } catch (error) {
       console.error(error);
     }
-  };
+  }, [search, page]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);

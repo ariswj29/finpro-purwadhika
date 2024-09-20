@@ -88,7 +88,7 @@ const FormStore = () => {
     } else {
       setCity([]);
     }
-  }, [watch('provinceId')]);
+  }, [watch]);
 
   const onSubmit = async (data: any) => {
     console.log(data, 'data submit');
