@@ -5,7 +5,7 @@ import ConfirmModal from '@/components/ConfirmModal';
 import { Branch } from '@/interface/branches.interface';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
-import { FaPen, FaPlus, FaSearch, FaTrash } from 'react-icons/fa';
+import { FaEye, FaPen, FaPlus, FaSearch, FaTrash } from 'react-icons/fa';
 
 export default function UsersPage() {
   const [branches, setBranches] = useState<Branch[]>([]);
@@ -90,7 +90,7 @@ export default function UsersPage() {
               <th className="px-4 py-2">Province</th>
               <th className="px-4 py-2">City</th>
               <th className="px-4 py-2">User</th>
-              <th className="px-4 py-2">Actions</th>
+              <th className="px-4 py-2 w-28">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -112,6 +112,17 @@ export default function UsersPage() {
                   <td className="border p-2">{branch.city.name}</td>
                   <td className="border p-2">{branch.user.username}</td>
                   <td className="border p-2">
+                    <button
+                      className="bg-blue-500 text-primary p-1 rounded mr-2"
+                      onClick={() =>
+                        window.open(
+                          `https://www.google.com/maps?q=${branch.latitude},${branch.longitude}`,
+                          '_blank',
+                        )
+                      }
+                    >
+                      <FaEye />
+                    </button>
                     <Link href={`/admin/stores/${branch.id}`}>
                       <button className="bg-yellow-500 hover:bg-yellow-600 text-primary p-1 rounded">
                         <FaPen />
