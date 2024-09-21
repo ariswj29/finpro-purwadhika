@@ -1,7 +1,5 @@
 import { Request, Response } from 'express';
-import { PrismaClient, Prisma, Category, Product } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import prisma from '@/helpers/prisma';
 
 export async function getAllProducts(req: Request, res: Response) {
   try {
@@ -112,7 +110,8 @@ export const getAllListProducts = async (req: Request, res: Response) => {
 
     if (category) {
       const selectedCategory = categories.find(
-        (cat: Category) => cat.name.toLowerCase() === category.toLowerCase(),
+        (cat: { name: string; id: number }) =>
+          cat.name.toLowerCase() === category.toLowerCase(),
       );
 
       if (selectedCategory) {

@@ -1,6 +1,16 @@
 import React from 'react';
 
-export default function SkeletonComponent({ className, width, height }) {
+interface SkeletonComponentProps {
+  className?: string;
+  width?: string | number;
+  height?: string | number;
+}
+
+export default function SkeletonComponent({
+  className,
+  width,
+  height,
+}: SkeletonComponentProps) {
   return (
     <div className={`${className} animate-pulse`}>
       <div

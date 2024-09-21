@@ -31,7 +31,7 @@ export default function AddressPage() {
       }
     };
     fetchData();
-  }, []);
+  }, [cookies.userId]);
 
   const handleSetPrimary = async (addressId: number) => {
     try {

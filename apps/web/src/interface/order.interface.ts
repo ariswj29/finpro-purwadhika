@@ -9,4 +9,7 @@ export interface Order {
   user: {
     username: string;
   };
+  branch: {
+    name: string;
+  };
 }

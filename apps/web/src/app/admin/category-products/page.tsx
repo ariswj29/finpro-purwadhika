@@ -1,7 +1,7 @@
 'use client';
 
 import ConfirmModal from '@/components/ConfirmModal';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 interface Category {
   id: number;
@@ -27,11 +27,7 @@ export default function CatogoryTable() {
   const [confirmationModal, setConfirmationModal] = useState(false);
   const [id, setId] = useState<number>(0);
 
-  useEffect(() => {
-    fetchData();
-  }, [page]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const res = await getCategory(search, page);
@@ -41,7 +37,11 @@ export default function CatogoryTable() {
     } catch (error) {
       console.error(error);
     }
-  };
+  }, [search, page]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);

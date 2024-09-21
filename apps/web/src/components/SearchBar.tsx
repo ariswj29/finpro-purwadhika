@@ -3,13 +3,13 @@ import React, { useState, useEffect } from 'react';
 import { FaSearch } from 'react-icons/fa';
 import { useDebounce } from 'use-debounce';
 
-const SearchBar = (props: any) => {
+const SearchBar = ({ setSearchEvents }: any) => {
   const [search, setSearch] = useState<string>('');
   const [debouncedSearch] = useDebounce(search, 1000);
 
   useEffect(() => {
-    props.setSearchEvents(debouncedSearch);
-  }, [debouncedSearch]);
+    setSearchEvents(debouncedSearch);
+  }, [debouncedSearch, setSearchEvents]);
 
   return (
     <div className="container mx-auto px-12">

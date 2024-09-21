@@ -27,7 +27,7 @@ export default function Wishlist() {
       fetchWishlist();
     }
     setLoading(false);
-  }, []);
+  }, [cookies.token, cookies.userId]);
 
   const handleRemoveWishlist = async (id: number) => {
     const res = await removeWishlist(id);

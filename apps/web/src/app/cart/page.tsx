@@ -28,7 +28,7 @@ export default function Cart() {
       fetchCart();
     }
     setLoading(false);
-  }, []);
+  }, [cookies.token, cookies.userId]);
 
   const handleQuantityChange = (index: number, newQuantity: number) => {
     const updatedCart = [...cart];

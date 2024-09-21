@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { addAddress, getAddress, getCity, getProvince } from '@/api/address';
 import { getCookies } from '@/helper/helper';
 import { useEffect, useState } from 'react';
@@ -37,7 +38,7 @@ export default function AddAddress({
 
     const fetchCity = async (provinceId: number) => {
       try {
-        const res = await getCity(provinceId);
+        const res = await getCity(provinceId.toString());
         setCity(res.data);
       } catch (err) {
         console.log(err);
@@ -51,7 +52,7 @@ export default function AddAddress({
     } else {
       setCity([]);
     }
-  }, [watch('provinceId')]);
+  }, [watch, watch('provinceId')]);
 
   const onSubmit = async (data: any, event: any) => {
     try {

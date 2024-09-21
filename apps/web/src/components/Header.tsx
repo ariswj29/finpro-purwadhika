@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { navbars, navbarsAuth } from '@/data/data';
+import { navbars } from '@/data/data';
 import { FaRegHeart, FaShoppingCart } from 'react-icons/fa';
 import { getCount } from '@/api/wishlist';
 import { getCookies } from '@/helper/helper';

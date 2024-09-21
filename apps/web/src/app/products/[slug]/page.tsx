@@ -40,7 +40,7 @@ export default function ProductDetail({ params }: { params: Params }) {
       }
     };
     fetchProduct();
-  }, []);
+  }, [params.slug]);
 
   const showToast = (data: { message: string; status: string }) => {
     setNotif(data);

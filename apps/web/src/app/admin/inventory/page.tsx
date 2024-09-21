@@ -2,16 +2,18 @@
 
 import ConfirmModal from '@/components/ConfirmModal';
 import { useCallback, useEffect, useState } from 'react';
-import { FaSearch } from 'react-icons/fa';
+import { FaPen, FaPlus, FaSearch, FaTrash } from 'react-icons/fa';
 import { formattedMoney, getCookies } from '@/helper/helper';
-import { getAllOrders } from '@/api/order';
-import { Order } from '@/interface/order.interface';
+import { Product } from '@/interface/product.interface';
+import Image from 'next/image';
+import Link from 'next/link';
+import { getInventory } from '@/api/inventory';
 import ActionOrder from '@/components/ActionOrder';
-import StatusOrder from '@/components/StatusOrder';
 
-export default function OrderTable() {
+export default function ProductTable() {
   const cookies = getCookies();
-  const [orders, setOrders] = useState<Order[]>([]);
+  const { role } = JSON.parse(cookies.user);
+  const [products, setProducts] = useState<Product[]>([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(page);
@@ -21,16 +23,15 @@ export default function OrderTable() {
 
   const fetchData = useCallback(async () => {
     setLoading(true);
-    const branchId = cookies.userId ? cookies.userId : 0;
     try {
-      const res = await getAllOrders(search, Number(branchId), page);
-      setOrders(res.data);
+      const res = await getInventory(search, page);
+      setProducts(res.data);
       setTotalPages(res.pagination.totalPages);
       setLoading(false);
     } catch (error) {
       console.error(error);
     }
-  }, [search, page, cookies.userId]);
+  }, [search, page]);
 
   useEffect(() => {
     fetchData();
@@ -58,13 +59,13 @@ export default function OrderTable() {
 
   return (
     <div className="container mx-auto px-4">
-      <div className="text-2xl mb-4">Table Orders</div>
+      <div className="text-2xl mb-4">Table Inventory</div>
       <div className="grid gap-4">
         <div className="flex justify-between items-center gap-4">
           <div className="flex">
             <input
               type="text"
-              placeholder="Search order"
+              placeholder="Search product"
               className="border p-2"
               value={search}
               onChange={handleSearchChange}
@@ -76,18 +77,27 @@ export default function OrderTable() {
               <FaSearch />
             </button>
           </div>
+          {role === 'SUPER_ADMIN' && (
+            <Link
+              href={'/admin/products/add'}
+              className="bg-green-500 hover:bg-green-600 text-primary p-2 rounded"
+            >
+              <span className="flex items-center">
+                <FaPlus /> &nbsp; Add Product
+              </span>
+            </Link>
+          )}
         </div>
         <table className="table-auto">
           <thead className="bg-secondary">
             <tr>
               <th className="px-4 py-2">No</th>
-              <th className="px-4 py-2">No Order</th>
-              <th className="px-4 py-2">Status</th>
-              <th className="px-4 py-2">Customer</th>
+              <th className="px-4 py-2">Image</th>
+              <th className="px-4 py-2">Name</th>
+              <th className="px-4 py-2">Category</th>
+              <th className="px-4 py-2">Stock</th>
               <th className="px-4 py-2">Price</th>
-              <th className="px-4 py-2">
-                {cookies.userId == 1 ? 'Branch' : 'Actions'}
-              </th>
+              <th className="px-4 py-2 w-2">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -95,32 +105,32 @@ export default function OrderTable() {
               <tr>
                 <td className="p-2 font-bold">Loading...</td>
               </tr>
-            ) : orders.length == 0 ? (
+            ) : products.length == 0 ? (
               <tr>
                 <td className="p-2 font-bold">Data not found!</td>
               </tr>
             ) : (
-              orders.map((order: Order, index) => {
+              products.map((product: Product, index) => {
                 return (
-                  <tr key={order.id} className="border p-2">
-                    <td className="border p-2 text-center">{order.no}</td>
-                    <td className="border p-2 capitalize">{order.name}</td>
+                  <tr key={product.id} className="border p-2">
+                    <td className="border p-2 text-center">{product.no}</td>
                     <td className="flex border p-2 capitalize justify-center">
-                      {StatusOrder({ status: order.paymentStatus })}
+                      <Image
+                        src={`${process.env.NEXT_PUBLIC_BASE_URL}/uploads/products/${product.image}`}
+                        width={50}
+                        height={50}
+                        alt={product.name}
+                      />
                     </td>
-                    <td className="border p-2">{order.user.username}</td>
+                    <td className="border p-2 capitalize">{product.name}</td>
+                    <td className="border p-2">{product.category.name}</td>
+                    <td className="border p-2">{product.totalStock} pcs</td>
                     <td className="border p-2 text-right">
-                      {formattedMoney(order.total)}
+                      {formattedMoney(product.price)}
                     </td>
-                    {cookies.userId == 1 ? (
-                      <td className="flex p-2 justify-center">
-                        {order.branch.name}
-                      </td>
-                    ) : (
-                      <td className="flex p-2 justify-center">
-                        <ActionOrder order={order} />
-                      </td>
-                    )}
+                    <td className="p-2 justify-center">
+                      <ActionOrder inventory={product} />
+                    </td>
                   </tr>
                 );
               })
@@ -148,7 +158,7 @@ export default function OrderTable() {
         <ConfirmModal
           id={id}
           setModal={setConfirmationModal}
-          title="Delete"
+          title="Delete product"
           // for="order"
         />
       )}

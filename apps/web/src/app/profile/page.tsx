@@ -147,7 +147,7 @@ export default function ProfilePage() {
             {...register('username')}
             className="input input-bordered w-full"
           />
-          {errors.username && (
+          {errors.username && typeof errors.username.message === 'string' && (
             <p className="text-error text-sm">{errors.username.message}</p>
           )}
         </div>
@@ -168,7 +168,11 @@ export default function ProfilePage() {
             className="input input-bordered w-full"
           />
           {errors.email && (
-            <p className="text-error text-sm">{errors.email.message}</p>
+            <p className="text-error text-sm">
+              {typeof errors.email?.message === 'string'
+                ? errors.email.message
+                : ''}
+            </p>
           )}
         </div>
 
@@ -190,7 +194,11 @@ export default function ProfilePage() {
             placeholder="Masukkan password baru"
           />
           {errors.password && (
-            <p className="text-error text-sm">{errors.password.message}</p>
+            <p className="text-error text-sm">
+              {typeof errors.password.message === 'string'
+                ? errors.password.message
+                : ''}
+            </p>
           )}
         </div>
 
@@ -203,7 +211,11 @@ export default function ProfilePage() {
             placeholder="Masukkan password baru"
           />
           {errors.password && (
-            <p className="text-error text-sm">{errors.password.message}</p>
+            <p className="text-error text-sm">
+              {typeof errors.password?.message === 'string'
+                ? errors.password.message
+                : ''}
+            </p>
           )}
         </div>
 
@@ -217,7 +229,9 @@ export default function ProfilePage() {
           />
           {errors.confirmPassword && (
             <p className="text-error text-sm">
-              {errors.confirmPassword.message}
+              {typeof errors.confirmPassword?.message === 'string'
+                ? errors.confirmPassword.message
+                : ''}
             </p>
           )}
         </div>
