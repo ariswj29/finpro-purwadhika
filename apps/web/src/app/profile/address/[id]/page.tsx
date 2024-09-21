@@ -16,6 +16,16 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { FaPlus } from 'react-icons/fa';
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+
+// Ikon custom untuk marker
+const icon = new L.Icon({
+  iconUrl: '/map-marker.png',
+  iconSize: [35, 35],
+  iconAnchor: [12, 12],
+});
 
 export default function AddAddress() {
   const cookies = getCookies();
@@ -24,6 +34,9 @@ export default function AddAddress() {
   const addressId = Array.isArray(id) ? id[0] : id || null;
   const [province, setProvince] = useState([]);
   const [city, setCity] = useState([]);
+  const [latitude, setLatitude] = useState(-6.2088); // Default Jakarta
+  const [longitude, setLongitude] = useState(106.8456); // Default Jakarta
+  const [loading, setLoading] = useState(true);
   const [notif, setNotif] = useState<{ message: string; status: string }>({
     message: '',
     status: '',
@@ -43,10 +56,15 @@ export default function AddAddress() {
       addressDetail(addressId || '')
         .then((data) => {
           reset(data.data);
+          setLatitude(data.data.latitude);
+          setLongitude(data.data.longitude);
+          setLoading(false);
         })
         .catch((error) => {
           console.error('Error fetching address:', error);
         });
+    } else {
+      setLoading(false);
     }
   }, [addressId, reset]);
 
@@ -69,7 +87,6 @@ export default function AddAddress() {
       }
     };
 
-    // Extract watch('provinceId') to a variable
     const provinceId = watch('provinceId');
 
     fetchProvince();
@@ -78,15 +95,15 @@ export default function AddAddress() {
     } else {
       setCity([]);
     }
-  }, [watch, watch('provinceId')]); // Keep the `watch` function and `provinceId` as dependencies
+  }, [watch, watch('provinceId')]);
 
   const onSubmit = async (data: any, event: any) => {
     try {
       data = {
         ...data,
         userId: Number(cookies.userId),
-        longitude: 0,
-        latitude: 0,
+        longitude,
+        latitude,
       };
       let response;
       if (addressId == 'add') {
@@ -103,6 +120,20 @@ export default function AddAddress() {
     }
   };
 
+  function LocationMarker() {
+    const map = useMapEvents({
+      click(e: any) {
+        setLatitude(e.latlng.lat);
+        setLongitude(e.latlng.lng);
+        map.flyTo(e.latlng, map.getZoom());
+      },
+    });
+
+    return latitude && longitude ? (
+      <Marker position={[latitude, longitude]} icon={icon}></Marker>
+    ) : null;
+  }
+
   const showToast = (data: { message: string; status: string }) => {
     setNotif(data);
     setTimeout(() => {
@@ -114,7 +145,7 @@ export default function AddAddress() {
     <div className="shadow container mx-auto px-4">
       <form>
         <NotificationToast toastMessage={notif} />
-        <div className="md:grid">
+        <div className="md:grid py-4">
           <label className="form-control w-full">
             <div className="label">
               <span className="label-text font-bold">Name</span>
@@ -201,6 +232,57 @@ export default function AddAddress() {
               <span className="text-red-500">This field is required</span>
             )}
           </label>
+
+          {/* Map with Leaflet */}
+          <div className="label">
+            <span className="label-text font-bold">Map</span>
+          </div>
+          {loading ? (
+            <div className="flex justify-center items-center h-96">
+              <p className="font-bold">Loading...</p>
+            </div>
+          ) : (
+            <div className="my-2 h-96">
+              <MapContainer
+                className="sticky"
+                center={[latitude, longitude]}
+                zoom={13}
+                style={{ height: '100%', width: '100%' }}
+              >
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                <LocationMarker />
+              </MapContainer>
+            </div>
+          )}
+
+          {/* Latitude and Longitude */}
+          <label className="form-control w-full">
+            <div className="label">
+              <span className="label-text font-bold">Latitude</span>
+            </div>
+            <input
+              type="text"
+              value={latitude}
+              className="input input-bordered"
+              readOnly
+            />
+          </label>
+          <label className="form-control w-full">
+            <div className="label">
+              <span className="label-text font-bold">Longitude</span>
+            </div>
+            <input
+              type="text"
+              value={longitude}
+              className="input input-bordered"
+              readOnly
+            />
+          </label>
+
+          {/* Submit button */}
           <button
             type="submit"
             className="btn bg-secondary my-4"

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
 import { getUserAdmin } from '@/api/user';
@@ -9,6 +10,16 @@ import { ShowMessage } from '@/components/ShowMessage';
 import { branchSchemma } from '@/schemas/branch.schema';
 import { createBranch, getBranch, updateBranch } from '@/api/branch';
 import { getCity, getProvince } from '@/api/address';
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+
+// Ikon custom untuk marker
+const icon = new L.Icon({
+  iconUrl: '/map-marker.png',
+  iconSize: [35, 35],
+  iconAnchor: [12, 12],
+});
 
 const FormStore = () => {
   const {
@@ -33,24 +44,26 @@ const FormStore = () => {
   const [province, setProvince] = useState([]);
   const [city, setCity] = useState([]);
   const [user, setUser] = useState([]);
+  const [latitude, setLatitude] = useState(-6.2088); // Default latitude Jakarta
+  const [longitude, setLongitude] = useState(106.8456); // Default longitude Jakarta
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (storeId != 'add') {
       getBranch(Number(storeId) || 0)
         .then((data) => {
           reset(data.data);
+          setLatitude(data.data.latitude);
+          setLongitude(data.data.longitude);
+          setLoading(false);
         })
         .catch((error) => {
           console.error('Error fetching user:', error);
         });
+    } else {
+      setLoading(false);
     }
   }, [storeId, reset]);
-
-  useEffect(() => {
-    if (storeId) {
-      reset({ ...watch() });
-    }
-  }, [storeId, reset, watch]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -88,15 +101,15 @@ const FormStore = () => {
     } else {
       setCity([]);
     }
-  }, [watch]);
+  }, [watch, watch('provinceId')]);
 
   const onSubmit = async (data: any) => {
     console.log(data, 'data submit');
     try {
       data = {
         ...data,
-        longitude: 0,
-        latitude: 0,
+        longitude,
+        latitude,
       };
       let response;
       if (storeId == 'add') {
@@ -116,10 +129,24 @@ const FormStore = () => {
     }
   };
 
+  function LocationMarker() {
+    const map = useMapEvents({
+      click(e: any) {
+        setLatitude(e.latlng.lat);
+        setLongitude(e.latlng.lng);
+        map.flyTo(e.latlng, map.getZoom());
+      },
+    });
+
+    return latitude && longitude ? (
+      <Marker position={[latitude, longitude]} icon={icon}></Marker>
+    ) : null;
+  }
+
   return (
     <form>
       <div className="container mx-auto px-4">
-        {showMessage === true ? (
+        {showMessage == true ? (
           <ShowMessage
             name={
               dataMessage.message === 'Branch successfully created'
@@ -227,6 +254,38 @@ const FormStore = () => {
               ),
             )}
           </select>
+
+          <label className="label">Map</label>
+          {loading ? (
+            <div className="col-span-2">Loading...</div>
+          ) : (
+            <div className="col-span-2">
+              <MapContainer
+                center={[latitude, longitude]}
+                zoom={13}
+                style={{ height: '400px', width: '100%' }}
+              >
+                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                <LocationMarker />
+              </MapContainer>
+            </div>
+          )}
+
+          <label className="label">Latitude</label>
+          <input
+            type="text"
+            className="w-full border p-2"
+            value={latitude}
+            readOnly
+          />
+
+          <label className="label">Longitude</label>
+          <input
+            type="text"
+            className="w-full border p-2"
+            value={longitude}
+            readOnly
+          />
 
           <div className="my-4">
             <button
