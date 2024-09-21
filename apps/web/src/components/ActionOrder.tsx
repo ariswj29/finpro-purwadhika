@@ -4,7 +4,7 @@ import { DetailOrder } from './DetailOrder';
 import ConfirmModal from './ConfirmModal';
 import UploadPaymentPage from './UploadPayment';
 
-export default function ActionOrder({ order }: any) {
+export default function ActionOrder({ order, inventory }: any) {
   const [openDetail, setOpenDetail] = useState<boolean>(false);
   const [openPayment, setOpenPayment] = useState<boolean>(false);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
@@ -62,15 +62,17 @@ export default function ActionOrder({ order }: any) {
         tabIndex={0}
         className="dropdown-content menu bg-base-100 rounded-box z-[1] w-32 p-2 shadow"
       >
-        <li className="my-1">
-          <a
-            className="font-semibold bg-slate-300"
-            onClick={() => handleOpenDetail(order)}
-          >
-            Detail
-          </a>
-        </li>
-        {order.paymentStatus == 'UNPAID' && (
+        {order && (
+          <li className="my-1">
+            <a
+              className="font-semibold bg-slate-300"
+              onClick={() => handleOpenDetail(order)}
+            >
+              Detail
+            </a>
+          </li>
+        )}
+        {order && order.paymentStatus == 'UNPAID' && (
           <li className="my-1">
             <a
               className="font-semibold bg-red-400"
@@ -84,7 +86,7 @@ export default function ActionOrder({ order }: any) {
             </a>
           </li>
         )}
-        {order.paymentStatus == 'PAID' && (
+        {order && order.paymentStatus == 'PAID' && (
           <>
             <li className="my-1">
               <a
@@ -108,7 +110,7 @@ export default function ActionOrder({ order }: any) {
             </li>
           </>
         )}
-        {order.paymentStatus == 'PROCESSING' && (
+        {order && order.paymentStatus == 'PROCESSING' && (
           <>
             <li className="my-1">
               <a
@@ -132,6 +134,26 @@ export default function ActionOrder({ order }: any) {
                 }}
               >
                 Cancel Order
+              </a>
+            </li>
+          </>
+        )}
+        {inventory && (
+          <>
+            <li className="my-1">
+              <a
+                className="font-semibold bg-slate-300"
+                onClick={() => handleOpenDetail(order)}
+              >
+                Request Stock
+              </a>
+            </li>
+            <li className="my-1">
+              <a
+                className="font-semibold bg-slate-300"
+                onClick={() => handleOpenDetail(order)}
+              >
+                Update Stock
               </a>
             </li>
           </>
