@@ -1,5 +1,7 @@
 // import { logoutProcess } from '@/api/auth';
 
+import { id } from 'date-fns/locale';
+
 export const navbars = [
   {
     id: 1,
@@ -47,7 +49,12 @@ export const sidebarSuperadmin = [
   {
     id: 6,
     title: 'Inventory',
-    link: '/admin/inventory',
+    link: '/admin/select-inventory',
+  },
+  {
+    id: 8,
+    title: 'Journal',
+    link: '/admin/journal',
   },
   {
     id: 5,
@@ -81,6 +88,11 @@ export const sidebarAdmin = [
     id: 4,
     title: 'Inventory',
     link: '/admin/inventory',
+  },
+  {
+    id: 8,
+    title: 'Journal',
+    link: '/admin/journal',
   },
 ];
 

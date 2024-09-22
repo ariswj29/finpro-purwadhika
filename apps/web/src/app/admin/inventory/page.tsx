@@ -77,16 +77,15 @@ export default function ProductTable() {
               <FaSearch />
             </button>
           </div>
-          {role === 'SUPER_ADMIN' && (
-            <Link
-              href={'/admin/products/add'}
-              className="bg-green-500 hover:bg-green-600 text-primary p-2 rounded"
-            >
-              <span className="flex items-center">
-                <FaPlus /> &nbsp; Add Product
-              </span>
-            </Link>
-          )}
+
+          <Link
+            href={'/admin/inventory/add'}
+            className="bg-green-500 hover:bg-green-600 text-primary p-2 rounded"
+          >
+            <span className="flex items-center">
+              <FaPlus /> &nbsp; Add Stock
+            </span>
+          </Link>
         </div>
         <table className="table-auto">
           <thead className="bg-secondary">

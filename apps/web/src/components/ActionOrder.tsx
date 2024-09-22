@@ -3,6 +3,7 @@ import { FaBars } from 'react-icons/fa';
 import { DetailOrder } from './DetailOrder';
 import ConfirmModal from './ConfirmModal';
 import UploadPaymentPage from './UploadPayment';
+import Link from 'next/link';
 
 export default function ActionOrder({ order, inventory }: any) {
   const [openDetail, setOpenDetail] = useState<boolean>(false);
@@ -141,20 +142,9 @@ export default function ActionOrder({ order, inventory }: any) {
         {inventory && (
           <>
             <li className="my-1">
-              <a
-                className="font-semibold bg-slate-300"
-                onClick={() => handleOpenDetail(order)}
-              >
-                Request Stock
-              </a>
-            </li>
-            <li className="my-1">
-              <a
-                className="font-semibold bg-slate-300"
-                onClick={() => handleOpenDetail(order)}
-              >
-                Update Stock
-              </a>
+              <Link href={`/admin/inventory/${inventory.id}`}>
+                <span className="font-semibold">Update Stock</span>
+              </Link>
             </li>
           </>
         )}

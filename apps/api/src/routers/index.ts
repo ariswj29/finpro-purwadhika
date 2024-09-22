@@ -11,6 +11,7 @@ import branch from './branch.router';
 import user from './user.router';
 import category from './category.router';
 import inventory from './inventory.router';
+import journal from './journal.router';
 
 const router = Router();
 
@@ -26,5 +27,6 @@ router.use('/api/branch', branch);
 router.use('/api/users', user);
 router.use('/api/categories', category);
 router.use('/api/inventory', inventory);
+router.use('/api/journal', journal);
 
 export default router;

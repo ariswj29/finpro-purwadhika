@@ -78,24 +78,79 @@ export async function inventories(req: Request, res: Response) {
 
 export async function createInventory(req: Request, res: Response) {
   try {
-    const { name, price, categoryId, slug, description } = req.body;
-    const image = req.file?.filename;
+    const { stock, productId, branchId, transactionType } = req.body;
 
-    const product = await prisma.product.create({
+    const branch = await prisma.branch.findUnique({
+      where: {
+        userId: parseInt(branchId, 10),
+      },
+    });
+
+    const productDetails = await prisma.product.findUnique({
+      where: {
+        id: parseInt(productId, 10),
+      },
+    });
+
+    if (!branch || !productDetails) {
+      return res.status(404).json({ message: 'Branch or Product not found' });
+    }
+
+    const productBranch = await prisma.productBranch.findFirst({
+      where: {
+        branchId: branch?.id,
+        productId: parseInt(productId, 10),
+      },
+    });
+
+    let product;
+    if (!productBranch && transactionType == 'IN') {
+      product = await prisma.productBranch.create({
+        data: {
+          stock: parseInt(stock, 10),
+          branch: {
+            connect: {
+              id: branch?.id,
+            },
+          },
+          product: {
+            connect: {
+              id: parseInt(productId, 10),
+            },
+          },
+        },
+      });
+    } else {
+      product = await prisma.productBranch.update({
+        where: {
+          id: productBranch?.id,
+        },
+        data: {
+          stock:
+            transactionType == 'IN'
+              ? (productBranch?.stock ?? 0) + parseInt(stock, 10)
+              : (productBranch?.stock ?? 0) - parseInt(stock, 10),
+        },
+      });
+    }
+
+    const journal = await prisma.journalMutation.create({
       data: {
-        name,
-        price: parseInt(price, 10),
-        image,
-        categoryId: parseInt(categoryId, 10),
-        slug,
-        description,
+        quantity: parseInt(stock, 10),
+        transactionType,
+        description: `${transactionType == 'IN' ? 'Add' : 'Remove'} ${stock} stock of ${productDetails?.name} ${branch?.name ? `to branch ${branch?.name}` : ''}`,
+        productBranch: {
+          connect: {
+            id: product.id,
+          },
+        },
       },
     });
 
     res.status(201).json({
       status: 'success',
-      message: 'success create product',
-      data: product,
+      message: 'Success adding stock',
+      data: { data: product, journal },
     });
   } catch (error) {
     console.error(error);
@@ -155,7 +210,7 @@ export async function updateInventory(req: Request, res: Response) {
 
     res.status(200).json({
       status: 'success',
-      message: 'success update product',
+      message: 'Success updating stock',
       data: product,
     });
   } catch (error) {
