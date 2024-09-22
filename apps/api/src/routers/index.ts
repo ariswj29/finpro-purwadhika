@@ -12,9 +12,11 @@ import user from './user.router';
 import category from './category.router';
 import inventory from './inventory.router';
 import journal from './journal.router';
+import dashboard from './dashboard.router';
 
 const router = Router();
 
+router.use('/api/dashboard', dashboard);
 router.use('/api/auth', auth);
 router.use('/api/products', products);
 router.use('/api/cart', cart);
