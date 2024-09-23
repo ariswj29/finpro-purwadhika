@@ -1,8 +1,8 @@
 NODE_ENV=development
 PORT=8000
-DATABASE_URL="mysql://jcwdol01403:jcwdol01403@adminer2.purwadhikabootcamp.com:3306/jcwdol01403"
+DATABASE_URL="mysql://localhost:root:3306/jcwdol14-final-project"
 JWT_SECRET_KEY="secret"
-PUBLIC_APP_URL="http://localhost:3000"
+PUBLIC_APP_URL="https://jcwdol01403.purwadhikabootcamp.com/"
 NODEMAILER_USER="ariswj29@gmail.com"
 CLIENT_ID="986829400165-i91adtg1nlv4c3epdqerovfrudoaap70.apps.googleusercontent.com"
 CLIENT_SECRET="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"
