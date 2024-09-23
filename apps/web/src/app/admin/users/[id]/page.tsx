@@ -8,7 +8,6 @@ import { useParams, useRouter } from 'next/navigation';
 import { ShowMessage } from '@/components/ShowMessage';
 import { usersSchema } from '@/schemas/users.schema';
 import Image from 'next/image';
-import Cookies from 'js-cookie';
 
 const FormUsers = () => {
   const {

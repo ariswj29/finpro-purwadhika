@@ -75,7 +75,9 @@ export default function DashboardPage() {
               <FaTicketAlt className="text-4xl text-blue-400" />
               <div className="text-md ml-2">Total Product</div>
             </div>
-            <div className="text-xl font-bold">{data?.totalProduct}</div>
+            <div className="text-xl font-bold">
+              {data?.totalProduct ? data?.totalProduct : 0}
+            </div>
           </div>
         </div>
         <div className="p-8 border border-secondary rounded-lg">
@@ -85,7 +87,7 @@ export default function DashboardPage() {
               <div className="text-md ml-2">Total Sales</div>
             </div>
             <div className="text-xl font-bold">
-              {formattedMoney(data?.totalSales)}
+              {data?.totalSales ? formattedMoney(data?.totalSales) : 0}
             </div>
           </div>
         </div>
@@ -95,7 +97,9 @@ export default function DashboardPage() {
               <FaTicketAlt className="text-4xl text-yellow-400" />
               <div className="text-md ml-2">Total Stock</div>
             </div>
-            <div className="text-xl font-bold">{data?.totalStock}</div>
+            <div className="text-xl font-bold">
+              {data?.totalStock ? data?.totalStock : 0}
+            </div>
           </div>
         </div>
       </div>

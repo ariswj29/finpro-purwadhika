@@ -6,8 +6,18 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useParams, useRouter } from 'next/navigation';
 import { ShowMessage } from '@/components/ShowMessage';
 import { productsSchema } from '@/schemas/products.schema';
-import { createProduct, getProductById, updateProduct } from '@/api/products';
+import {
+  createProduct,
+  getAllCategories,
+  getProductById,
+  updateProduct,
+} from '@/api/products';
 import Image from 'next/image';
+
+interface Category {
+  id: string;
+  name: string;
+}
 
 const FormProduct = () => {
   const {
@@ -31,6 +41,7 @@ const FormProduct = () => {
   const [showMessage, setShowMessage] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>('');
+  const [categories, setCategories] = useState<Category[]>([]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -45,6 +56,15 @@ const FormProduct = () => {
   };
 
   useEffect(() => {
+    const fetchcategories = async () => {
+      try {
+        const response = await getAllCategories();
+        setCategories(response.data);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+
     if (userId != 'add') {
       getProductById(userId || '')
         .then((data) => {
@@ -59,6 +79,8 @@ const FormProduct = () => {
           console.error('Error fetching user:', error);
         });
     }
+
+    fetchcategories();
   }, [userId, reset]);
 
   useEffect(() => {
@@ -173,10 +195,11 @@ const FormProduct = () => {
               <option value="" disabled selected>
                 Select Category
               </option>
-              <option value="1">Fruits</option>
-              <option value="2">Vegetables</option>
-              <option value="3">Meat</option>
-              <option value="4">Processed Ingredients</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
             </select>
             {errors.categoryId && (
               <p className="text-sm text-red-500">

@@ -12,6 +12,7 @@ import user from './user.router';
 import category from './category.router';
 import inventory from './inventory.router';
 import journal from './journal.router';
+import mutation from './mutation.router';
 import dashboard from './dashboard.router';
 
 const router = Router();
@@ -30,5 +31,6 @@ router.use('/api/users', user);
 router.use('/api/categories', category);
 router.use('/api/inventory', inventory);
 router.use('/api/journal', journal);
+router.use('/api/mutation', mutation);
 
 export default router;
