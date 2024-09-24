@@ -39,14 +39,16 @@ export default function OrderCompletePage() {
   };
 
   return (
-    <div className="relative p-12 sm:p-16 border-2 shadow-md w-full">
-      <h3 className="text-2xl font-bold">Order List Complete</h3>
+    <div className="relative p-4 sm:p-8 lg:p-12 border-2 shadow-md w-full">
+      <h3 className="text-lg sm:text-xl lg:text-2xl font-bol pb-4">
+        Order List Complete
+      </h3>
 
       {/* Modal Detail */}
       {openDetail && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="fixed inset-0 bg-black opacity-70"></div>
-          <div className="relative bg-white p-2 rounded-lg shadow-lg z-10">
+          <div className="relative bg-white p-4 rounded-lg shadow-lg z-10 w-full max-w-md sm:max-w-lg">
             <DetailOrder
               show={openDetail}
               order={selectedOrder}
@@ -57,16 +59,18 @@ export default function OrderCompletePage() {
       )}
 
       {/* Tabel Order */}
-      <div className={`${openDetail ? 'opacity-50 pointer-events-none' : ''}`}>
-        <table className="table">
+      <div
+        className={`${openDetail ? 'opacity-50 pointer-events-none' : ''} overflow-x-auto`}
+      >
+        <table className="table-auto w-full text-sm sm:text-base">
           <thead>
             <tr>
-              <th>No</th>
-              <th>No Order</th>
-              <th>Date Order</th>
-              <th>Status</th>
-              <th>Total Price</th>
-              <th>Action</th>
+              <th className="px-2 py-3">No</th>
+              <th className="px-2 py-3">No Order</th>
+              <th className="px-2 py-3">Date Order</th>
+              <th className="px-2 py-3">Status</th>
+              <th className="px-2 py-3">Total Price</th>
+              <th className="px-2 py-3">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -87,16 +91,16 @@ export default function OrderCompletePage() {
               </tr>
             ) : (
               data.map((item, index) => (
-                <tr key={index}>
-                  <th>{index + 1}</th>
-                  <td>{item.name}</td>
-                  <td>{formattedDate(item.createdAt)}</td>
-                  <td>
+                <tr key={index} className="border-b">
+                  <th className="px-2 py-2">{index + 1}</th>
+                  <td className="px-2 py-2">{item.name}</td>
+                  <td className="px-2 py-2">{formattedDate(item.createdAt)}</td>
+                  <td className="px-2 py-2">
                     <StatusOrder status="COMPLETE" />
                   </td>
-                  <td>{formattedMoney(item.total)}</td>
-                  <td>
-                    <div className="dropdown">
+                  <td className="px-2 py-2">{formattedMoney(item.total)}</td>
+                  <td className="px-2 py-2">
+                    <div className="dropdown dropdown-left dropdown-end">
                       <div tabIndex={0} role="button" className="m-1">
                         <FaBars />
                       </div>

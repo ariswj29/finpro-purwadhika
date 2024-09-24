@@ -56,31 +56,40 @@ export default function OrderListPage() {
 
   return (
     <div className="relative p-12 sm:p-16 border-2 shadow-md w-full">
-      <h3 className="text-2xl font-bold">Order List</h3>
+      <h3 className="text-2xl font-bold pb-4">Order List</h3>
 
+      {/* Modal Detail */}
       {openDetail && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="fixed inset-0 bg-black opacity-70"></div>
-          <DetailOrder
-            show={openDetail}
-            order={selectedOrder}
-            onClose={handleCloseDetail}
-          />
+          <div className="relative bg-white p-2 rounded-lg shadow-lg z-10 max-w-md w-full sm:w-auto">
+            <DetailOrder
+              show={openDetail}
+              order={selectedOrder}
+              onClose={handleCloseDetail}
+            />
+          </div>
         </div>
       )}
 
+      {/* Modal Payment */}
       {openPayment && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="fixed inset-0 bg-black opacity-70"></div>
-          <UploadPaymentPage
-            order={selectedOrder}
-            onClose={handleClosePayment}
-          />
+          <div className="relative bg-white p-2 rounded-lg shadow-lg z-10 max-w-md w-full sm:w-auto">
+            <UploadPaymentPage
+              order={selectedOrder}
+              onClose={handleClosePayment}
+            />
+          </div>
         </div>
       )}
 
-      <div className={`${openDetail ? 'opacity-50 pointer-events-none' : ''}`}>
-        <table className="table">
+      {/* Table Order */}
+      <div
+        className={`overflow-x-auto w-full ${openDetail || openPayment ? 'opacity-50 pointer-events-none' : ''}`}
+      >
+        <table className="table w-full">
           <thead>
             <tr>
               <th>No</th>
@@ -118,7 +127,7 @@ export default function OrderListPage() {
                   </td>
                   <td>{formattedMoney(item.total)}</td>
                   <td>
-                    <div className="dropdown">
+                    <div className="dropdown dropdown-left">
                       <div tabIndex={0} role="button" className="m-1">
                         <FaBars />
                       </div>
@@ -138,9 +147,6 @@ export default function OrderListPage() {
                           <>
                             <li className="my-1">
                               <a
-                                // disabled={
-                                //   item.expirePayment < new Date() ? true : false
-                                // }
                                 className="font-semibold bg-blue-400"
                                 onClick={() => handleOpenPayment(item)}
                               >
@@ -183,14 +189,14 @@ export default function OrderListPage() {
             )}
           </tbody>
         </table>
-        {confirmationModal === true ? (
-          <ConfirmModal
-            id={id}
-            setModal={setConfirmationModal}
-            title={forModal}
-          />
-        ) : null}
       </div>
+      {confirmationModal && (
+        <ConfirmModal
+          id={id}
+          setModal={setConfirmationModal}
+          title={forModal}
+        />
+      )}
     </div>
   );
 }

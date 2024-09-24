@@ -11,4 +11,10 @@ export interface Product {
   category: {
     name: string;
   };
+  productBranchs: {
+    branch: {
+      name: string;
+    };
+    stock: number;
+  }[];
 }

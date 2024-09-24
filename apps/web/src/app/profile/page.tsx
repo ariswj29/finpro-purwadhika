@@ -153,7 +153,7 @@ export default function ProfilePage() {
         </div>
 
         <button type="submit" className="btn w-full">
-          update profile
+          Update Profile
         </button>
       </form>
 
