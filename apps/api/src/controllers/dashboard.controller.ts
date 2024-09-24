@@ -38,7 +38,7 @@ export const getDashboard = async (req: Request, res: Response) => {
       },
     });
     const formattedSales = salesPerProduct.map(
-      (item) => item._sum.quantity || 0,
+      (item: { _sum: { quantity: number | null } }) => item._sum.quantity ?? 0,
     );
 
     const stockPerProduct = await prisma.productBranch.groupBy({
@@ -50,7 +50,9 @@ export const getDashboard = async (req: Request, res: Response) => {
         branchId: branch ? branch.id : undefined,
       },
     });
-    const formattedStock = stockPerProduct.map((item) => item._sum.stock || 0);
+    const formattedStock = stockPerProduct.map(
+      (item: { _sum: { stock: number | null } }) => item._sum.stock ?? 0,
+    );
 
     console.log(formattedSales, 'formattedSales');
 

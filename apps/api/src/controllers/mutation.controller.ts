@@ -47,12 +47,14 @@ export async function mutations(req: Request, res: Response) {
       take: limitNumber,
     });
 
-    const mutationsWithStockAndIndex = mutations.map((mutation, index) => {
-      return {
-        ...mutation,
-        no: (pageNumber - 1) * limitNumber + index + 1,
-      };
-    });
+    const mutationsWithStockAndIndex = mutations.map(
+      (mutation: { stockProcess: number | null }, index: number) => {
+        return {
+          ...mutation,
+          no: (pageNumber - 1) * limitNumber + index + 1,
+        };
+      },
+    );
 
     const totalMutations = await prisma.mutation.count();
     const totalPages = Math.ceil(totalMutations / limitNumber);

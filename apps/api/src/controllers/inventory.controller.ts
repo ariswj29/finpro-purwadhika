@@ -43,18 +43,20 @@ export async function inventories(req: Request, res: Response) {
       take: limitNumber,
     });
 
-    const productsWithStockAndIndex = products.map((product, index) => {
-      const totalStock = product.productBranchs.reduce(
-        (acc, branch) => acc + branch.stock,
-        0,
-      );
+    const productsWithStockAndIndex = products.map(
+      (product: { productBranchs: { stock: number }[] }, index: number) => {
+        const totalStock = product.productBranchs.reduce(
+          (acc: number, curr: { stock: number }) => acc + curr.stock,
+          0,
+        );
 
-      return {
-        ...product,
-        no: (pageNumber - 1) * limitNumber + index + 1,
-        totalStock,
-      };
-    });
+        return {
+          ...product,
+          no: (pageNumber - 1) * limitNumber + index + 1,
+          totalStock,
+        };
+      },
+    );
 
     const totalProducts = await prisma.product.count();
     const totalPages = Math.ceil(totalProducts / limitNumber);
@@ -79,6 +81,7 @@ export async function inventories(req: Request, res: Response) {
 export async function createInventory(req: Request, res: Response) {
   try {
     const { stock, productId, branchId, transactionType } = req.body;
+    console.log(req.body, 'req.body');
 
     const branch = await prisma.branch.findUnique({
       where: {
