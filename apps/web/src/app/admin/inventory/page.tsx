@@ -5,11 +5,12 @@ import { useCallback, useEffect, useState } from 'react';
 import { FaPen, FaPlus, FaSearch, FaTrash } from 'react-icons/fa';
 import { formattedMoney, getCookies } from '@/helper/helper';
 import { Product } from '@/interface/product.interface';
-import { getProducts } from '@/api/products';
 import Image from 'next/image';
 import Link from 'next/link';
+import { getInventory } from '@/api/inventory';
+import ActionOrder from '@/components/ActionOrder';
 
-export default function ProductTable() {
+export default function InventoryTable() {
   const cookies = getCookies();
   const { role } = JSON.parse(cookies.user);
   const [products, setProducts] = useState<Product[]>([]);
@@ -23,7 +24,7 @@ export default function ProductTable() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await getProducts(search, page);
+      const res = await getInventory(search, page);
       setProducts(res.data);
       setTotalPages(res.pagination.totalPages);
       setLoading(false);
@@ -58,7 +59,7 @@ export default function ProductTable() {
 
   return (
     <div className="container mx-auto px-4">
-      <div className="text-2xl mb-4">Table Products</div>
+      <div className="text-2xl mb-4">Table Inventory</div>
       <div className="grid gap-4">
         <div className="flex justify-between items-center gap-4">
           <div className="flex">
@@ -76,16 +77,15 @@ export default function ProductTable() {
               <FaSearch />
             </button>
           </div>
-          {role === 'SUPER_ADMIN' && (
-            <Link
-              href={'/admin/products/add'}
-              className="bg-green-500 hover:bg-green-600 text-primary p-2 rounded"
-            >
-              <span className="flex items-center">
-                <FaPlus /> &nbsp; Add Product
-              </span>
-            </Link>
-          )}
+
+          <Link
+            href={'/admin/inventory/add'}
+            className="bg-green-500 hover:bg-green-600 text-primary p-2 rounded"
+          >
+            <span className="flex items-center">
+              <FaPlus /> &nbsp; Add Stock
+            </span>
+          </Link>
         </div>
         <table className="table-auto">
           <thead className="bg-secondary">
@@ -94,9 +94,8 @@ export default function ProductTable() {
               <th className="px-4 py-2">Image</th>
               <th className="px-4 py-2">Name</th>
               <th className="px-4 py-2">Category</th>
-              <th className="px-4 py-2">Total Stock</th>
+              <th className="px-4 py-2">Stock</th>
               <th className="px-4 py-2">Price</th>
-              {role === 'SUPER_ADMIN' && <th className="px-4 py-2">Actions</th>}
             </tr>
           </thead>
           <tbody>
@@ -127,24 +126,6 @@ export default function ProductTable() {
                     <td className="border p-2 text-right">
                       {formattedMoney(product.price)}
                     </td>
-                    {role === 'SUPER_ADMIN' && (
-                      <td className="border p-2">
-                        <Link href={`/admin/products/${product.id}`}>
-                          <button className="bg-yellow-500 hover:bg-yellow-600 text-primary p-1 rounded">
-                            <FaPen />
-                          </button>
-                        </Link>
-                        <button
-                          onClick={() => {
-                            setConfirmationModal(true);
-                            setId(product.id);
-                          }}
-                          className="bg-red-500 hover:bg-red-600 text-primary p-1 rounded ml-2"
-                        >
-                          <FaTrash />
-                        </button>
-                      </td>
-                    )}
                   </tr>
                 );
               })

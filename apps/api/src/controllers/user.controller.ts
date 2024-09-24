@@ -230,12 +230,16 @@ export const getAdmin = async (req: Request, res: Response) => {
         role: 'ADMIN',
         // branch: null
       },
-
       select: {
         id: true,
         username: true,
         email: true,
         role: true,
+        branch: {
+          select: {
+            name: true,
+          },
+        },
       },
     });
 

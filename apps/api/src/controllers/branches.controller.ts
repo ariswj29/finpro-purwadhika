@@ -42,16 +42,37 @@ export async function createBranch(req: Request, res: Response) {
 
 export async function getBranch(req: Request, res: Response) {
   try {
-    const { id } = req.params;
-    const response = await prisma.branch.findUnique({
-      where: { id: Number(id) },
+    const { userId, id } = req.params;
+
+    console.log(id, 'id');
+    console.log(userId, 'userId');
+
+    const conditions: any[] = [];
+
+    if (id) {
+      conditions.push({ id: Number(id) });
+    }
+    if (userId) {
+      conditions.push({ userId: Number(userId) });
+    }
+
+    if (conditions.length === 0) {
+      throw new Error('No valid parameters provided');
+    }
+
+    const response = await prisma.branch.findFirst({
+      where: {
+        OR: conditions,
+      },
     });
 
-    if (!response) throw new Error(`branch with ${id} ID is not found`);
+    if (!response) {
+      throw new Error('Branch not found');
+    }
 
     res.status(200).json({
       status: 'success',
-      message: 'success get branch',
+      message: 'Successfully fetched branch',
       data: response,
     });
   } catch (error) {

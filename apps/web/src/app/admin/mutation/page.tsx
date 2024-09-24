@@ -4,15 +4,15 @@ import ConfirmModal from '@/components/ConfirmModal';
 import { useCallback, useEffect, useState } from 'react';
 import { FaPen, FaPlus, FaSearch, FaTrash } from 'react-icons/fa';
 import { formattedMoney, getCookies } from '@/helper/helper';
-import { Product } from '@/interface/product.interface';
-import { getProducts } from '@/api/products';
-import Image from 'next/image';
 import Link from 'next/link';
+import { getMutations } from '@/api/inventory';
+import ActionOrder from '@/components/ActionOrder';
+import { mutation } from '@/interface/mutation.interface';
 
-export default function ProductTable() {
+export default function MutationTable() {
   const cookies = getCookies();
   const { role } = JSON.parse(cookies.user);
-  const [products, setProducts] = useState<Product[]>([]);
+  const [mutations, setMutations] = useState<mutation[]>([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(page);
@@ -23,8 +23,8 @@ export default function ProductTable() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await getProducts(search, page);
-      setProducts(res.data);
+      const res = await getMutations(search, page);
+      setMutations(res.data);
       setTotalPages(res.pagination.totalPages);
       setLoading(false);
     } catch (error) {
@@ -58,7 +58,7 @@ export default function ProductTable() {
 
   return (
     <div className="container mx-auto px-4">
-      <div className="text-2xl mb-4">Table Products</div>
+      <div className="text-2xl mb-4">Table Inventory</div>
       <div className="grid gap-4">
         <div className="flex justify-between items-center gap-4">
           <div className="flex">
@@ -76,27 +76,27 @@ export default function ProductTable() {
               <FaSearch />
             </button>
           </div>
-          {role === 'SUPER_ADMIN' && (
-            <Link
-              href={'/admin/products/add'}
-              className="bg-green-500 hover:bg-green-600 text-primary p-2 rounded"
-            >
-              <span className="flex items-center">
-                <FaPlus /> &nbsp; Add Product
-              </span>
-            </Link>
-          )}
+
+          <Link
+            href={'/admin/mutation/add'}
+            className="bg-green-500 hover:bg-green-600 text-primary p-2 rounded"
+          >
+            <span className="flex items-center">
+              <FaPlus /> &nbsp; Add Stock Mutation
+            </span>
+          </Link>
         </div>
         <table className="table-auto">
           <thead className="bg-secondary">
             <tr>
               <th className="px-4 py-2">No</th>
-              <th className="px-4 py-2">Image</th>
-              <th className="px-4 py-2">Name</th>
-              <th className="px-4 py-2">Category</th>
-              <th className="px-4 py-2">Total Stock</th>
-              <th className="px-4 py-2">Price</th>
-              {role === 'SUPER_ADMIN' && <th className="px-4 py-2">Actions</th>}
+              <th className="px-4 py-2">Status</th>
+              <th className="px-4 py-2">Branch Destination</th>
+              <th className="px-4 py-2">Branch Source</th>
+              <th className="px-4 py-2">Product</th>
+              <th className="px-4 py-2">Stock Request</th>
+              <th className="px-4 py-2 w-2">Stock Process</th>
+              <th className="px-4 py-2 w-2">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -104,47 +104,36 @@ export default function ProductTable() {
               <tr>
                 <td className="p-2 font-bold">Loading...</td>
               </tr>
-            ) : products.length == 0 ? (
+            ) : mutations.length == 0 ? (
               <tr>
                 <td className="p-2 font-bold">Data not found!</td>
               </tr>
             ) : (
-              products.map((product: Product, index) => {
+              mutations.map((mutation) => {
                 return (
-                  <tr key={product.id} className="border p-2">
-                    <td className="border p-2 text-center">{product.no}</td>
-                    <td className="flex border p-2 capitalize justify-center">
-                      <Image
-                        src={`${process.env.NEXT_PUBLIC_BASE_URL}/uploads/products/${product.image}`}
-                        width={50}
-                        height={50}
-                        alt={product.name}
-                      />
+                  <tr key={mutation.id} className="border p-2">
+                    <td className="border p-2 text-center">{mutation.no}</td>
+                    <td className="border p-2 capitalize text-center">
+                      <span
+                        className={`bg-${mutation.status === 'PENDING' ? 'yellow' : mutation.status === 'APPROVED' ? 'green' : 'red'}-500 text-white p-1 rounded`}
+                      >
+                        {mutation.status}
+                      </span>
                     </td>
-                    <td className="border p-2 capitalize">{product.name}</td>
-                    <td className="border p-2">{product.category.name}</td>
-                    <td className="border p-2">{product.totalStock} pcs</td>
-                    <td className="border p-2 text-right">
-                      {formattedMoney(product.price)}
+                    <td className="border p-2">
+                      {mutation.destinationBranch.name}
                     </td>
-                    {role === 'SUPER_ADMIN' && (
-                      <td className="border p-2">
-                        <Link href={`/admin/products/${product.id}`}>
-                          <button className="bg-yellow-500 hover:bg-yellow-600 text-primary p-1 rounded">
-                            <FaPen />
-                          </button>
-                        </Link>
-                        <button
-                          onClick={() => {
-                            setConfirmationModal(true);
-                            setId(product.id);
-                          }}
-                          className="bg-red-500 hover:bg-red-600 text-primary p-1 rounded ml-2"
-                        >
-                          <FaTrash />
-                        </button>
-                      </td>
-                    )}
+                    <td className="border p-2">{mutation.sourceBranch.name}</td>
+                    <td className="border p-2">{mutation.product.name}</td>
+                    <td className="border p-2">
+                      {mutation.stockRequest ? mutation.stockRequest : 0} pcs
+                    </td>
+                    <td className="border p-2">
+                      {mutation.stockProcess ? mutation.stockProcess : 0} pcs
+                    </td>
+                    <td className="p-2 justify-center">
+                      <ActionOrder mutation={mutation} />
+                    </td>
                   </tr>
                 );
               })

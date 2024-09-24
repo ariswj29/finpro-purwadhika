@@ -1,24 +1,21 @@
 'use client';
 
 import { FaMoneyBill, FaTicketAlt, FaUsers } from 'react-icons/fa';
-// import ChartBar from '@/components/ChartBar';
-// import ChartLine from '@/components/ChartLine';
+import ChartBar from '@/components/ChartBar';
+import ChartLine from '@/components/ChartLine';
 import { useEffect, useState } from 'react';
-import { getCookies } from '@/helper/helper';
-// import { getDashboardData } from '@/api/dashboard';
+import { formattedMoney, getCookies } from '@/helper/helper';
+import { getDashboardData } from '@/api/dashboard';
 
 export default function DashboardPage() {
   const cookies = getCookies();
   const user = JSON.parse(cookies.user || '{}');
   const [data, setData] = useState({
-    users: 0,
-    transactions: 0,
-    events: 0,
-    eventsThisYear: 0,
-    eventsThisMonth: 0,
-    eventsToday: 0,
-    arrayCountCategories: [],
-    arrayCountAttandeePerMonth: [],
+    totalProduct: 0,
+    totalSales: 0,
+    totalStock: 0,
+    salesPerProduct: [],
+    stockPerProduct: [],
   });
 
   useEffect(() => {
@@ -40,70 +37,80 @@ export default function DashboardPage() {
         Your login with role:{' '}
         {user.role == 'SUPER_ADMIN' ? 'SUPER ADMIN' : user.role}
       </div>
-      {/* <div className="grid grid-cols-3 gap-4 items-center justify-center">
+      <div className="grid grid-cols-3 gap-4 items-center justify-center">
+        {user.role == 'SUPER_ADMIN' && (
+          <>
+            <div className="p-8 border border-secondary rounded-lg">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <FaUsers className="text-4xl text-blue-400" />
+                  <div className="text-md ml-2">Total Users</div>
+                </div>
+                <div className="text-xl font-bold">15</div>
+              </div>
+            </div>
+            <div className="p-8 border border-secondary rounded-lg">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <FaUsers className="text-4xl text-green-400" />
+                  <div className="text-md ml-2">Total Admin</div>
+                </div>
+                <div className="text-xl font-bold">8</div>
+              </div>
+            </div>
+            <div className="p-8 border border-secondary rounded-lg">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <FaUsers className="text-4xl text-yellow-400" />
+                  <div className="text-md ml-2">Total Customer</div>
+                </div>
+                <div className="text-xl font-bold">7</div>
+              </div>
+            </div>
+          </>
+        )}
         <div className="p-8 border border-secondary rounded-lg">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <FaUsers className="text-4xl" />
-              <div className="text-md ml-2"></div>
+              <FaTicketAlt className="text-4xl text-blue-400" />
+              <div className="text-md ml-2">Total Product</div>
             </div>
-            <div className="text-xl font-bold">{data?.users}</div>
-          </div>
-        </div>
-        <div className="p-8 border border-secondary rounded-lg">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <FaMoneyBill className="text-4xl" />
-              <div className="text-md ml-2"></div>
+            <div className="text-xl font-bold">
+              {data?.totalProduct ? data?.totalProduct : 0}
             </div>
-            <div className="text-xl font-bold">{data?.transactions}</div>
-          </div>
-        </div>
-        <div className="p-8 border border-secondary rounded-lg">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <FaTicketAlt className="text-4xl" />
-              <div className="text-md ml-2"></div>
-            </div>
-            <div className="text-xl font-bold">{data?.events}</div>
           </div>
         </div>
         <div className="p-8 border border-secondary rounded-lg">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <FaTicketAlt className="text-4xl text-green-400" />
-              <div className="text-md ml-2"></div>
+              <div className="text-md ml-2">Total Sales</div>
             </div>
-            <div className="text-xl font-bold">{data?.eventsThisYear}</div>
-          </div>
-        </div>
-        <div className="p-8 border border-secondary rounded-lg">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <FaTicketAlt className="text-4xl text-blue-400" />
-              <div className="text-md ml-2"></div>
+            <div className="text-xl font-bold">
+              {data?.totalSales ? formattedMoney(data?.totalSales) : 0}
             </div>
-            <div className="text-xl font-bold">{data?.eventsThisMonth}</div>
           </div>
         </div>
         <div className="p-8 border border-secondary rounded-lg">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <FaTicketAlt className="text-4xl text-yellow-400" />
-              <div className="text-md ml-2"></div>
+              <div className="text-md ml-2">Total Stock</div>
             </div>
-            <div className="text-xl font-bold">{data?.eventsToday}</div>
+            <div className="text-xl font-bold">
+              {data?.totalStock ? data?.totalStock : 0}
+            </div>
           </div>
         </div>
       </div>
       <div className="grid grid-cols-2 gap-4 mt-8">
         <div className="p-8 border border-secondary rounded-lg">
-          <ChartBar data={data?.arrayCountCategories} />
+          <ChartBar data={data?.salesPerProduct} />
         </div>
         <div className="p-8 border border-secondary rounded-lg">
-          <ChartLine data={data?.arrayCountAttandeePerMonth} />
+          <ChartLine data={data?.stockPerProduct} />
         </div>
-      </div> */}
+      </div>
     </div>
   );
 }

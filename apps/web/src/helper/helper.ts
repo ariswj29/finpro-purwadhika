@@ -17,6 +17,10 @@ export const formattedDate = (date: string) => {
   return format(new Date(date), 'dd MMMM yyyy', { locale: idLocale });
 };
 
+export const formattedDateAndHour = (date: string) => {
+  return format(new Date(date), 'dd MMMM yyyy HH:mm', { locale: idLocale });
+};
+
 export const formattedMoney = (money: number) => {
   const format = new Intl.NumberFormat('id-ID', {
     style: 'currency',
