@@ -104,3 +104,62 @@ export async function getJournals(page: number = 1, limit: number = 10) {
 
   return res.data;
 }
+
+export async function getMutations(
+  search: string,
+  page: number = 1,
+  limit: number = 10,
+) {
+  const authToken = await getCookie('token');
+  const userId = await getCookie('userId');
+  const url = base_url_api + '/mutation';
+  const res = await axios.get(url, {
+    params: {
+      search,
+      page,
+      limit,
+      userId,
+    },
+    headers: {
+      Authorization: 'Bearer ' + authToken,
+    },
+  });
+
+  return res.data;
+}
+
+export async function getMutationById(id: number) {
+  const authToken = await getCookie('token');
+  const url = base_url_api + '/mutation/' + id;
+  const res = await axios.get(url, {
+    headers: {
+      Authorization: 'Bearer ' + authToken,
+    },
+  });
+
+  return res.data;
+}
+
+export async function createMutation(data: any) {
+  const authToken = await getCookie('token');
+  const url = base_url_api + '/mutation';
+  const res = await axios.post(url, data, {
+    headers: {
+      Authorization: 'Bearer ' + authToken,
+    },
+  });
+
+  return res.data;
+}
+
+export async function updateMutation(id: string, data: any) {
+  const authToken = await getCookie('token');
+  const url = base_url_api + '/mutation/' + id;
+  const res = await axios.put(url, data, {
+    headers: {
+      Authorization: 'Bearer ' + authToken,
+    },
+  });
+
+  return res.data;
+}

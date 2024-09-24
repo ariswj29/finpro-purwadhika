@@ -52,7 +52,7 @@ export default function ProductDetail({ params }: { params: Params }) {
   return (
     <div className="max-w-screen-xl mx-auto my-16">
       <NotificationToast toastMessage={notif} />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 px-8">
         {/* Product Image */}
         <div className="flex justify-center">
           <Image

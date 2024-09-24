@@ -158,36 +158,6 @@ export async function createInventory(req: Request, res: Response) {
   }
 }
 
-export async function inventory(req: Request, res: Response) {
-  try {
-    const { id } = req.params;
-
-    const isIdNumeric = !isNaN(Number(id));
-
-    const product = await prisma.product.findFirst({
-      where: {
-        OR: [
-          { id: isIdNumeric ? parseInt(id, 10) : undefined },
-          { slug: !isIdNumeric ? id : undefined },
-        ],
-      },
-    });
-
-    if (!product) {
-      return res.status(404).json({ message: 'Product not found' });
-    }
-
-    res.status(200).json({
-      status: 'success',
-      message: 'Success get product',
-      data: product,
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: 'Internal Server Error' });
-  }
-}
-
 export async function updateInventory(req: Request, res: Response) {
   try {
     const { id } = req.params;
@@ -212,26 +182,6 @@ export async function updateInventory(req: Request, res: Response) {
       status: 'success',
       message: 'Success updating stock',
       data: product,
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: 'Internal Server Error' });
-  }
-}
-
-export async function deleteInventory(req: Request, res: Response) {
-  try {
-    const { id } = req.params;
-
-    await prisma.product.delete({
-      where: {
-        id: parseInt(id, 10),
-      },
-    });
-
-    res.status(200).json({
-      status: 'success',
-      message: 'success delete product',
     });
   } catch (error) {
     console.error(error);

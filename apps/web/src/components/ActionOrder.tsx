@@ -5,7 +5,7 @@ import ConfirmModal from './ConfirmModal';
 import UploadPaymentPage from './UploadPayment';
 import Link from 'next/link';
 
-export default function ActionOrder({ order, inventory }: any) {
+export default function ActionOrder({ order, mutation }: any) {
   const [openDetail, setOpenDetail] = useState<boolean>(false);
   const [openPayment, setOpenPayment] = useState<boolean>(false);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
@@ -139,10 +139,10 @@ export default function ActionOrder({ order, inventory }: any) {
             </li>
           </>
         )}
-        {inventory && (
+        {mutation.status == 'PENDING' && (
           <>
             <li className="my-1">
-              <Link href={`/admin/inventory/${inventory.id}`}>
+              <Link href={`/admin/mutation/${mutation.id}`}>
                 <span className="font-semibold">Update Stock</span>
               </Link>
             </li>

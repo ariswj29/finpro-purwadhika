@@ -52,6 +52,11 @@ export const sidebarSuperadmin = [
     link: '/admin/select-inventory',
   },
   {
+    id: 9,
+    title: 'Mutation',
+    link: '/admin/mutation',
+  },
+  {
     id: 8,
     title: 'Journal',
     link: '/admin/journal',
@@ -88,6 +93,11 @@ export const sidebarAdmin = [
     id: 4,
     title: 'Inventory',
     link: '/admin/inventory',
+  },
+  {
+    id: 9,
+    title: 'Mutation',
+    link: '/admin/mutation',
   },
   {
     id: 8,

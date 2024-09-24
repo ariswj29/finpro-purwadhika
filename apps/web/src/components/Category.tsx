@@ -37,7 +37,7 @@ const Category: React.FC<CategoryProps> = ({ onSortChange, categories }) => {
 
   return (
     <div className="flex justify-center py-8 gap-9">
-      <div className="flex justify-center items-center space-x-12">
+      <div className="flex flex-col justify-center items-center sm:flex-row sm:space-x-12 space-y-4 sm:space-y-0">
         {/* All Categories Button */}
         <div className="hover:font-semibold">
           <div
