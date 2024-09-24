@@ -45,7 +45,7 @@ export const sendResetPassword = async (
       html: `
         <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
         <h2 style="color: #2c3e50;">Hello, ${name}</h2>
-        <p>Sorry to hear you’re having trouble logging into Instagram. We got a message that you forgot your password. If this was you, you can get right back into your account or reset your password now.:</p>
+        <p>Sorry to hear you’re having trouble logging into Groceria. We got a message that you forgot your password. If this was you, you can get right back into your account or reset your password now.:</p>
         <p style="text-align: center;">
             <a href="${verificationLink}" style="
             background-color: #1abc9c;

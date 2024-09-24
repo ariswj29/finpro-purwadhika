@@ -82,7 +82,7 @@ export default function ProductsPage() {
         ) : products.length == 0 ? (
           <span className="p-2 font-bold">Data not found!</span>
         ) : (
-          products.map((product) => {
+          products?.map((product) => {
             return (
               <div
                 key={product.id}
@@ -101,7 +101,11 @@ export default function ProductsPage() {
                     {formattedMoney(product.price ?? 0)}
                   </p>
                   <p className="text-gray-600">
-                    Stock: {product.currentStock || 0}
+                    Stock:{' '}
+                    {product.productBranchs.reduce(
+                      (acc: number, cur: { stock: number }) => acc + cur.stock,
+                      0,
+                    )}
                   </p>
                 </Link>
               </div>

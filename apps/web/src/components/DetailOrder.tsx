@@ -9,6 +9,7 @@ export const DetailOrder = (props: any) => {
   const [showModal, setShowModal] = useState(props.show);
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<OrderDetail[]>([]);
+
   useEffect(() => {
     const fetchData = async () => {
       const response = await getOrderDetail(props.order.id);
@@ -28,66 +29,71 @@ export const DetailOrder = (props: any) => {
 
   return (
     showModal && (
-      <div className="relative bg-white p-4 rounded-lg shadow-lg z-10">
-        <h1 className="text-xl font-bold">Detail Order</h1>
-        <table className="table w-[35rem]">
-          <thead>
-            <tr>
-              <th>No</th>
-              <th>Product</th>
-              <th>Price</th>
-              <th>Quantity</th>
-              <th>Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
+      <div className="relative bg-white p-4 rounded-lg shadow-lg z-10 max-w-full w-full sm:max-w-lg">
+        <h1 className="text-xl font-bold mb-4">Detail Order</h1>
+
+        <div className="overflow-x-auto">
+          <table className="table-auto w-full">
+            <thead>
               <tr>
-                <td
-                  colSpan={6}
-                  className="skeleton h-32 text-center p-4 font-bold"
-                >
-                  Loading...
-                </td>
+                <th className="text-left px-2">No</th>
+                <th className="text-left px-2">Product</th>
+                <th className="text-right px-2">Price</th>
+                <th className="text-center px-2">Qty</th>
+                <th className="text-right px-2">Total</th>
               </tr>
-            ) : data.length === 0 ? (
-              <tr>
-                <td colSpan={6} className="text-center p-4 font-bold">
-                  No detail order
-                </td>
-              </tr>
-            ) : (
-              data?.map((item, index) => (
-                <tr key={index}>
-                  <td>{index + 1}</td>
-                  <td className="flex items-center">
-                    <Image
-                      src={`${process.env.NEXT_PUBLIC_BASE_URL}/products/${item.product.image}`}
-                      width={75}
-                      height={75}
-                      alt="image product"
-                    />
-                    {item.product.name}
-                  </td>
-                  <td>{formattedMoney(item.product.price)}</td>
-                  <td className="text-center">{item.quantity}</td>
-                  <td className="text-right">
-                    {formattedMoney(item.product.price * item.quantity)}
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan={5} className="h-32 text-center p-4 font-bold">
+                    Loading...
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-        <hr className="my-2" />
+              ) : data.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="text-center p-4 font-bold">
+                    No detail order
+                  </td>
+                </tr>
+              ) : (
+                data?.map((item, index) => (
+                  <tr key={index} className="border-t">
+                    <td className="text-center">{index + 1}</td>
+                    <td className="flex items-center space-x-2 w-60">
+                      <Image
+                        src={`${process.env.NEXT_PUBLIC_BASE_URL}/products/${item.product.image}`}
+                        width={50}
+                        height={50}
+                        alt="image product"
+                        className="rounded-md object-cover"
+                      />
+                      <span>{item.product.name}</span>
+                    </td>
+                    <td className="text-right">
+                      {formattedMoney(item.product.price)}
+                    </td>
+                    <td className="text-center">{item.quantity}</td>
+                    <td className="text-right">
+                      {formattedMoney(item.product.price * item.quantity)}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        <hr className="my-4" />
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <p className="text-sm">
-              Number Order :{' '}
+              Order No :{' '}
               <span className="font-semibold">{props.order.name}</span>
             </p>
             <p className="text-sm">
-              Status Order :{' '}
+              Status :{' '}
               <span className="font-semibold">{props.order.paymentStatus}</span>
             </p>
             <p className="text-sm">
@@ -109,7 +115,7 @@ export const DetailOrder = (props: any) => {
                 className="mt-4 text-blue-700 underline rounded-md cursor-pointer hover:font-bold"
                 onClick={() => openPaymentProof(props.order.paymentProof)}
               >
-                Payment Proof
+                View Payment Proof
               </a>
             )}
           </div>
@@ -135,9 +141,9 @@ export const DetailOrder = (props: any) => {
           </div>
         </div>
 
-        <div className="flex justify-end">
+        <div className="flex justify-end mt-4">
           <button
-            className="p-2 border border-secondary rounded-md cursor-pointer hover:font-bold"
+            className="px-4 py-2 bg-gray-200 border border-secondary rounded-md cursor-pointer hover:bg-gray-300"
             onClick={() => props.onClose(false)}
           >
             Close

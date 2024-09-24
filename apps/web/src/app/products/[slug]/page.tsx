@@ -84,7 +84,7 @@ export default function ProductDetail({ params }: { params: Params }) {
             {formattedMoney(product?.price || 0)}
           </p>
           <p className="text-base text-gray-600">
-            Stock: {product?.currentStock || 0}
+            Stock: {product?.totalStock || 0}
           </p>
           <p className="text-gray-600">
             Description: {product?.description || 'Product Description'}

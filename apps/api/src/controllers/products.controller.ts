@@ -51,12 +51,55 @@ export async function getAllProducts(req: Request, res: Response) {
     const products = await prisma.product.findMany({
       where: whereSearch,
       take: limitNumber,
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        image: true,
+        slug: true,
+        category: {
+          select: {
+            name: true,
+          },
+        },
+        productBranchs: {
+          select: {
+            stock: true,
+            branchId: true,
+          },
+        },
+      },
     });
+
+    const productsWithStockAndIndex = products.map(
+      (
+        product: {
+          id: number;
+          name: string;
+          price: number;
+          slug: string;
+          image: string | null;
+          category: { name: string };
+          productBranchs: { stock: number; branchId: number }[];
+        },
+        index: number,
+      ) => {
+        const totalStock = product.productBranchs.reduce(
+          (acc: number, branch: { stock: number }) => acc + branch.stock,
+          0,
+        );
+        return {
+          ...product,
+          no: index + 1,
+          totalStock,
+        };
+      },
+    );
 
     res.status(200).json({
       status: 'success',
       message: 'success',
-      data: products,
+      data: productsWithStockAndIndex,
       nearestBranch: whereSearch.productBranchs?.some?.branchId,
     });
   } catch (error) {
@@ -104,6 +147,24 @@ export const getAllListProducts = async (req: Request, res: Response) => {
       ...whereSearch,
       skip,
       take: limit,
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        image: true,
+        slug: true,
+        category: {
+          select: {
+            name: true,
+          },
+        },
+        productBranchs: {
+          select: {
+            stock: true,
+            branchId: true,
+          },
+        },
+      },
     };
 
     const categories = await prisma.category.findMany();
@@ -260,16 +321,38 @@ export async function product(req: Request, res: Response) {
           { slug: !isIdNumeric ? id : undefined },
         ],
       },
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        image: true,
+        category: {
+          select: {
+            name: true,
+          },
+        },
+        slug: true,
+        productBranchs: {
+          select: {
+            stock: true,
+          },
+        },
+      },
     });
 
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
 
+    const totalStock = product.productBranchs.reduce(
+      (acc: number, branch: { stock: number }) => acc + branch.stock,
+      0,
+    );
+
     res.status(200).json({
       status: 'success',
       message: 'Success get product',
-      data: product,
+      data: { ...product, totalStock },
     });
   } catch (error) {
     console.error(error);
