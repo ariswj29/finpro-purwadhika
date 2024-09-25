@@ -97,7 +97,7 @@ export default function ProductsList(props: any) {
                     {formattedMoney(product.price ?? 0)}
                   </p>
                   <p className="text-gray-600">
-                    Stock: {product.currentStock || 0}
+                    Stock: {product.totalStock || 0}
                   </p>
                 </Link>
               </div>

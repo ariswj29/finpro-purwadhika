@@ -17,6 +17,7 @@ export const getDashboard = async (req: Request, res: Response) => {
       },
       where: {
         paymentStatus: 'DELIVERED',
+        branchId: branch ? branch.id : undefined,
       },
     });
 
@@ -31,14 +32,31 @@ export const getDashboard = async (req: Request, res: Response) => {
       },
     });
 
+    const allProducts = await prisma.product.findMany({
+      select: { id: true },
+      orderBy: { id: 'asc' },
+    });
+
     const salesPerProduct = await prisma.orderProduct.groupBy({
       by: ['productId'],
       _sum: {
         quantity: true,
       },
+      where: {
+        order: {
+          // paymentStatus: 'DELIVERED',
+          branchId: branch ? branch.id : undefined,
+        },
+      },
     });
-    const formattedSales = salesPerProduct.map(
-      (item: { _sum: { quantity: number | null } }) => item._sum.quantity ?? 0,
+
+    const salesMap = salesPerProduct.reduce((acc: any, item: any) => {
+      acc[item.productId] = item._sum.quantity ?? 0;
+      return acc;
+    }, {});
+
+    const salesValues = allProducts.map(
+      (product: { id: number }) => salesMap[product.id] ?? 0,
     );
 
     const stockPerProduct = await prisma.productBranch.groupBy({
@@ -50,18 +68,22 @@ export const getDashboard = async (req: Request, res: Response) => {
         branchId: branch ? branch.id : undefined,
       },
     });
-    const formattedStock = stockPerProduct.map(
-      (item: { _sum: { stock: number | null } }) => item._sum.stock ?? 0,
-    );
 
-    console.log(formattedSales, 'formattedSales');
+    const stockMap = stockPerProduct.reduce((acc: any, item: any) => {
+      acc[item.productId] = item._sum.stock ?? 0;
+      return acc;
+    }, {});
+
+    const stockValues = allProducts.map(
+      (product: { id: number }) => stockMap[product.id] ?? 0,
+    );
 
     res.json({
       totalSales: totalSales._sum.total,
       totalProduct: totalProduct,
       totalStock: totalStock._sum.stock,
-      salesPerProduct: formattedSales,
-      stockPerProduct: formattedStock,
+      salesPerProduct: salesValues,
+      stockPerProduct: stockValues,
     });
   } catch (error) {
     res.status(500).json({ error: 'error' });

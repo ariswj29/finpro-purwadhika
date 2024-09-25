@@ -139,7 +139,7 @@ export default function ActionOrder({ order, mutation }: any) {
             </li>
           </>
         )}
-        {mutation.status == 'PENDING' && (
+        {mutation?.status == 'PENDING' && (
           <>
             <li className="my-1">
               <Link href={`/admin/mutation/${mutation.id}`}>

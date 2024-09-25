@@ -91,7 +91,7 @@ export default function SelectInventoryPage() {
             <div>Data not found!</div>
           ) : (
             branches.map((branch: Branch, index) => (
-              <Link href={`/admin/inventory/${branch.id}`} key={index}>
+              <Link href={`/admin/select-inventory/${branch.id}`} key={index}>
                 <div className="bg-white hover:border-2 shadow-md rounded-lg p-4">
                   <div className="flex items-center mb-4">
                     <div className="w-12 h-12 rounded-full mr-4">

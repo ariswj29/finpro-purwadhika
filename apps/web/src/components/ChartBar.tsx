@@ -6,10 +6,19 @@ const Bar = dynamic(() => import('react-chartjs-2').then((mod) => mod.Bar), {
 });
 export default function ChartBar(props: { data: number[] }) {
   const dataBar = {
-    labels: ['Fruit', 'Vegetable', 'Meat', 'Ingredient'],
+    labels: [
+      'Kentang',
+      'Brokoli',
+      'Strawberry',
+      'Mangga',
+      'Ayam Fillet',
+      'Sayap Ayam',
+      'Tahu Kuning',
+      'Tempe',
+    ],
     datasets: [
       {
-        label: 'Sales per category',
+        label: 'Sales per product',
         data: props.data,
         fill: false,
         tension: 0.1,
@@ -24,7 +33,6 @@ export default function ChartBar(props: { data: number[] }) {
           'rgb(255, 205, 86)',
           'rgb(75, 192, 192)',
           'rgb(54, 162, 235)',
-          'rgb(153, 102, 255)',
         ],
         borderWidth: 1,
       },

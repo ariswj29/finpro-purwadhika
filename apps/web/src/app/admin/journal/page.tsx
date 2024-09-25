@@ -98,7 +98,11 @@ export default function JournalPage() {
                     {formattedDateAndHour(journal.createdAt)}
                   </td>
                   <td className="border p-2 text-center">
-                    {journal.transactionType}
+                    {journal.transactionType == 'IN' ? (
+                      <span className="text-green-500">IN</span>
+                    ) : (
+                      <span className="text-red-500">OUT</span>
+                    )}
                   </td>
                   <td className="border p-2 text-center">{journal.quantity}</td>
                   <td className="border p-2">

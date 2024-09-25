@@ -179,6 +179,8 @@ export async function createOrder(req: Request, res: Response) {
     });
 
     body.cart.forEach(async (item: any) => {
+      console.log(item, 'item');
+      // create order product
       await prisma.orderProduct.create({
         data: {
           quantity: item.quantity,
@@ -196,6 +198,56 @@ export async function createOrder(req: Request, res: Response) {
           },
         },
       });
+
+      // updatee stock
+      await prisma.productBranch
+        .findFirst({
+          where: {
+            productId: item.productId,
+            branchId: body.branchId,
+          },
+        })
+        .then(async (productBranch) => {
+          if (productBranch) {
+            await prisma.productBranch.update({
+              where: {
+                id: productBranch.id,
+              },
+              data: {
+                stock: productBranch.stock - item.quantity,
+              },
+            });
+          }
+        });
+
+      // update journal
+      const findBranch = await prisma.productBranch.findFirst({
+        where: {
+          productId: item.productId,
+          branchId: body.branchId,
+        },
+      });
+
+      const findProduct = await prisma.product.findUnique({
+        where: {
+          id: item.productId,
+        },
+      });
+
+      if (findBranch) {
+        await prisma.journalMutation.create({
+          data: {
+            quantity: item.quantity,
+            transactionType: 'OUT',
+            description: `OUT ${item.quantity} stock of ${findProduct?.name} for order '${response.name}'`,
+            productBranch: {
+              connect: {
+                id: findBranch?.id ?? 0,
+              },
+            },
+          },
+        });
+      }
     });
 
     return res.status(200).json({
