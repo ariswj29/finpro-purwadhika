@@ -6,17 +6,18 @@ const base_url_api = process.env.NEXT_PUBLIC_BASE_API_URL;
 export async function getInventory(
   search?: string,
   page: number = 1,
+  userId?: number,
   limit: number = 10,
 ) {
+  console.log('userId', userId);
   const authToken = await getCookie('token');
-  const userId = await getCookie('userId');
   const url = base_url_api + '/inventory';
   const res = await axios.get(url, {
     params: {
       search,
       page,
-      limit,
       userId,
+      limit,
     },
     headers: {
       Authorization: 'Bearer ' + authToken,
