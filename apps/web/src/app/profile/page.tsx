@@ -111,11 +111,11 @@ export default function ProfilePage() {
   return (
     <div className="container mx-auto px-4">
       <NotificationToast toastMessage={notif} />
-      <h3 className="text-3xl font-bold mb-6 text-center">My Profile</h3>
+      <h3 className="text-3xl font-bold text-center py-8">My Profile</h3>
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="card shadow-lg p-6 bg-base-100 mb-6"
+        className="card shadow-lg p-6 bg-base-100"
       >
         {preview && (
           <div className="mb-4">
@@ -159,7 +159,7 @@ export default function ProfilePage() {
 
       <form
         onSubmit={handleSubmit(onSubmitEmail)}
-        className="card shadow-lg p-6 bg-base-100 mb-6"
+        className="card shadow-lg p-6 bg-base-100 my-6"
       >
         <div className="form-control mb-4">
           <label className="label font-semibold">Email</label>

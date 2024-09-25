@@ -9,35 +9,36 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { getInventory } from '@/api/inventory';
 import ActionOrder from '@/components/ActionOrder';
-import { getCookie } from '@/action/cookies';
+import { useParams } from 'next/navigation';
 
 export default function InventoryTable() {
   const cookies = getCookies();
-  const { role } = JSON.parse(cookies.user);
   const [products, setProducts] = useState<Product[]>([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(page);
   const [loading, setLoading] = useState(false);
   const [confirmationModal, setConfirmationModal] = useState(false);
-  const [id, setId] = useState<number>(0);
+  const [ids, setIds] = useState<number>(0);
+  const { id } = useParams();
+
+  const inventoryId = Array.isArray(id)
+    ? parseInt(id[0])
+    : id
+      ? parseInt(id)
+      : undefined;
 
   const fetchData = useCallback(async () => {
     setLoading(true);
-    const userId = await getCookie('userId');
     try {
-      const res = await getInventory(
-        search,
-        page,
-        userId ? Number(userId) : undefined,
-      );
+      const res = await getInventory(search, page, inventoryId);
       setProducts(res.data);
       setTotalPages(res.pagination.totalPages);
       setLoading(false);
     } catch (error) {
       console.error(error);
     }
-  }, [search, page]);
+  }, [search, page, inventoryId]);
 
   useEffect(() => {
     fetchData();
@@ -65,7 +66,7 @@ export default function InventoryTable() {
 
   return (
     <div className="container mx-auto px-4">
-      <div className="text-2xl mb-4">Table Inventory</div>
+      <div className="text-2xl mb-4">Table Inventory Branch {inventoryId}</div>
       <div className="grid gap-4">
         <div className="flex justify-between items-center gap-4">
           <div className="flex">
@@ -157,7 +158,7 @@ export default function InventoryTable() {
       </div>
       {confirmationModal && (
         <ConfirmModal
-          id={id}
+          id={ids}
           setModal={setConfirmationModal}
           title="Delete product"
           // for="order"

@@ -1,5 +1,10 @@
 // import { logoutProcess } from '@/api/auth';
-
+import {
+  FaLinkedin,
+  FaSquareEnvelope,
+  FaSquareFacebook,
+  FaSquareWhatsapp,
+} from 'react-icons/fa6';
 import { id } from 'date-fns/locale';
 
 export const navbars = [
@@ -51,11 +56,11 @@ export const sidebarSuperadmin = [
     title: 'Inventory',
     link: '/admin/select-inventory',
   },
-  {
-    id: 9,
-    title: 'Mutation',
-    link: '/admin/mutation',
-  },
+  // {
+  //   id: 9,
+  //   title: 'Mutation',
+  //   link: '/admin/mutation',
+  // },
   {
     id: 8,
     title: 'Journal',
@@ -184,5 +189,28 @@ export const couriers = [
   {
     id: 'pos',
     name: 'POS Indonesia',
+  },
+];
+
+export const socialMedia = [
+  {
+    id: 1,
+    icon: <FaSquareEnvelope size={40} />,
+    link: `mailto:?subject&body`,
+  },
+  {
+    id: 2,
+    icon: <FaSquareFacebook size={40} />,
+    link: `https://www.facebook.com/`,
+  },
+  {
+    id: 3,
+    icon: <FaLinkedin size={40} />,
+    link: `https://www.linkedin.com/`,
+  },
+  {
+    id: 4,
+    icon: <FaSquareWhatsapp size={40} />,
+    link: `https://api.whatsapp.com/send?text`,
   },
 ];

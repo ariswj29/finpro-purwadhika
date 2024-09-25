@@ -14,38 +14,69 @@ export async function mutations(req: Request, res: Response) {
       },
     });
 
-    const mutations = await prisma.mutation.findMany({
-      select: {
-        id: true,
-        note: true,
-        status: true,
-        stockProcess: true,
-        stockRequest: true,
-        product: {
-          select: {
-            name: true,
+    let mutations;
+    console.log(userId, 'userId');
+    if (parseInt(userId as string, 10) === 1) {
+      mutations = await prisma.mutation.findMany({
+        select: {
+          id: true,
+          note: true,
+          status: true,
+          stockProcess: true,
+          stockRequest: true,
+          product: {
+            select: {
+              name: true,
+            },
+          },
+          sourceBranch: {
+            select: {
+              name: true,
+            },
+          },
+          destinationBranch: {
+            select: {
+              name: true,
+            },
           },
         },
-        sourceBranch: {
-          select: {
-            name: true,
+        skip: (pageNumber - 1) * limitNumber,
+        take: limitNumber,
+      });
+    } else {
+      mutations = await prisma.mutation.findMany({
+        select: {
+          id: true,
+          note: true,
+          status: true,
+          stockProcess: true,
+          stockRequest: true,
+          product: {
+            select: {
+              name: true,
+            },
+          },
+          sourceBranch: {
+            select: {
+              name: true,
+            },
+          },
+          destinationBranch: {
+            select: {
+              name: true,
+            },
           },
         },
-        destinationBranch: {
-          select: {
-            name: true,
-          },
+        where: {
+          OR: [
+            { destinationBranchId: branchId?.id },
+            { sourceBranchId: branchId?.id },
+          ],
         },
-      },
-      where: {
-        OR: [
-          { destinationBranchId: branchId?.id },
-          { sourceBranchId: branchId?.id },
-        ],
-      },
-      skip: (pageNumber - 1) * limitNumber,
-      take: limitNumber,
-    });
+        skip: (pageNumber - 1) * limitNumber,
+        take: limitNumber,
+      });
+    }
 
     const mutationsWithStockAndIndex = mutations.map(
       (mutation: { stockProcess: number | null }, index: number) => {
