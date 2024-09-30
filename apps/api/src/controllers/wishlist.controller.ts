@@ -14,14 +14,34 @@ export const getAllWishlist = async (req: Request, res: Response) => {
 export const addToWishlist = async (req: Request, res: Response) => {
   const { productId, userId } = req.body;
 
-  // const wishlist = await prisma.wishlist.create({
-  //   data: {
-  //     productId: parseInt(productId),
-  //     userId,
-  //   },
-  // });
+  const searchWishlist = await prisma.wishlist.findFirst({
+    where: {
+      productId: parseInt(productId),
+      userId,
+    },
+  });
 
-  res.json({ code: 200, status: 'success', data: 'wishlist' });
+  if (searchWishlist) {
+    return res.status(400).json({
+      code: 400,
+      status: 'error',
+      message: 'Item already in wishlist',
+    });
+  }
+
+  const wishlist = await prisma.wishlist.create({
+    data: {
+      productId: parseInt(productId),
+      userId,
+    },
+  });
+
+  res.json({
+    code: 200,
+    status: 'success',
+    data: wishlist,
+    message: 'Item added to wishlist',
+  });
 };
 
 export const getWishlist = async (req: Request, res: Response) => {

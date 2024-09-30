@@ -7,7 +7,7 @@ export const Footer = () => {
     <footer className="w-full bg-black p-8 text-white my-6">
       <div className="grid md:grid-cols-5 sm:grid-cols-1 gap-4 max-w-screen-xl mx-auto">
         <div className="col-span-2 px-6">
-          <Image src="/logo-white.png" alt="groceria" width={300} height={25} />
+          <Image src="/logo-white.png" alt="groceria" width={250} height={25} />
           <p className="mt-4 text-justify">
             Groceria is your trusted platform for sourcing fresh groceries
             online. Explore and shop for a wide range of fresh produce, daily
