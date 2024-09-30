@@ -41,6 +41,7 @@ export default function LoginPage() {
         Cookies.set('token', token, { expires: 1, secure: true });
         Cookies.set('userId', data.id, { expires: 1, secure: true });
         Cookies.set('user', JSON.stringify(data), { expires: 1, secure: true });
+        Cookies.set('role', data.role, { expires: 1, secure: true });
 
         setTimeout(() => {
           setShowMessage(false);

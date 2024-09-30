@@ -126,9 +126,13 @@ export async function getAllOrderList(req: Request, res: Response) {
 export async function getOrderList(req: Request, res: Response) {
   try {
     const { user_id } = req.params;
+    const { search } = req.query;
     const order = await prisma.order.findMany({
       where: {
         userId: Number(user_id),
+        name: {
+          contains: search as string,
+        },
         paymentStatus: {
           in: ['UNPAID', 'PAID', 'PROCESSING', 'SHIPPED', 'CANCELED'],
         },
@@ -263,9 +267,13 @@ export async function createOrder(req: Request, res: Response) {
 export async function getOrderListComplete(req: Request, res: Response) {
   try {
     const { user_id } = req.params;
+    const { search } = req.query;
     const order = await prisma.order.findMany({
       where: {
         userId: Number(user_id),
+        name: {
+          contains: search as string,
+        },
         paymentStatus: {
           in: ['DELIVERED'],
         },

@@ -31,7 +31,6 @@ export async function createInventory(data: any) {
   const url = base_url_api + '/inventory';
   const res = await axios.post(url, data, {
     headers: {
-      'Content-Type': 'multipart/form-data',
       Authorization: 'Bearer ' + authToken,
     },
   });
@@ -56,7 +55,6 @@ export async function updateInventory(id: string, data: any) {
   const url = base_url_api + '/inventory/' + id;
   const res = await axios.put(url, data, {
     headers: {
-      'Content-Type': 'multipart/form-data',
       Authorization: 'Bearer ' + authToken,
     },
   });
