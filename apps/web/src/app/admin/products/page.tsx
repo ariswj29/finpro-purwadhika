@@ -23,7 +23,7 @@ export default function ProductTable() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await getProducts(search, page);
+      const res = await getProducts(Number(10), search, page);
       setProducts(res.data);
       setTotalPages(res.pagination.totalPages);
       setLoading(false);

@@ -21,24 +21,30 @@ export async function getAllOrders(
   return res.data;
 }
 
-export async function getAllOrder(userId: number) {
+export async function getAllOrder(userId: number, search?: string) {
   const authToken = await getCookie('token');
   const url = base_url_api + '/orders/user/' + userId;
   const res = await axios.get(url, {
     headers: {
       Authorization: 'Bearer ' + authToken,
     },
+    params: {
+      search,
+    },
   });
 
   return res.data;
 }
 
-export async function getOrderComplete(userId: number) {
+export async function getOrderComplete(userId: number, search?: string) {
   const authToken = await getCookie('token');
   const url = base_url_api + '/orders/complete/' + userId;
   const res = await axios.get(url, {
     headers: {
       Authorization: 'Bearer ' + authToken,
+    },
+    params: {
+      search,
     },
   });
 

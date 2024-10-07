@@ -2,6 +2,7 @@
 
 import { addCart } from '@/api/cart';
 import { getProductById } from '@/api/products';
+import { addToWishlist } from '@/api/wishlist';
 import NotificationToast from '@/components/NotificationToast';
 import { formattedMoney, getCookies } from '@/helper/helper';
 import { Product } from '@/interface/product.interface';
@@ -25,6 +26,20 @@ export default function ProductDetail({ params }: { params: Params }) {
     if (cookies.token && cookies.userId) {
       const res = await addCart(id, Number(cookies.userId));
       showToast(res);
+    } else {
+      showToast({ message: 'Please login first!', status: 'error' });
+    }
+  };
+
+  const handleAddToWishlist = async (id: number) => {
+    if (cookies.token && cookies.userId) {
+      try {
+        const response = await addToWishlist(id, Number(cookies.userId));
+        showToast(response);
+      } catch (error) {
+        const axiosError = error as { response: { data: any } };
+        showToast(axiosError.response?.data || error);
+      }
     } else {
       showToast({ message: 'Please login first!', status: 'error' });
     }
@@ -56,7 +71,7 @@ export default function ProductDetail({ params }: { params: Params }) {
         {/* Product Image */}
         <div className="flex justify-center">
           <Image
-            src={`${process.env.NEXT_PUBLIC_BASE_URL}/products/${product?.image}`}
+            src={`${process.env.NEXT_PUBLIC_BASE_URL}/uploads/products/${product?.image}`}
             alt={product?.name || 'Product Name'}
             className="bg-gray-200 rounded-lg w-full h-96 object-cover"
             width={500}
@@ -80,14 +95,17 @@ export default function ProductDetail({ params }: { params: Params }) {
           <h1 className="text-3xl font-bold">
             {product?.name || 'Product Name'}
           </h1>
-          <p className="text-xl text-gray-700">
+          <p className="text-xl text-gray-700 font-bold">
             {formattedMoney(product?.price || 0)}
           </p>
           <p className="text-base text-gray-600">
-            Stock: {product?.totalStock || 0}
+            Stock: <span className="font-bold">{product?.totalStock || 0}</span>
           </p>
           <p className="text-gray-600">
-            Description: {product?.description || 'Product Description'}
+            Description:{' '}
+            <span className="font-bold">
+              {product?.description || 'Product Description'}
+            </span>
           </p>
 
           <button
@@ -95,6 +113,12 @@ export default function ProductDetail({ params }: { params: Params }) {
             onClick={() => product?.id && handleAddToCart(product.id)}
           >
             Add to cart
+          </button>
+          <button
+            className="border-2 border-secondary rounded-xl py-2 my-9 text-center w-full font-bold hover:font-extrabold"
+            onClick={() => product?.id && handleAddToWishlist(product.id)}
+          >
+            Add to wishlist
           </button>
         </div>
       </div>

@@ -57,6 +57,7 @@ export async function getAllProducts(req: Request, res: Response) {
         price: true,
         image: true,
         slug: true,
+        description: true,
         category: {
           select: {
             name: true,
@@ -78,6 +79,7 @@ export async function getAllProducts(req: Request, res: Response) {
           name: string;
           price: number;
           slug: string;
+          description: string | null;
           image: string | null;
           category: { name: string };
           productBranchs: { stock: number; branchId: number }[];
@@ -153,6 +155,7 @@ export const getAllListProducts = async (req: Request, res: Response) => {
         price: true,
         image: true,
         slug: true,
+        description: true,
         category: {
           select: {
             name: true,
@@ -222,6 +225,7 @@ export async function products(req: Request, res: Response) {
         name: true,
         price: true,
         image: true,
+        description: true,
         category: {
           select: {
             name: true,
@@ -243,6 +247,7 @@ export async function products(req: Request, res: Response) {
           id: number;
           name: string;
           price: number;
+          description: string | null;
           image: string | null;
           category: { name: string };
           productBranchs: { stock: number }[];
@@ -326,6 +331,7 @@ export async function product(req: Request, res: Response) {
         name: true,
         price: true,
         image: true,
+        description: true,
         category: {
           select: {
             name: true,

@@ -6,12 +6,13 @@ import { DetailOrder } from '@/components/DetailOrder';
 import StatusOrder from '@/components/StatusOrder';
 import UploadPaymentPage from '@/components/UploadPayment';
 import { formattedDate, formattedMoney, getCookies } from '@/helper/helper';
-import { useEffect, useState } from 'react';
-import { FaBars } from 'react-icons/fa';
+import { useCallback, useEffect, useState } from 'react';
+import { FaBars, FaSearch } from 'react-icons/fa';
 
 export default function OrderListPage() {
   const cookies = getCookies();
   const [data, setData] = useState<any[]>([]);
+  const [search, setSearch] = useState('');
   const [loading, setLoading] = useState<boolean>(true);
   const [openDetail, setOpenDetail] = useState<boolean>(false);
   const [openPayment, setOpenPayment] = useState<boolean>(false);
@@ -20,19 +21,27 @@ export default function OrderListPage() {
   const [id, setId] = useState<number>(0);
   const [forModal, setFor] = useState<string>('');
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await getAllOrder(Number(cookies.userId));
-        setData(res.data);
-        setLoading(false);
-      } catch (error) {
-        console.log(error);
-      }
-    };
+  const fetchData = useCallback(async () => {
+    try {
+      const res = await getAllOrder(Number(cookies.userId), search);
+      setData(res.data);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  }, [cookies.userId, search]);
 
+  useEffect(() => {
     fetchData();
-  }, [cookies.userId]);
+  }, [fetchData]);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+  };
+
+  const handleSearchClick = () => {
+    fetchData();
+  };
 
   const handleOpenDetail = (order: any) => {
     setSelectedOrder(order);
@@ -56,7 +65,24 @@ export default function OrderListPage() {
 
   return (
     <div className="relative p-12 sm:p-16 border-2 shadow-md w-full">
-      <h3 className="text-2xl font-bold pb-4">Order List</h3>
+      <div className="flex flex-col md:flex-row justify-between items-center pb-4">
+        <h3 className="text-2xl font-bold">Order List</h3>
+        <div className="flex px-4">
+          <input
+            type="text"
+            placeholder="Search order"
+            className="border p-2"
+            value={search}
+            onChange={handleSearchChange}
+          />
+          <button
+            className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
+            onClick={handleSearchClick}
+          >
+            <FaSearch />
+          </button>
+        </div>
+      </div>
 
       {/* Modal Detail */}
       {openDetail && (

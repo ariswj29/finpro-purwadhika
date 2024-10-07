@@ -58,7 +58,7 @@ const FormStore = () => {
       });
     };
     const fetchProduct = async () => {
-      getProducts().then((res) => {
+      getProducts(Number(20)).then((res) => {
         setProduct(res.data);
       });
     };

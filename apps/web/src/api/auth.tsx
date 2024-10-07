@@ -46,4 +46,5 @@ export async function logout() {
   Cookies.remove('nearestBranch');
   Cookies.remove('latitude');
   Cookies.remove('longitude');
+  Cookies.remove('role');
 }

@@ -4,29 +4,38 @@ import { getOrderComplete } from '@/api/order';
 import { DetailOrder } from '@/components/DetailOrder';
 import StatusOrder from '@/components/StatusOrder';
 import { formattedDate, formattedMoney, getCookies } from '@/helper/helper';
-import { useEffect, useState } from 'react';
-import { FaBars } from 'react-icons/fa';
+import { useCallback, useEffect, useState } from 'react';
+import { FaBars, FaSearch } from 'react-icons/fa';
 
 export default function OrderCompletePage() {
   const cookies = getCookies();
   const [data, setData] = useState<any[]>([]);
+  const [search, setSearch] = useState('');
   const [loading, setLoading] = useState<boolean>(true);
   const [openDetail, setOpenDetail] = useState<boolean>(false);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await getOrderComplete(Number(cookies.userId));
-        setData(res.data);
-        setLoading(false);
-      } catch (error) {
-        console.log(error);
-      }
-    };
+  const fetchData = useCallback(async () => {
+    try {
+      const res = await getOrderComplete(Number(cookies.userId), search);
+      setData(res.data);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  }, [cookies.userId, search]);
 
+  useEffect(() => {
     fetchData();
-  }, [cookies.userId]);
+  }, [fetchData]);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+  };
+
+  const handleSearchClick = () => {
+    fetchData();
+  };
 
   const handleOpenDetail = (order: any) => {
     setSelectedOrder(order);
@@ -40,9 +49,24 @@ export default function OrderCompletePage() {
 
   return (
     <div className="relative p-4 sm:p-8 lg:p-12 border-2 shadow-md w-full">
-      <h3 className="text-lg sm:text-xl lg:text-2xl font-bol pb-4">
-        Order List Complete
-      </h3>
+      <div className="flex flex-col md:flex-row justify-between items-center pb-4">
+        <h3 className="text-2xl font-bold">Order List Complete</h3>
+        <div className="flex px-4">
+          <input
+            type="text"
+            placeholder="Search order"
+            className="border p-2"
+            value={search}
+            onChange={handleSearchChange}
+          />
+          <button
+            className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
+            onClick={handleSearchClick}
+          >
+            <FaSearch />
+          </button>
+        </div>
+      </div>
 
       {/* Modal Detail */}
       {openDetail && (

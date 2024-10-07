@@ -83,11 +83,14 @@ export async function createInventory(req: Request, res: Response) {
     const { stock, productId, branchId, transactionType } = req.body;
     console.log(req.body, 'req.body');
 
-    const branch = await prisma.branch.findUnique({
-      where: {
-        userId: parseInt(branchId, 10),
-      },
-    });
+    let branch;
+    if (branchId) {
+      branch = await prisma.branch.findUnique({
+        where: {
+          userId: parseInt(branchId, 10),
+        },
+      });
+    }
 
     const productDetails = await prisma.product.findUnique({
       where: {
@@ -153,7 +156,7 @@ export async function createInventory(req: Request, res: Response) {
     res.status(201).json({
       status: 'success',
       message: 'Success adding stock',
-      data: { data: product, journal },
+      data: '{ data: product, journal }',
     });
   } catch (error) {
     console.error(error);
