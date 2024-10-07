@@ -177,8 +177,8 @@ const FormProduct = () => {
 
           <label className="label">Description</label>
           <div className="">
-            <input
-              className="w-full border p-2"
+            <textarea
+              className="w-full border p-2 h-24"
               {...register('description')}
               placeholder="Description"
             />

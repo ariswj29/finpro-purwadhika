@@ -47,9 +47,9 @@ export async function getAllListProducts(
 }
 
 export async function getProducts(
+  limit: number,
   search?: string,
   page: number = 1,
-  limit: number = 10,
 ) {
   const authToken = await getCookie('token');
   const url = base_url_api + '/products';

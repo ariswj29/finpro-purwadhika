@@ -5,18 +5,9 @@ const Line = dynamic(() => import('react-chartjs-2').then((mod) => mod.Line), {
   ssr: false,
 });
 
-export default function ChartLine(props: { data: number[] }) {
+export default function ChartLine(props: { data: number[]; labels: string[] }) {
   const dataLine = {
-    labels: [
-      'Kentang',
-      'Brokoli',
-      'Strawberry',
-      'Mangga',
-      'Ayam Fillet',
-      'Sayap Ayam',
-      'Tahu Kuning',
-      'Tempe',
-    ],
+    labels: props.labels,
     datasets: [
       {
         label: 'Stock Product',

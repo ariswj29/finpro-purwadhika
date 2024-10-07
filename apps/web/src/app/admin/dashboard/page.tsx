@@ -6,6 +6,7 @@ import ChartLine from '@/components/ChartLine';
 import { useEffect, useState } from 'react';
 import { formattedMoney, getCookies } from '@/helper/helper';
 import { getDashboardData } from '@/api/dashboard';
+import ChartPie from '@/components/ChartPie';
 
 export default function DashboardPage() {
   const cookies = getCookies();
@@ -16,6 +17,10 @@ export default function DashboardPage() {
     totalStock: 0,
     salesPerProduct: [],
     stockPerProduct: [],
+    productNames: [],
+    categoryNames: [],
+    salesPerCategory: [],
+    stockPerCategory: [],
   });
 
   useEffect(() => {
@@ -105,10 +110,26 @@ export default function DashboardPage() {
       </div>
       <div className="grid grid-cols-2 gap-4 mt-8">
         <div className="p-8 border border-secondary rounded-lg">
-          <ChartBar data={data?.salesPerProduct} />
+          <ChartPie
+            data={data?.salesPerCategory}
+            labels={data?.categoryNames}
+            title={'Sales per category'}
+          />
         </div>
         <div className="p-8 border border-secondary rounded-lg">
-          <ChartLine data={data?.stockPerProduct} />
+          <ChartPie
+            data={data?.stockPerCategory}
+            labels={data?.categoryNames}
+            title={'Stock per category'}
+          />
+        </div>
+      </div>
+      <div className="grid gap-4 mt-8">
+        <div className="p-8 border border-secondary rounded-lg">
+          <ChartBar data={data?.salesPerProduct} labels={data?.productNames} />
+        </div>
+        <div className="p-8 border border-secondary rounded-lg">
+          <ChartLine data={data?.stockPerProduct} labels={data?.productNames} />
         </div>
       </div>
     </div>
