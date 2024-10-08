@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import prisma from '@/helpers/prisma';
+import ProductSchema from '@/schemas/product.schema';
+import * as yup from 'yup';
 
 export async function getAllProducts(req: Request, res: Response) {
   try {
@@ -288,6 +290,8 @@ export async function products(req: Request, res: Response) {
 
 export async function createProduct(req: Request, res: Response) {
   try {
+    await ProductSchema.validate(req.body, { abortEarly: false });
+
     const { name, price, categoryId, slug, description } = req.body;
     const image = req.file?.filename;
 
@@ -308,8 +312,14 @@ export async function createProduct(req: Request, res: Response) {
       data: product,
     });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: 'Internal Server Error' });
+    if (error instanceof yup.ValidationError) {
+      return res.status(400).json({
+        status: 'error',
+        message: error.errors,
+      });
+    }
+
+    res.status(400).json({ error: 'An unexpected error occurred' });
   }
 }
 

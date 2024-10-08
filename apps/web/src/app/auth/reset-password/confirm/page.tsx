@@ -27,6 +27,7 @@ export default function ConfirmResetPasswordPage(context: any) {
   });
   const [showMessage, setShowMessage] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const resetPassword = async (formData: any) => {
@@ -123,14 +124,14 @@ export default function ConfirmResetPasswordPage(context: any) {
                 className="mt-1 block w-full px-3 py-2 border border-secondary rounded-md shadow-sm focus:outline-none sm:text-sm"
                 {...register('confirmPassword')}
                 placeholder="Confirm Password"
-                type={showPassword ? 'text' : 'confirmPassword'}
+                type={showConfirmPassword ? 'text' : 'password'}
                 id="confirmPassword"
               />
               <span
                 className="absolute right-3 mt-1 top-1/2 cursor-pointer transform"
-                onClick={() => setShowPassword(!showPassword)}
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               >
-                {showPassword ? <FaEyeSlash /> : <FaEye />}
+                {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
               </span>
             </div>
             {errors.password && (
