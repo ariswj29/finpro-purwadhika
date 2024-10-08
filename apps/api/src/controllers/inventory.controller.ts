@@ -65,6 +65,7 @@ export async function inventories(req: Request, res: Response) {
       status: 'success',
       message: 'success get all products',
       data: productsWithStockAndIndex,
+      branch: branchId,
       pagination: {
         totalItems: totalProducts,
         totalPages,

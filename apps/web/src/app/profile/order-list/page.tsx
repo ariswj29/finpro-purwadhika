@@ -115,7 +115,7 @@ export default function OrderListPage() {
       <div
         className={`overflow-x-auto w-full ${openDetail || openPayment ? 'opacity-50 pointer-events-none' : ''}`}
       >
-        <table className="table w-full">
+        <table className="table w-full h-40">
           <thead>
             <tr>
               <th>No</th>
