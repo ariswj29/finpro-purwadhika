@@ -13,6 +13,8 @@ import { createOrder } from '@/api/order';
 import { getBranch } from '@/api/branch';
 import { calShippingCost } from '@/api/checkout';
 import NotificationToast from '../../components/NotificationToast';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { orderSchema } from '@/schemas/order.schema';
 
 export default function CheckoutPage(context: any) {
   const cookies = getCookies();
@@ -32,7 +34,9 @@ export default function CheckoutPage(context: any) {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    resolver: yupResolver(orderSchema),
+  });
 
   const selectedCourier = watch('courier');
   const selectedAddress = watch('addressId');

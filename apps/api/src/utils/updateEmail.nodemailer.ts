@@ -40,8 +40,8 @@ export const sendNewEmail = async (
     const mailOptions = {
       from: "'Groceria' <info@groceria.com>",
       to: toEmail,
-      subject: 'Email Verification - Groceria',
-      text: `Please verify your email`,
+      subject: 'Update Email - Groceria',
+      text: `Please update your email`,
       html: `
         <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
         <h2 style="color: #2c3e50;">Hello, ${name}</h2>
