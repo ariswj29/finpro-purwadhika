@@ -62,7 +62,7 @@ export const DetailOrder = (props: any) => {
                     <td className="text-center">{index + 1}</td>
                     <td className="flex items-center space-x-2 w-60">
                       <Image
-                        src={`${process.env.NEXT_PUBLIC_BASE_URL}/products/${item.product.image}`}
+                        src={`${process.env.NEXT_PUBLIC_BASE_URL}/uploads/products/${item.product.image}`}
                         width={50}
                         height={50}
                         alt="image product"

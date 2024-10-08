@@ -4,12 +4,16 @@ import dynamic from 'next/dynamic';
 const Bar = dynamic(() => import('react-chartjs-2').then((mod) => mod.Bar), {
   ssr: false,
 });
-export default function ChartBar(props: { data: number[]; labels: string[] }) {
+export default function ChartBar(props: {
+  data: number[];
+  labels: string[];
+  title: string;
+}) {
   const dataBar = {
     labels: props.labels,
     datasets: [
       {
-        label: 'Sales per product',
+        label: props.title,
         data: props.data,
         fill: false,
         height: 100,
