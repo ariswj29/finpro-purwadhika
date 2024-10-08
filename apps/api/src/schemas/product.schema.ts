@@ -1,10 +1,12 @@
 import * as yup from 'yup';
 
-const profileUpdateSchema = yup.object().shape({
-  username: yup.string().min(3).max(50).notRequired(),
-  email: yup.string().email().notRequired(),
-  password: yup.string().min(8).notRequired(),
-  profilePicture: yup
+const ProductSchema = yup.object().shape({
+  slug: yup.string().notRequired(),
+  name: yup.string().required('Name is required'),
+  description: yup.string().min(8).notRequired(),
+  price: yup.number().required('Price is required'),
+  categoryId: yup.number().required('Category is required'),
+  image: yup
     .mixed()
     .nullable()
     .notRequired()
@@ -19,4 +21,4 @@ const profileUpdateSchema = yup.object().shape({
     }),
 });
 
-export default profileUpdateSchema;
+export default ProductSchema;
