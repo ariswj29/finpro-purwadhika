@@ -14,6 +14,7 @@ import { useParams } from 'next/navigation';
 export default function InventoryTable() {
   const cookies = getCookies();
   const [products, setProducts] = useState<Product[]>([]);
+  const [branch, setBranch] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(page);
@@ -31,9 +32,12 @@ export default function InventoryTable() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await getInventory(search, page, inventoryId);
-      setProducts(res.data);
-      setTotalPages(res.pagination.totalPages);
+      if (inventoryId !== undefined) {
+        const res = await getInventory(search, page, inventoryId + 1);
+        setProducts(res.data);
+        setTotalPages(res.pagination.totalPages);
+        setBranch(res.branch ? res.branch.name : 'Groceria ...');
+      }
       setLoading(false);
     } catch (error) {
       console.error(error);
@@ -66,7 +70,7 @@ export default function InventoryTable() {
 
   return (
     <div className="container mx-auto px-4">
-      <div className="text-2xl mb-4">Table Inventory Branch {inventoryId}</div>
+      <div className="text-2xl mb-4">Table Inventory | Branch {branch}</div>
       <div className="grid gap-4">
         <div className="flex justify-between items-center gap-4">
           <div className="flex">
@@ -85,14 +89,14 @@ export default function InventoryTable() {
             </button>
           </div>
 
-          <Link
+          {/* <Link
             href={'/admin/inventory/add'}
             className="bg-green-500 hover:bg-green-600 text-primary p-2 rounded"
           >
             <span className="flex items-center">
               <FaPlus /> &nbsp; Add Stock
             </span>
-          </Link>
+          </Link> */}
         </div>
         <table className="table-auto">
           <thead className="bg-secondary">

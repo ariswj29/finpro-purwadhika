@@ -148,7 +148,7 @@ export default function CheckoutPage(context: any) {
                   <td className="p-2">
                     <div className="flex items-center">
                       <Image
-                        src={`${process.env.NEXT_PUBLIC_BASE_URL}/products/${item.product.image}`}
+                        src={`${process.env.NEXT_PUBLIC_BASE_URL}/uploads/products/${item.product.image}`}
                         alt="Product"
                         width={80}
                         height={80}

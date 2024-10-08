@@ -40,6 +40,9 @@ export async function mutations(req: Request, res: Response) {
             },
           },
         },
+        orderBy: {
+          id: 'desc',
+        },
         skip: (pageNumber - 1) * limitNumber,
         take: limitNumber,
       });
@@ -72,6 +75,9 @@ export async function mutations(req: Request, res: Response) {
             { destinationBranchId: branchId?.id },
             { sourceBranchId: branchId?.id },
           ],
+        },
+        orderBy: {
+          id: 'desc',
         },
         skip: (pageNumber - 1) * limitNumber,
         take: limitNumber,
@@ -133,7 +139,7 @@ export async function createMutation(req: Request, res: Response) {
     const mutation = await prisma.mutation.create({
       data: {
         stockRequest: parseInt(stockRequest, 10),
-        stockProcess: parseInt(stockProcess, 10 || 0),
+        stockProcess: parseInt(stockProcess || '0', 10),
         note,
         status: 'PENDING',
         product: {

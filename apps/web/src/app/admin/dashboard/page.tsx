@@ -126,10 +126,18 @@ export default function DashboardPage() {
       </div>
       <div className="grid gap-4 mt-8">
         <div className="p-8 border border-secondary rounded-lg">
-          <ChartBar data={data?.salesPerProduct} labels={data?.productNames} />
+          <ChartLine
+            data={data?.salesPerProduct}
+            labels={data?.productNames}
+            title={'Sales per product'}
+          />
         </div>
         <div className="p-8 border border-secondary rounded-lg">
-          <ChartLine data={data?.stockPerProduct} labels={data?.productNames} />
+          <ChartBar
+            data={data?.stockPerProduct}
+            labels={data?.productNames}
+            title={'Stock per product'}
+          />
         </div>
       </div>
     </div>

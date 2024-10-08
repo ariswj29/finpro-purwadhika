@@ -5,12 +5,16 @@ const Line = dynamic(() => import('react-chartjs-2').then((mod) => mod.Line), {
   ssr: false,
 });
 
-export default function ChartLine(props: { data: number[]; labels: string[] }) {
+export default function ChartLine(props: {
+  data: number[];
+  labels: string[];
+  title: string;
+}) {
   const dataLine = {
     labels: props.labels,
     datasets: [
       {
-        label: 'Stock Product',
+        label: props.title,
         data: props.data,
         fill: false,
         tension: 0.1,
